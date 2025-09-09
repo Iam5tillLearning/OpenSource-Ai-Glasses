@@ -1,0 +1,26 @@
+Build started at 2025-07-06T15:42:37.551448
+Main binary: /usr/bin/python3
+Build Options: -Dnls=disabled -Dlibmount=disabled -Dselinux=disabled -Dinternal_pcre=true -Ddefault_library=static -Dprefix=/home/xjy/bluez_output '--cross-file cross-file.txt'
+Python system: Linux
+The Meson build system
+Version: 0.53.2
+Source dir: /home/xjy/1106b/bluez-5.66/glib-2.66.7
+Build dir: /home/xjy/1106b/bluez-5.66/glib-2.66.7/build-cross
+Build type: cross build
+Project name: glib
+Project version: 2.66.7
+No CFLAGS in the environment, not changing global flags.
+No LDFLAGS in the environment, not changing global flags.
+No CPPFLAGS in the environment, not changing global flags.
+Sanity testing C compiler: /home/xjy/1106b/ttys2+blooth_but_erofs/rv1106b_rv1103b_linux_ipc_v1.0.0_20241016/tools/linux/toolchain/arm-rockchip831-linux-uclibcgnueabihf/bin/arm-rockchip831-linux-uclibcgnueabihf-gcc
+Is cross compiler: False.
+Sanity check compiler command line: /home/xjy/1106b/ttys2+blooth_but_erofs/rv1106b_rv1103b_linux_ipc_v1.0.0_20241016/tools/linux/toolchain/arm-rockchip831-linux-uclibcgnueabihf/bin/arm-rockchip831-linux-uclibcgnueabihf-gcc /home/xjy/1106b/bluez-5.66/glib-2.66.7/build-cross/meson-private/sanitycheckc.c -o /home/xjy/1106b/bluez-5.66/glib-2.66.7/build-cross/meson-private/sanitycheckc.exe -pipe -D_FILE_OFFSET_BITS=64
+Sanity check compile stdout:
+
+-----
+Sanity check compile stderr:
+
+-----
+Running test binary command: /home/xjy/1106b/bluez-5.66/glib-2.66.7/build-cross/meson-private/sanitycheckc.exe
+
+meson.build:1:0: ERROR: Could not invoke sanity test executable: [Errno 8] Exec format error: '/home/xjy/1106b/bluez-5.66/glib-2.66.7/build-cross/meson-private/sanitycheckc.exe'.

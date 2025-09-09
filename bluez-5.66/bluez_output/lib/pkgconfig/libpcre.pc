@@ -1,0 +1,13 @@
+# Package Information for pkg-config
+
+prefix=/home/xjy/Downloads/glib-2.46.2/build
+exec_prefix=${prefix}
+libdir=${exec_prefix}/lib
+includedir=${prefix}/include
+
+Name: libpcre
+Description: PCRE - Perl compatible regular expressions C library with 8 bit character support
+Version: 8.40
+Libs: -L${libdir} -lpcre
+Libs.private:  
+Cflags: -I${includedir} 

@@ -1,0 +1,52 @@
+src/raw_api.lo: ../src/raw_api.c include/ffi.h include/ffitarget.h \
+ /home/xjy/1106b/ttys2+blooth_but_erofs/rv1106b_rv1103b_linux_ipc_v1.0.0_20241016/tools/linux/toolchain/arm-rockchip831-linux-uclibcgnueabihf/lib/gcc/arm-rockchip831-linux-uclibcgnueabihf/8.3.0/include/stddef.h \
+ /home/xjy/1106b/ttys2+blooth_but_erofs/rv1106b_rv1103b_linux_ipc_v1.0.0_20241016/tools/linux/toolchain/arm-rockchip831-linux-uclibcgnueabihf/lib/gcc/arm-rockchip831-linux-uclibcgnueabihf/8.3.0/include-fixed/limits.h \
+ /home/xjy/1106b/ttys2+blooth_but_erofs/rv1106b_rv1103b_linux_ipc_v1.0.0_20241016/tools/linux/toolchain/arm-rockchip831-linux-uclibcgnueabihf/lib/gcc/arm-rockchip831-linux-uclibcgnueabihf/8.3.0/include-fixed/syslimits.h \
+ /home/xjy/1106b/ttys2+blooth_but_erofs/rv1106b_rv1103b_linux_ipc_v1.0.0_20241016/tools/linux/toolchain/arm-rockchip831-linux-uclibcgnueabihf/arm-rockchip831-linux-uclibcgnueabihf/sysroot/usr/include/limits.h \
+ /home/xjy/1106b/ttys2+blooth_but_erofs/rv1106b_rv1103b_linux_ipc_v1.0.0_20241016/tools/linux/toolchain/arm-rockchip831-linux-uclibcgnueabihf/arm-rockchip831-linux-uclibcgnueabihf/sysroot/usr/include/features.h \
+ /home/xjy/1106b/ttys2+blooth_but_erofs/rv1106b_rv1103b_linux_ipc_v1.0.0_20241016/tools/linux/toolchain/arm-rockchip831-linux-uclibcgnueabihf/arm-rockchip831-linux-uclibcgnueabihf/sysroot/usr/include/bits/uClibc_config.h \
+ /home/xjy/1106b/ttys2+blooth_but_erofs/rv1106b_rv1103b_linux_ipc_v1.0.0_20241016/tools/linux/toolchain/arm-rockchip831-linux-uclibcgnueabihf/arm-rockchip831-linux-uclibcgnueabihf/sysroot/usr/include/sys/cdefs.h \
+ /home/xjy/1106b/ttys2+blooth_but_erofs/rv1106b_rv1103b_linux_ipc_v1.0.0_20241016/tools/linux/toolchain/arm-rockchip831-linux-uclibcgnueabihf/arm-rockchip831-linux-uclibcgnueabihf/sysroot/usr/include/bits/posix1_lim.h \
+ /home/xjy/1106b/ttys2+blooth_but_erofs/rv1106b_rv1103b_linux_ipc_v1.0.0_20241016/tools/linux/toolchain/arm-rockchip831-linux-uclibcgnueabihf/arm-rockchip831-linux-uclibcgnueabihf/sysroot/usr/include/bits/local_lim.h \
+ /home/xjy/1106b/ttys2+blooth_but_erofs/rv1106b_rv1103b_linux_ipc_v1.0.0_20241016/tools/linux/toolchain/arm-rockchip831-linux-uclibcgnueabihf/arm-rockchip831-linux-uclibcgnueabihf/sysroot/usr/include/linux/limits.h \
+ /home/xjy/1106b/ttys2+blooth_but_erofs/rv1106b_rv1103b_linux_ipc_v1.0.0_20241016/tools/linux/toolchain/arm-rockchip831-linux-uclibcgnueabihf/arm-rockchip831-linux-uclibcgnueabihf/sysroot/usr/include/bits/uClibc_local_lim.h \
+ /home/xjy/1106b/ttys2+blooth_but_erofs/rv1106b_rv1103b_linux_ipc_v1.0.0_20241016/tools/linux/toolchain/arm-rockchip831-linux-uclibcgnueabihf/arm-rockchip831-linux-uclibcgnueabihf/sysroot/usr/include/bits/posix2_lim.h \
+ ../include/ffi_common.h fficonfig.h \
+ /home/xjy/1106b/ttys2+blooth_but_erofs/rv1106b_rv1103b_linux_ipc_v1.0.0_20241016/tools/linux/toolchain/arm-rockchip831-linux-uclibcgnueabihf/arm-rockchip831-linux-uclibcgnueabihf/sysroot/usr/include/alloca.h \
+ /home/xjy/1106b/ttys2+blooth_but_erofs/rv1106b_rv1103b_linux_ipc_v1.0.0_20241016/tools/linux/toolchain/arm-rockchip831-linux-uclibcgnueabihf/arm-rockchip831-linux-uclibcgnueabihf/sysroot/usr/include/string.h
+
+include/ffi.h:
+
+include/ffitarget.h:
+
+/home/xjy/1106b/ttys2+blooth_but_erofs/rv1106b_rv1103b_linux_ipc_v1.0.0_20241016/tools/linux/toolchain/arm-rockchip831-linux-uclibcgnueabihf/lib/gcc/arm-rockchip831-linux-uclibcgnueabihf/8.3.0/include/stddef.h:
+
+/home/xjy/1106b/ttys2+blooth_but_erofs/rv1106b_rv1103b_linux_ipc_v1.0.0_20241016/tools/linux/toolchain/arm-rockchip831-linux-uclibcgnueabihf/lib/gcc/arm-rockchip831-linux-uclibcgnueabihf/8.3.0/include-fixed/limits.h:
+
+/home/xjy/1106b/ttys2+blooth_but_erofs/rv1106b_rv1103b_linux_ipc_v1.0.0_20241016/tools/linux/toolchain/arm-rockchip831-linux-uclibcgnueabihf/lib/gcc/arm-rockchip831-linux-uclibcgnueabihf/8.3.0/include-fixed/syslimits.h:
+
+/home/xjy/1106b/ttys2+blooth_but_erofs/rv1106b_rv1103b_linux_ipc_v1.0.0_20241016/tools/linux/toolchain/arm-rockchip831-linux-uclibcgnueabihf/arm-rockchip831-linux-uclibcgnueabihf/sysroot/usr/include/limits.h:
+
+/home/xjy/1106b/ttys2+blooth_but_erofs/rv1106b_rv1103b_linux_ipc_v1.0.0_20241016/tools/linux/toolchain/arm-rockchip831-linux-uclibcgnueabihf/arm-rockchip831-linux-uclibcgnueabihf/sysroot/usr/include/features.h:
+
+/home/xjy/1106b/ttys2+blooth_but_erofs/rv1106b_rv1103b_linux_ipc_v1.0.0_20241016/tools/linux/toolchain/arm-rockchip831-linux-uclibcgnueabihf/arm-rockchip831-linux-uclibcgnueabihf/sysroot/usr/include/bits/uClibc_config.h:
+
+/home/xjy/1106b/ttys2+blooth_but_erofs/rv1106b_rv1103b_linux_ipc_v1.0.0_20241016/tools/linux/toolchain/arm-rockchip831-linux-uclibcgnueabihf/arm-rockchip831-linux-uclibcgnueabihf/sysroot/usr/include/sys/cdefs.h:
+
+/home/xjy/1106b/ttys2+blooth_but_erofs/rv1106b_rv1103b_linux_ipc_v1.0.0_20241016/tools/linux/toolchain/arm-rockchip831-linux-uclibcgnueabihf/arm-rockchip831-linux-uclibcgnueabihf/sysroot/usr/include/bits/posix1_lim.h:
+
+/home/xjy/1106b/ttys2+blooth_but_erofs/rv1106b_rv1103b_linux_ipc_v1.0.0_20241016/tools/linux/toolchain/arm-rockchip831-linux-uclibcgnueabihf/arm-rockchip831-linux-uclibcgnueabihf/sysroot/usr/include/bits/local_lim.h:
+
+/home/xjy/1106b/ttys2+blooth_but_erofs/rv1106b_rv1103b_linux_ipc_v1.0.0_20241016/tools/linux/toolchain/arm-rockchip831-linux-uclibcgnueabihf/arm-rockchip831-linux-uclibcgnueabihf/sysroot/usr/include/linux/limits.h:
+
+/home/xjy/1106b/ttys2+blooth_but_erofs/rv1106b_rv1103b_linux_ipc_v1.0.0_20241016/tools/linux/toolchain/arm-rockchip831-linux-uclibcgnueabihf/arm-rockchip831-linux-uclibcgnueabihf/sysroot/usr/include/bits/uClibc_local_lim.h:
+
+/home/xjy/1106b/ttys2+blooth_but_erofs/rv1106b_rv1103b_linux_ipc_v1.0.0_20241016/tools/linux/toolchain/arm-rockchip831-linux-uclibcgnueabihf/arm-rockchip831-linux-uclibcgnueabihf/sysroot/usr/include/bits/posix2_lim.h:
+
+../include/ffi_common.h:
+
+fficonfig.h:
+
+/home/xjy/1106b/ttys2+blooth_but_erofs/rv1106b_rv1103b_linux_ipc_v1.0.0_20241016/tools/linux/toolchain/arm-rockchip831-linux-uclibcgnueabihf/arm-rockchip831-linux-uclibcgnueabihf/sysroot/usr/include/alloca.h:
+
+/home/xjy/1106b/ttys2+blooth_but_erofs/rv1106b_rv1103b_linux_ipc_v1.0.0_20241016/tools/linux/toolchain/arm-rockchip831-linux-uclibcgnueabihf/arm-rockchip831-linux-uclibcgnueabihf/sysroot/usr/include/string.h:

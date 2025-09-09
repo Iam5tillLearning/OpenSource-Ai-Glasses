@@ -1,0 +1,12 @@
+prefix=/home/xjy/Downloads/bluez-5.66/bluez_output
+exec_prefix=${prefix}
+libdir=${exec_prefix}/lib
+includedir=${prefix}/include
+
+Name: GObject
+Description: GLib Type, Object, Parameter and Signal Library
+Requires: glib-2.0
+Version: 2.46.2
+Libs: -L${libdir} -lgobject-2.0
+Libs.private: -lffi
+Cflags:

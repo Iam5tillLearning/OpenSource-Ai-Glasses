@@ -1,0 +1,14 @@
+prefix=/home/xjy/Downloads/bluez-5.66/bluez_output
+exec_prefix=${prefix}
+libdir=${exec_prefix}/lib
+includedir=${prefix}/include
+
+gmodule_supported=true
+
+Name: GModule
+Description: Dynamic module loader for GLib
+Requires: glib-2.0
+Version: 2.46.2
+Libs: -L${libdir} -lgmodule-2.0 -pthread
+Libs.private: 
+Cflags: -pthread

@@ -1,0 +1,21 @@
+original_prefix=/home/xjy/Downloads/bluez-5.66/bluez_output
+prefix=${original_prefix}
+exec_prefix=${prefix}
+bindir=${exec_prefix}/bin
+libdir=${exec_prefix}/lib
+includedir=${prefix}/include
+system_bus_default_address=unix:path=/home/xjy/Downloads/bluez-5.66/bluez_output/var/run/dbus/system_bus_socket
+datarootdir=${prefix}/share
+datadir=${datarootdir}
+sysconfdir=${prefix}/etc
+session_bus_services_dir=${datadir}/dbus-1/services
+system_bus_services_dir=${datadir}/dbus-1/system-services
+interfaces_dir=${datadir}/dbus-1/interfaces
+daemondir=${bindir}
+
+Name: dbus
+Description: Free desktop message bus
+Version: 1.15.0
+Libs: -L${libdir} -ldbus-1
+Libs.private:    
+Cflags: -I${includedir}/dbus-1.0 -I${libdir}/dbus-1.0/include 

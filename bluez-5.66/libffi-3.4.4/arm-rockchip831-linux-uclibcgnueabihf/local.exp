@@ -1,0 +1,3 @@
+set CC_FOR_TARGET "arm-rockchip831-linux-uclibcgnueabihf-gcc -I/home/xjy/bluez_output/include -L/home/xjy/bluez_output/lib"
+set CXX_FOR_TARGET "arm-rockchip831-linux-uclibcgnueabihf-g++"
+set compiler_vendor "gnu"

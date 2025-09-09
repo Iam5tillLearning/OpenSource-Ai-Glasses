@@ -1,0 +1,174 @@
+tools/nokfw.o: tools/nokfw.c config.h \
+ /home/xjy/1106b/ttys2+blooth_but_erofs/rv1106b_rv1103b_linux_ipc_v1.0.0_20241016/tools/linux/toolchain/arm-rockchip831-linux-uclibcgnueabihf/arm-rockchip831-linux-uclibcgnueabihf/sysroot/usr/include/stdio.h \
+ /home/xjy/1106b/ttys2+blooth_but_erofs/rv1106b_rv1103b_linux_ipc_v1.0.0_20241016/tools/linux/toolchain/arm-rockchip831-linux-uclibcgnueabihf/arm-rockchip831-linux-uclibcgnueabihf/sysroot/usr/include/features.h \
+ /home/xjy/1106b/ttys2+blooth_but_erofs/rv1106b_rv1103b_linux_ipc_v1.0.0_20241016/tools/linux/toolchain/arm-rockchip831-linux-uclibcgnueabihf/arm-rockchip831-linux-uclibcgnueabihf/sysroot/usr/include/bits/uClibc_config.h \
+ /home/xjy/1106b/ttys2+blooth_but_erofs/rv1106b_rv1103b_linux_ipc_v1.0.0_20241016/tools/linux/toolchain/arm-rockchip831-linux-uclibcgnueabihf/arm-rockchip831-linux-uclibcgnueabihf/sysroot/usr/include/sys/cdefs.h \
+ /home/xjy/1106b/ttys2+blooth_but_erofs/rv1106b_rv1103b_linux_ipc_v1.0.0_20241016/tools/linux/toolchain/arm-rockchip831-linux-uclibcgnueabihf/lib/gcc/arm-rockchip831-linux-uclibcgnueabihf/8.3.0/include/stddef.h \
+ /home/xjy/1106b/ttys2+blooth_but_erofs/rv1106b_rv1103b_linux_ipc_v1.0.0_20241016/tools/linux/toolchain/arm-rockchip831-linux-uclibcgnueabihf/arm-rockchip831-linux-uclibcgnueabihf/sysroot/usr/include/bits/types.h \
+ /home/xjy/1106b/ttys2+blooth_but_erofs/rv1106b_rv1103b_linux_ipc_v1.0.0_20241016/tools/linux/toolchain/arm-rockchip831-linux-uclibcgnueabihf/arm-rockchip831-linux-uclibcgnueabihf/sysroot/usr/include/bits/wordsize.h \
+ /home/xjy/1106b/ttys2+blooth_but_erofs/rv1106b_rv1103b_linux_ipc_v1.0.0_20241016/tools/linux/toolchain/arm-rockchip831-linux-uclibcgnueabihf/arm-rockchip831-linux-uclibcgnueabihf/sysroot/usr/include/bits/typesizes.h \
+ /home/xjy/1106b/ttys2+blooth_but_erofs/rv1106b_rv1103b_linux_ipc_v1.0.0_20241016/tools/linux/toolchain/arm-rockchip831-linux-uclibcgnueabihf/arm-rockchip831-linux-uclibcgnueabihf/sysroot/usr/include/bits/uClibc_stdio.h \
+ /home/xjy/1106b/ttys2+blooth_but_erofs/rv1106b_rv1103b_linux_ipc_v1.0.0_20241016/tools/linux/toolchain/arm-rockchip831-linux-uclibcgnueabihf/arm-rockchip831-linux-uclibcgnueabihf/sysroot/usr/include/wchar.h \
+ /home/xjy/1106b/ttys2+blooth_but_erofs/rv1106b_rv1103b_linux_ipc_v1.0.0_20241016/tools/linux/toolchain/arm-rockchip831-linux-uclibcgnueabihf/arm-rockchip831-linux-uclibcgnueabihf/sysroot/usr/include/bits/wchar.h \
+ /home/xjy/1106b/ttys2+blooth_but_erofs/rv1106b_rv1103b_linux_ipc_v1.0.0_20241016/tools/linux/toolchain/arm-rockchip831-linux-uclibcgnueabihf/arm-rockchip831-linux-uclibcgnueabihf/sysroot/usr/include/bits/pthreadtypes.h \
+ /home/xjy/1106b/ttys2+blooth_but_erofs/rv1106b_rv1103b_linux_ipc_v1.0.0_20241016/tools/linux/toolchain/arm-rockchip831-linux-uclibcgnueabihf/arm-rockchip831-linux-uclibcgnueabihf/sysroot/usr/include/endian.h \
+ /home/xjy/1106b/ttys2+blooth_but_erofs/rv1106b_rv1103b_linux_ipc_v1.0.0_20241016/tools/linux/toolchain/arm-rockchip831-linux-uclibcgnueabihf/arm-rockchip831-linux-uclibcgnueabihf/sysroot/usr/include/bits/endian.h \
+ /home/xjy/1106b/ttys2+blooth_but_erofs/rv1106b_rv1103b_linux_ipc_v1.0.0_20241016/tools/linux/toolchain/arm-rockchip831-linux-uclibcgnueabihf/arm-rockchip831-linux-uclibcgnueabihf/sysroot/usr/include/byteswap.h \
+ /home/xjy/1106b/ttys2+blooth_but_erofs/rv1106b_rv1103b_linux_ipc_v1.0.0_20241016/tools/linux/toolchain/arm-rockchip831-linux-uclibcgnueabihf/arm-rockchip831-linux-uclibcgnueabihf/sysroot/usr/include/bits/byteswap.h \
+ /home/xjy/1106b/ttys2+blooth_but_erofs/rv1106b_rv1103b_linux_ipc_v1.0.0_20241016/tools/linux/toolchain/arm-rockchip831-linux-uclibcgnueabihf/arm-rockchip831-linux-uclibcgnueabihf/sysroot/usr/include/bits/byteswap-common.h \
+ /home/xjy/1106b/ttys2+blooth_but_erofs/rv1106b_rv1103b_linux_ipc_v1.0.0_20241016/tools/linux/toolchain/arm-rockchip831-linux-uclibcgnueabihf/arm-rockchip831-linux-uclibcgnueabihf/sysroot/usr/include/bits/byteswap-16.h \
+ /home/xjy/1106b/ttys2+blooth_but_erofs/rv1106b_rv1103b_linux_ipc_v1.0.0_20241016/tools/linux/toolchain/arm-rockchip831-linux-uclibcgnueabihf/lib/gcc/arm-rockchip831-linux-uclibcgnueabihf/8.3.0/include/stdarg.h \
+ /home/xjy/1106b/ttys2+blooth_but_erofs/rv1106b_rv1103b_linux_ipc_v1.0.0_20241016/tools/linux/toolchain/arm-rockchip831-linux-uclibcgnueabihf/arm-rockchip831-linux-uclibcgnueabihf/sysroot/usr/include/bits/stdio_lim.h \
+ /home/xjy/1106b/ttys2+blooth_but_erofs/rv1106b_rv1103b_linux_ipc_v1.0.0_20241016/tools/linux/toolchain/arm-rockchip831-linux-uclibcgnueabihf/arm-rockchip831-linux-uclibcgnueabihf/sysroot/usr/include/errno.h \
+ /home/xjy/1106b/ttys2+blooth_but_erofs/rv1106b_rv1103b_linux_ipc_v1.0.0_20241016/tools/linux/toolchain/arm-rockchip831-linux-uclibcgnueabihf/arm-rockchip831-linux-uclibcgnueabihf/sysroot/usr/include/bits/errno.h \
+ /home/xjy/1106b/ttys2+blooth_but_erofs/rv1106b_rv1103b_linux_ipc_v1.0.0_20241016/tools/linux/toolchain/arm-rockchip831-linux-uclibcgnueabihf/arm-rockchip831-linux-uclibcgnueabihf/sysroot/usr/include/linux/errno.h \
+ /home/xjy/1106b/ttys2+blooth_but_erofs/rv1106b_rv1103b_linux_ipc_v1.0.0_20241016/tools/linux/toolchain/arm-rockchip831-linux-uclibcgnueabihf/arm-rockchip831-linux-uclibcgnueabihf/sysroot/usr/include/asm/errno.h \
+ /home/xjy/1106b/ttys2+blooth_but_erofs/rv1106b_rv1103b_linux_ipc_v1.0.0_20241016/tools/linux/toolchain/arm-rockchip831-linux-uclibcgnueabihf/arm-rockchip831-linux-uclibcgnueabihf/sysroot/usr/include/asm-generic/errno.h \
+ /home/xjy/1106b/ttys2+blooth_but_erofs/rv1106b_rv1103b_linux_ipc_v1.0.0_20241016/tools/linux/toolchain/arm-rockchip831-linux-uclibcgnueabihf/arm-rockchip831-linux-uclibcgnueabihf/sysroot/usr/include/asm-generic/errno-base.h \
+ /home/xjy/1106b/ttys2+blooth_but_erofs/rv1106b_rv1103b_linux_ipc_v1.0.0_20241016/tools/linux/toolchain/arm-rockchip831-linux-uclibcgnueabihf/arm-rockchip831-linux-uclibcgnueabihf/sysroot/usr/include/fcntl.h \
+ /home/xjy/1106b/ttys2+blooth_but_erofs/rv1106b_rv1103b_linux_ipc_v1.0.0_20241016/tools/linux/toolchain/arm-rockchip831-linux-uclibcgnueabihf/arm-rockchip831-linux-uclibcgnueabihf/sysroot/usr/include/bits/fcntl.h \
+ /home/xjy/1106b/ttys2+blooth_but_erofs/rv1106b_rv1103b_linux_ipc_v1.0.0_20241016/tools/linux/toolchain/arm-rockchip831-linux-uclibcgnueabihf/arm-rockchip831-linux-uclibcgnueabihf/sysroot/usr/include/sys/types.h \
+ /home/xjy/1106b/ttys2+blooth_but_erofs/rv1106b_rv1103b_linux_ipc_v1.0.0_20241016/tools/linux/toolchain/arm-rockchip831-linux-uclibcgnueabihf/arm-rockchip831-linux-uclibcgnueabihf/sysroot/usr/include/time.h \
+ /home/xjy/1106b/ttys2+blooth_but_erofs/rv1106b_rv1103b_linux_ipc_v1.0.0_20241016/tools/linux/toolchain/arm-rockchip831-linux-uclibcgnueabihf/arm-rockchip831-linux-uclibcgnueabihf/sysroot/usr/include/sys/select.h \
+ /home/xjy/1106b/ttys2+blooth_but_erofs/rv1106b_rv1103b_linux_ipc_v1.0.0_20241016/tools/linux/toolchain/arm-rockchip831-linux-uclibcgnueabihf/arm-rockchip831-linux-uclibcgnueabihf/sysroot/usr/include/bits/select.h \
+ /home/xjy/1106b/ttys2+blooth_but_erofs/rv1106b_rv1103b_linux_ipc_v1.0.0_20241016/tools/linux/toolchain/arm-rockchip831-linux-uclibcgnueabihf/arm-rockchip831-linux-uclibcgnueabihf/sysroot/usr/include/bits/sigset.h \
+ /home/xjy/1106b/ttys2+blooth_but_erofs/rv1106b_rv1103b_linux_ipc_v1.0.0_20241016/tools/linux/toolchain/arm-rockchip831-linux-uclibcgnueabihf/arm-rockchip831-linux-uclibcgnueabihf/sysroot/usr/include/bits/time.h \
+ /home/xjy/1106b/ttys2+blooth_but_erofs/rv1106b_rv1103b_linux_ipc_v1.0.0_20241016/tools/linux/toolchain/arm-rockchip831-linux-uclibcgnueabihf/arm-rockchip831-linux-uclibcgnueabihf/sysroot/usr/include/sys/sysmacros.h \
+ /home/xjy/1106b/ttys2+blooth_but_erofs/rv1106b_rv1103b_linux_ipc_v1.0.0_20241016/tools/linux/toolchain/arm-rockchip831-linux-uclibcgnueabihf/arm-rockchip831-linux-uclibcgnueabihf/sysroot/usr/include/bits/uio.h \
+ /home/xjy/1106b/ttys2+blooth_but_erofs/rv1106b_rv1103b_linux_ipc_v1.0.0_20241016/tools/linux/toolchain/arm-rockchip831-linux-uclibcgnueabihf/arm-rockchip831-linux-uclibcgnueabihf/sysroot/usr/include/bits/fcntl-linux.h \
+ /home/xjy/1106b/ttys2+blooth_but_erofs/rv1106b_rv1103b_linux_ipc_v1.0.0_20241016/tools/linux/toolchain/arm-rockchip831-linux-uclibcgnueabihf/arm-rockchip831-linux-uclibcgnueabihf/sysroot/usr/include/sys/stat.h \
+ /home/xjy/1106b/ttys2+blooth_but_erofs/rv1106b_rv1103b_linux_ipc_v1.0.0_20241016/tools/linux/toolchain/arm-rockchip831-linux-uclibcgnueabihf/arm-rockchip831-linux-uclibcgnueabihf/sysroot/usr/include/bits/stat.h \
+ /home/xjy/1106b/ttys2+blooth_but_erofs/rv1106b_rv1103b_linux_ipc_v1.0.0_20241016/tools/linux/toolchain/arm-rockchip831-linux-uclibcgnueabihf/arm-rockchip831-linux-uclibcgnueabihf/sysroot/usr/include/unistd.h \
+ /home/xjy/1106b/ttys2+blooth_but_erofs/rv1106b_rv1103b_linux_ipc_v1.0.0_20241016/tools/linux/toolchain/arm-rockchip831-linux-uclibcgnueabihf/arm-rockchip831-linux-uclibcgnueabihf/sysroot/usr/include/bits/posix_opt.h \
+ /home/xjy/1106b/ttys2+blooth_but_erofs/rv1106b_rv1103b_linux_ipc_v1.0.0_20241016/tools/linux/toolchain/arm-rockchip831-linux-uclibcgnueabihf/arm-rockchip831-linux-uclibcgnueabihf/sysroot/usr/include/bits/uClibc_posix_opt.h \
+ /home/xjy/1106b/ttys2+blooth_but_erofs/rv1106b_rv1103b_linux_ipc_v1.0.0_20241016/tools/linux/toolchain/arm-rockchip831-linux-uclibcgnueabihf/arm-rockchip831-linux-uclibcgnueabihf/sysroot/usr/include/bits/environments.h \
+ /home/xjy/1106b/ttys2+blooth_but_erofs/rv1106b_rv1103b_linux_ipc_v1.0.0_20241016/tools/linux/toolchain/arm-rockchip831-linux-uclibcgnueabihf/arm-rockchip831-linux-uclibcgnueabihf/sysroot/usr/include/bits/confname.h \
+ /home/xjy/1106b/ttys2+blooth_but_erofs/rv1106b_rv1103b_linux_ipc_v1.0.0_20241016/tools/linux/toolchain/arm-rockchip831-linux-uclibcgnueabihf/arm-rockchip831-linux-uclibcgnueabihf/sysroot/usr/include/bits/getopt.h \
+ /home/xjy/1106b/ttys2+blooth_but_erofs/rv1106b_rv1103b_linux_ipc_v1.0.0_20241016/tools/linux/toolchain/arm-rockchip831-linux-uclibcgnueabihf/arm-rockchip831-linux-uclibcgnueabihf/sysroot/usr/include/string.h \
+ /home/xjy/1106b/ttys2+blooth_but_erofs/rv1106b_rv1103b_linux_ipc_v1.0.0_20241016/tools/linux/toolchain/arm-rockchip831-linux-uclibcgnueabihf/arm-rockchip831-linux-uclibcgnueabihf/sysroot/usr/include/getopt.h \
+ /home/xjy/1106b/ttys2+blooth_but_erofs/rv1106b_rv1103b_linux_ipc_v1.0.0_20241016/tools/linux/toolchain/arm-rockchip831-linux-uclibcgnueabihf/arm-rockchip831-linux-uclibcgnueabihf/sysroot/usr/include/stdlib.h \
+ /home/xjy/1106b/ttys2+blooth_but_erofs/rv1106b_rv1103b_linux_ipc_v1.0.0_20241016/tools/linux/toolchain/arm-rockchip831-linux-uclibcgnueabihf/arm-rockchip831-linux-uclibcgnueabihf/sysroot/usr/include/bits/waitflags.h \
+ /home/xjy/1106b/ttys2+blooth_but_erofs/rv1106b_rv1103b_linux_ipc_v1.0.0_20241016/tools/linux/toolchain/arm-rockchip831-linux-uclibcgnueabihf/arm-rockchip831-linux-uclibcgnueabihf/sysroot/usr/include/bits/waitstatus.h \
+ /home/xjy/1106b/ttys2+blooth_but_erofs/rv1106b_rv1103b_linux_ipc_v1.0.0_20241016/tools/linux/toolchain/arm-rockchip831-linux-uclibcgnueabihf/arm-rockchip831-linux-uclibcgnueabihf/sysroot/usr/include/alloca.h \
+ /home/xjy/1106b/ttys2+blooth_but_erofs/rv1106b_rv1103b_linux_ipc_v1.0.0_20241016/tools/linux/toolchain/arm-rockchip831-linux-uclibcgnueabihf/lib/gcc/arm-rockchip831-linux-uclibcgnueabihf/8.3.0/include/stdint.h \
+ /home/xjy/1106b/ttys2+blooth_but_erofs/rv1106b_rv1103b_linux_ipc_v1.0.0_20241016/tools/linux/toolchain/arm-rockchip831-linux-uclibcgnueabihf/arm-rockchip831-linux-uclibcgnueabihf/sysroot/usr/include/stdint.h \
+ /home/xjy/1106b/ttys2+blooth_but_erofs/rv1106b_rv1103b_linux_ipc_v1.0.0_20241016/tools/linux/toolchain/arm-rockchip831-linux-uclibcgnueabihf/arm-rockchip831-linux-uclibcgnueabihf/sysroot/usr/include/sys/mman.h \
+ /home/xjy/1106b/ttys2+blooth_but_erofs/rv1106b_rv1103b_linux_ipc_v1.0.0_20241016/tools/linux/toolchain/arm-rockchip831-linux-uclibcgnueabihf/arm-rockchip831-linux-uclibcgnueabihf/sysroot/usr/include/bits/mman.h \
+ /home/xjy/1106b/ttys2+blooth_but_erofs/rv1106b_rv1103b_linux_ipc_v1.0.0_20241016/tools/linux/toolchain/arm-rockchip831-linux-uclibcgnueabihf/arm-rockchip831-linux-uclibcgnueabihf/sysroot/usr/include/bits/mman-linux.h \
+ /home/xjy/1106b/ttys2+blooth_but_erofs/rv1106b_rv1103b_linux_ipc_v1.0.0_20241016/tools/linux/toolchain/arm-rockchip831-linux-uclibcgnueabihf/arm-rockchip831-linux-uclibcgnueabihf/sysroot/usr/include/bits/mman-shared.h
+
+config.h:
+
+/home/xjy/1106b/ttys2+blooth_but_erofs/rv1106b_rv1103b_linux_ipc_v1.0.0_20241016/tools/linux/toolchain/arm-rockchip831-linux-uclibcgnueabihf/arm-rockchip831-linux-uclibcgnueabihf/sysroot/usr/include/stdio.h:
+
+/home/xjy/1106b/ttys2+blooth_but_erofs/rv1106b_rv1103b_linux_ipc_v1.0.0_20241016/tools/linux/toolchain/arm-rockchip831-linux-uclibcgnueabihf/arm-rockchip831-linux-uclibcgnueabihf/sysroot/usr/include/features.h:
+
+/home/xjy/1106b/ttys2+blooth_but_erofs/rv1106b_rv1103b_linux_ipc_v1.0.0_20241016/tools/linux/toolchain/arm-rockchip831-linux-uclibcgnueabihf/arm-rockchip831-linux-uclibcgnueabihf/sysroot/usr/include/bits/uClibc_config.h:
+
+/home/xjy/1106b/ttys2+blooth_but_erofs/rv1106b_rv1103b_linux_ipc_v1.0.0_20241016/tools/linux/toolchain/arm-rockchip831-linux-uclibcgnueabihf/arm-rockchip831-linux-uclibcgnueabihf/sysroot/usr/include/sys/cdefs.h:
+
+/home/xjy/1106b/ttys2+blooth_but_erofs/rv1106b_rv1103b_linux_ipc_v1.0.0_20241016/tools/linux/toolchain/arm-rockchip831-linux-uclibcgnueabihf/lib/gcc/arm-rockchip831-linux-uclibcgnueabihf/8.3.0/include/stddef.h:
+
+/home/xjy/1106b/ttys2+blooth_but_erofs/rv1106b_rv1103b_linux_ipc_v1.0.0_20241016/tools/linux/toolchain/arm-rockchip831-linux-uclibcgnueabihf/arm-rockchip831-linux-uclibcgnueabihf/sysroot/usr/include/bits/types.h:
+
+/home/xjy/1106b/ttys2+blooth_but_erofs/rv1106b_rv1103b_linux_ipc_v1.0.0_20241016/tools/linux/toolchain/arm-rockchip831-linux-uclibcgnueabihf/arm-rockchip831-linux-uclibcgnueabihf/sysroot/usr/include/bits/wordsize.h:
+
+/home/xjy/1106b/ttys2+blooth_but_erofs/rv1106b_rv1103b_linux_ipc_v1.0.0_20241016/tools/linux/toolchain/arm-rockchip831-linux-uclibcgnueabihf/arm-rockchip831-linux-uclibcgnueabihf/sysroot/usr/include/bits/typesizes.h:
+
+/home/xjy/1106b/ttys2+blooth_but_erofs/rv1106b_rv1103b_linux_ipc_v1.0.0_20241016/tools/linux/toolchain/arm-rockchip831-linux-uclibcgnueabihf/arm-rockchip831-linux-uclibcgnueabihf/sysroot/usr/include/bits/uClibc_stdio.h:
+
+/home/xjy/1106b/ttys2+blooth_but_erofs/rv1106b_rv1103b_linux_ipc_v1.0.0_20241016/tools/linux/toolchain/arm-rockchip831-linux-uclibcgnueabihf/arm-rockchip831-linux-uclibcgnueabihf/sysroot/usr/include/wchar.h:
+
+/home/xjy/1106b/ttys2+blooth_but_erofs/rv1106b_rv1103b_linux_ipc_v1.0.0_20241016/tools/linux/toolchain/arm-rockchip831-linux-uclibcgnueabihf/arm-rockchip831-linux-uclibcgnueabihf/sysroot/usr/include/bits/wchar.h:
+
+/home/xjy/1106b/ttys2+blooth_but_erofs/rv1106b_rv1103b_linux_ipc_v1.0.0_20241016/tools/linux/toolchain/arm-rockchip831-linux-uclibcgnueabihf/arm-rockchip831-linux-uclibcgnueabihf/sysroot/usr/include/bits/pthreadtypes.h:
+
+/home/xjy/1106b/ttys2+blooth_but_erofs/rv1106b_rv1103b_linux_ipc_v1.0.0_20241016/tools/linux/toolchain/arm-rockchip831-linux-uclibcgnueabihf/arm-rockchip831-linux-uclibcgnueabihf/sysroot/usr/include/endian.h:
+
+/home/xjy/1106b/ttys2+blooth_but_erofs/rv1106b_rv1103b_linux_ipc_v1.0.0_20241016/tools/linux/toolchain/arm-rockchip831-linux-uclibcgnueabihf/arm-rockchip831-linux-uclibcgnueabihf/sysroot/usr/include/bits/endian.h:
+
+/home/xjy/1106b/ttys2+blooth_but_erofs/rv1106b_rv1103b_linux_ipc_v1.0.0_20241016/tools/linux/toolchain/arm-rockchip831-linux-uclibcgnueabihf/arm-rockchip831-linux-uclibcgnueabihf/sysroot/usr/include/byteswap.h:
+
+/home/xjy/1106b/ttys2+blooth_but_erofs/rv1106b_rv1103b_linux_ipc_v1.0.0_20241016/tools/linux/toolchain/arm-rockchip831-linux-uclibcgnueabihf/arm-rockchip831-linux-uclibcgnueabihf/sysroot/usr/include/bits/byteswap.h:
+
+/home/xjy/1106b/ttys2+blooth_but_erofs/rv1106b_rv1103b_linux_ipc_v1.0.0_20241016/tools/linux/toolchain/arm-rockchip831-linux-uclibcgnueabihf/arm-rockchip831-linux-uclibcgnueabihf/sysroot/usr/include/bits/byteswap-common.h:
+
+/home/xjy/1106b/ttys2+blooth_but_erofs/rv1106b_rv1103b_linux_ipc_v1.0.0_20241016/tools/linux/toolchain/arm-rockchip831-linux-uclibcgnueabihf/arm-rockchip831-linux-uclibcgnueabihf/sysroot/usr/include/bits/byteswap-16.h:
+
+/home/xjy/1106b/ttys2+blooth_but_erofs/rv1106b_rv1103b_linux_ipc_v1.0.0_20241016/tools/linux/toolchain/arm-rockchip831-linux-uclibcgnueabihf/lib/gcc/arm-rockchip831-linux-uclibcgnueabihf/8.3.0/include/stdarg.h:
+
+/home/xjy/1106b/ttys2+blooth_but_erofs/rv1106b_rv1103b_linux_ipc_v1.0.0_20241016/tools/linux/toolchain/arm-rockchip831-linux-uclibcgnueabihf/arm-rockchip831-linux-uclibcgnueabihf/sysroot/usr/include/bits/stdio_lim.h:
+
+/home/xjy/1106b/ttys2+blooth_but_erofs/rv1106b_rv1103b_linux_ipc_v1.0.0_20241016/tools/linux/toolchain/arm-rockchip831-linux-uclibcgnueabihf/arm-rockchip831-linux-uclibcgnueabihf/sysroot/usr/include/errno.h:
+
+/home/xjy/1106b/ttys2+blooth_but_erofs/rv1106b_rv1103b_linux_ipc_v1.0.0_20241016/tools/linux/toolchain/arm-rockchip831-linux-uclibcgnueabihf/arm-rockchip831-linux-uclibcgnueabihf/sysroot/usr/include/bits/errno.h:
+
+/home/xjy/1106b/ttys2+blooth_but_erofs/rv1106b_rv1103b_linux_ipc_v1.0.0_20241016/tools/linux/toolchain/arm-rockchip831-linux-uclibcgnueabihf/arm-rockchip831-linux-uclibcgnueabihf/sysroot/usr/include/linux/errno.h:
+
+/home/xjy/1106b/ttys2+blooth_but_erofs/rv1106b_rv1103b_linux_ipc_v1.0.0_20241016/tools/linux/toolchain/arm-rockchip831-linux-uclibcgnueabihf/arm-rockchip831-linux-uclibcgnueabihf/sysroot/usr/include/asm/errno.h:
+
+/home/xjy/1106b/ttys2+blooth_but_erofs/rv1106b_rv1103b_linux_ipc_v1.0.0_20241016/tools/linux/toolchain/arm-rockchip831-linux-uclibcgnueabihf/arm-rockchip831-linux-uclibcgnueabihf/sysroot/usr/include/asm-generic/errno.h:
+
+/home/xjy/1106b/ttys2+blooth_but_erofs/rv1106b_rv1103b_linux_ipc_v1.0.0_20241016/tools/linux/toolchain/arm-rockchip831-linux-uclibcgnueabihf/arm-rockchip831-linux-uclibcgnueabihf/sysroot/usr/include/asm-generic/errno-base.h:
+
+/home/xjy/1106b/ttys2+blooth_but_erofs/rv1106b_rv1103b_linux_ipc_v1.0.0_20241016/tools/linux/toolchain/arm-rockchip831-linux-uclibcgnueabihf/arm-rockchip831-linux-uclibcgnueabihf/sysroot/usr/include/fcntl.h:
+
+/home/xjy/1106b/ttys2+blooth_but_erofs/rv1106b_rv1103b_linux_ipc_v1.0.0_20241016/tools/linux/toolchain/arm-rockchip831-linux-uclibcgnueabihf/arm-rockchip831-linux-uclibcgnueabihf/sysroot/usr/include/bits/fcntl.h:
+
+/home/xjy/1106b/ttys2+blooth_but_erofs/rv1106b_rv1103b_linux_ipc_v1.0.0_20241016/tools/linux/toolchain/arm-rockchip831-linux-uclibcgnueabihf/arm-rockchip831-linux-uclibcgnueabihf/sysroot/usr/include/sys/types.h:
+
+/home/xjy/1106b/ttys2+blooth_but_erofs/rv1106b_rv1103b_linux_ipc_v1.0.0_20241016/tools/linux/toolchain/arm-rockchip831-linux-uclibcgnueabihf/arm-rockchip831-linux-uclibcgnueabihf/sysroot/usr/include/time.h:
+
+/home/xjy/1106b/ttys2+blooth_but_erofs/rv1106b_rv1103b_linux_ipc_v1.0.0_20241016/tools/linux/toolchain/arm-rockchip831-linux-uclibcgnueabihf/arm-rockchip831-linux-uclibcgnueabihf/sysroot/usr/include/sys/select.h:
+
+/home/xjy/1106b/ttys2+blooth_but_erofs/rv1106b_rv1103b_linux_ipc_v1.0.0_20241016/tools/linux/toolchain/arm-rockchip831-linux-uclibcgnueabihf/arm-rockchip831-linux-uclibcgnueabihf/sysroot/usr/include/bits/select.h:
+
+/home/xjy/1106b/ttys2+blooth_but_erofs/rv1106b_rv1103b_linux_ipc_v1.0.0_20241016/tools/linux/toolchain/arm-rockchip831-linux-uclibcgnueabihf/arm-rockchip831-linux-uclibcgnueabihf/sysroot/usr/include/bits/sigset.h:
+
+/home/xjy/1106b/ttys2+blooth_but_erofs/rv1106b_rv1103b_linux_ipc_v1.0.0_20241016/tools/linux/toolchain/arm-rockchip831-linux-uclibcgnueabihf/arm-rockchip831-linux-uclibcgnueabihf/sysroot/usr/include/bits/time.h:
+
+/home/xjy/1106b/ttys2+blooth_but_erofs/rv1106b_rv1103b_linux_ipc_v1.0.0_20241016/tools/linux/toolchain/arm-rockchip831-linux-uclibcgnueabihf/arm-rockchip831-linux-uclibcgnueabihf/sysroot/usr/include/sys/sysmacros.h:
+
+/home/xjy/1106b/ttys2+blooth_but_erofs/rv1106b_rv1103b_linux_ipc_v1.0.0_20241016/tools/linux/toolchain/arm-rockchip831-linux-uclibcgnueabihf/arm-rockchip831-linux-uclibcgnueabihf/sysroot/usr/include/bits/uio.h:
+
+/home/xjy/1106b/ttys2+blooth_but_erofs/rv1106b_rv1103b_linux_ipc_v1.0.0_20241016/tools/linux/toolchain/arm-rockchip831-linux-uclibcgnueabihf/arm-rockchip831-linux-uclibcgnueabihf/sysroot/usr/include/bits/fcntl-linux.h:
+
+/home/xjy/1106b/ttys2+blooth_but_erofs/rv1106b_rv1103b_linux_ipc_v1.0.0_20241016/tools/linux/toolchain/arm-rockchip831-linux-uclibcgnueabihf/arm-rockchip831-linux-uclibcgnueabihf/sysroot/usr/include/sys/stat.h:
+
+/home/xjy/1106b/ttys2+blooth_but_erofs/rv1106b_rv1103b_linux_ipc_v1.0.0_20241016/tools/linux/toolchain/arm-rockchip831-linux-uclibcgnueabihf/arm-rockchip831-linux-uclibcgnueabihf/sysroot/usr/include/bits/stat.h:
+
+/home/xjy/1106b/ttys2+blooth_but_erofs/rv1106b_rv1103b_linux_ipc_v1.0.0_20241016/tools/linux/toolchain/arm-rockchip831-linux-uclibcgnueabihf/arm-rockchip831-linux-uclibcgnueabihf/sysroot/usr/include/unistd.h:
+
+/home/xjy/1106b/ttys2+blooth_but_erofs/rv1106b_rv1103b_linux_ipc_v1.0.0_20241016/tools/linux/toolchain/arm-rockchip831-linux-uclibcgnueabihf/arm-rockchip831-linux-uclibcgnueabihf/sysroot/usr/include/bits/posix_opt.h:
+
+/home/xjy/1106b/ttys2+blooth_but_erofs/rv1106b_rv1103b_linux_ipc_v1.0.0_20241016/tools/linux/toolchain/arm-rockchip831-linux-uclibcgnueabihf/arm-rockchip831-linux-uclibcgnueabihf/sysroot/usr/include/bits/uClibc_posix_opt.h:
+
+/home/xjy/1106b/ttys2+blooth_but_erofs/rv1106b_rv1103b_linux_ipc_v1.0.0_20241016/tools/linux/toolchain/arm-rockchip831-linux-uclibcgnueabihf/arm-rockchip831-linux-uclibcgnueabihf/sysroot/usr/include/bits/environments.h:
+
+/home/xjy/1106b/ttys2+blooth_but_erofs/rv1106b_rv1103b_linux_ipc_v1.0.0_20241016/tools/linux/toolchain/arm-rockchip831-linux-uclibcgnueabihf/arm-rockchip831-linux-uclibcgnueabihf/sysroot/usr/include/bits/confname.h:
+
+/home/xjy/1106b/ttys2+blooth_but_erofs/rv1106b_rv1103b_linux_ipc_v1.0.0_20241016/tools/linux/toolchain/arm-rockchip831-linux-uclibcgnueabihf/arm-rockchip831-linux-uclibcgnueabihf/sysroot/usr/include/bits/getopt.h:
+
+/home/xjy/1106b/ttys2+blooth_but_erofs/rv1106b_rv1103b_linux_ipc_v1.0.0_20241016/tools/linux/toolchain/arm-rockchip831-linux-uclibcgnueabihf/arm-rockchip831-linux-uclibcgnueabihf/sysroot/usr/include/string.h:
+
+/home/xjy/1106b/ttys2+blooth_but_erofs/rv1106b_rv1103b_linux_ipc_v1.0.0_20241016/tools/linux/toolchain/arm-rockchip831-linux-uclibcgnueabihf/arm-rockchip831-linux-uclibcgnueabihf/sysroot/usr/include/getopt.h:
+
+/home/xjy/1106b/ttys2+blooth_but_erofs/rv1106b_rv1103b_linux_ipc_v1.0.0_20241016/tools/linux/toolchain/arm-rockchip831-linux-uclibcgnueabihf/arm-rockchip831-linux-uclibcgnueabihf/sysroot/usr/include/stdlib.h:
+
+/home/xjy/1106b/ttys2+blooth_but_erofs/rv1106b_rv1103b_linux_ipc_v1.0.0_20241016/tools/linux/toolchain/arm-rockchip831-linux-uclibcgnueabihf/arm-rockchip831-linux-uclibcgnueabihf/sysroot/usr/include/bits/waitflags.h:
+
+/home/xjy/1106b/ttys2+blooth_but_erofs/rv1106b_rv1103b_linux_ipc_v1.0.0_20241016/tools/linux/toolchain/arm-rockchip831-linux-uclibcgnueabihf/arm-rockchip831-linux-uclibcgnueabihf/sysroot/usr/include/bits/waitstatus.h:
+
+/home/xjy/1106b/ttys2+blooth_but_erofs/rv1106b_rv1103b_linux_ipc_v1.0.0_20241016/tools/linux/toolchain/arm-rockchip831-linux-uclibcgnueabihf/arm-rockchip831-linux-uclibcgnueabihf/sysroot/usr/include/alloca.h:
+
+/home/xjy/1106b/ttys2+blooth_but_erofs/rv1106b_rv1103b_linux_ipc_v1.0.0_20241016/tools/linux/toolchain/arm-rockchip831-linux-uclibcgnueabihf/lib/gcc/arm-rockchip831-linux-uclibcgnueabihf/8.3.0/include/stdint.h:
+
+/home/xjy/1106b/ttys2+blooth_but_erofs/rv1106b_rv1103b_linux_ipc_v1.0.0_20241016/tools/linux/toolchain/arm-rockchip831-linux-uclibcgnueabihf/arm-rockchip831-linux-uclibcgnueabihf/sysroot/usr/include/stdint.h:
+
+/home/xjy/1106b/ttys2+blooth_but_erofs/rv1106b_rv1103b_linux_ipc_v1.0.0_20241016/tools/linux/toolchain/arm-rockchip831-linux-uclibcgnueabihf/arm-rockchip831-linux-uclibcgnueabihf/sysroot/usr/include/sys/mman.h:
+
+/home/xjy/1106b/ttys2+blooth_but_erofs/rv1106b_rv1103b_linux_ipc_v1.0.0_20241016/tools/linux/toolchain/arm-rockchip831-linux-uclibcgnueabihf/arm-rockchip831-linux-uclibcgnueabihf/sysroot/usr/include/bits/mman.h:
+
+/home/xjy/1106b/ttys2+blooth_but_erofs/rv1106b_rv1103b_linux_ipc_v1.0.0_20241016/tools/linux/toolchain/arm-rockchip831-linux-uclibcgnueabihf/arm-rockchip831-linux-uclibcgnueabihf/sysroot/usr/include/bits/mman-linux.h:
+
+/home/xjy/1106b/ttys2+blooth_but_erofs/rv1106b_rv1103b_linux_ipc_v1.0.0_20241016/tools/linux/toolchain/arm-rockchip831-linux-uclibcgnueabihf/arm-rockchip831-linux-uclibcgnueabihf/sysroot/usr/include/bits/mman-shared.h:

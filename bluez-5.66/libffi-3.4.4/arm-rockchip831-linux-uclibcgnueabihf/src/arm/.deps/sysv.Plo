@@ -1,0 +1,12 @@
+src/arm/sysv.lo: ../src/arm/sysv.S fficonfig.h include/ffi.h \
+ include/ffitarget.h ../include/ffi_cfi.h ../src/arm/internal.h
+
+fficonfig.h:
+
+include/ffi.h:
+
+include/ffitarget.h:
+
+../include/ffi_cfi.h:
+
+../src/arm/internal.h:
