@@ -1,0 +1,14 @@
+prefix=/home/bryson/ws/FFmpeg/output/ffmpeg-rockchip
+exec_prefix=${prefix}
+libdir=/home/bryson/ws/FFmpeg/output/ffmpeg-rockchip/lib
+includedir=/home/bryson/ws/FFmpeg/output/ffmpeg-rockchip/include
+
+Name: libavdevice
+Description: FFmpeg device handling library
+Version: 59.4.100
+Requires: 
+Requires.private: libavfilter >= 8.24.100, libswscale >= 6.4.100, libavformat >= 59.16.100, libavcodec >= 59.18.100, libswresample >= 4.3.100, libavutil >= 57.17.100
+Conflicts:
+Libs: -L${libdir}  -lavdevice 
+Libs.private: -lm -latomic
+Cflags: -I${includedir}

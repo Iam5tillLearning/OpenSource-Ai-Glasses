@@ -1,0 +1,14 @@
+prefix=/home/bryson/ws/FFmpeg/output/ffmpeg-rockchip
+exec_prefix=${prefix}
+libdir=/home/bryson/ws/FFmpeg/output/ffmpeg-rockchip/lib
+includedir=/home/bryson/ws/FFmpeg/output/ffmpeg-rockchip/include
+
+Name: libavutil
+Description: FFmpeg utility library
+Version: 57.17.100
+Requires: 
+Requires.private: 
+Conflicts:
+Libs: -L${libdir}  -lavutil 
+Libs.private: -pthread -lm -latomic
+Cflags: -I${includedir}

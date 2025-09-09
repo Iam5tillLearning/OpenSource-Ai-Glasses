@@ -1,0 +1,22 @@
+#!/bin/sh
+
+case "$1" in
+  start)
+    echo "Starting Wi-Fi..."
+    /oem/usr/start_wifi.sh
+    #/oem/usr/launch.sh
+    ;;
+  stop)
+    echo "Stopping Wi-Fi..."
+    killall -q wpa_supplicant
+    ifconfig wlan0 down
+    rmmod rtl8723ds
+    rmmod cfg80211
+    ;;
+  *)
+    echo "Usage: $0 {start|stop}"
+    exit 1
+    ;;
+esac
+
+exit 0

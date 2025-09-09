@@ -1,0 +1,42 @@
+#IncludeRegexLine: ^[ 	]*[#%][ 	]*(include|import)[ 	]*[<"]([^">]+)([">])
+
+#IncludeRegexScan: ^.*$
+
+#IncludeRegexComplain: ^$
+
+#IncludeRegexTransform: 
+
+/home/xjy/1106b/main/FFmLauncher/launch.cpp
+stdio.h
+-
+stdlib.h
+-
+string.h
+-
+fcntl.h
+-
+unistd.h
+-
+errno.h
+-
+sys/ioctl.h
+-
+linux/videodev2.h
+-
+sys/mman.h
+-
+semaphore.h
+-
+sys/stat.h
+-
+cstdarg
+-
+time.h
+-
+stdint.h
+-
+sys/wait.h
+-
+signal.h
+-
+

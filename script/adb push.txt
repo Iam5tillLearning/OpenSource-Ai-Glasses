@@ -1,0 +1,39 @@
+./adb push .\wpa_supplicant.conf /etc/wpa_supplicant.conf
+./adb shell "chmod 666 ./oem/usr/etc/nginx"
+./adb shell "chmod 666 ./oem/usr/sbin/nginx"
+./adb push .\start_wifi.sh /oem/usr/
+./adb shell "chmod +x /oem/usr/start_wifi.sh"
+./adb push S99wifi /etc/init.d/S99wifi
+./adb shell "chmod +x /etc/init.d/S99wifi"
+./adb shell "mkdir -p /etc/rcS.d"
+./adb shell "ln -sf /etc/init.d/S99wifi /etc/rcS.d/S99wifi"
+./adb push .\expect.sh /oem/usr/
+./adb shell "chmod +x /oem/usr/expect.sh"
+
+./adb push .\ai_client_socket ./usr/bin
+./adb shell "chmod +x ./usr/bin/ai_client_socket"
+
+./adb push .\display ./usr/bin
+./adb shell "chmod +x /usr/bin/display"
+
+./adb push .\btgatt-server ./usr/bin
+./adb shell "chmod +x /usr/bin/btgatt-server"
+
+./adb push .\launch ./usr/bin
+./adb shell "chmod +x /usr/bin/launch"
+
+./adb push .\ffmpeg ./usr/bin
+./adb shell "chmod +x /usr/bin/ffmpeg"
+
+./adb push .\expect\bin\tclsh8.4 /usr/bin
+
+./adb push .\FFlaunch ./usr/bin
+./adb shell "chmod +x /usr/bin/FFlaunch"
+
+./adb push .\expect\lib\tcl8.4\ /usr/lib
+./adb push .\expect\lib\libexpect5.45.so /usr/lib
+./adb push .\expect\lib\libtcl8.4.so /usr/lib
+./adb push .\expect\bin\expect /usr/bin
+./adb push .\expect\bin\tclsh8.4 /usr/bin
+
+ps | grep -v '\['#显示进程
