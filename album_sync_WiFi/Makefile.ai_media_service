@@ -1,0 +1,163 @@
+# Makefile for AI Media Service
+# 编译统一媒体服务程序
+
+# 目标程序名
+TARGET = ai_media_service
+
+# 源文件
+SOURCES = ai_media_service.c ../rockit/rockit/mpi/example/common/test_comm_argparse.c
+
+# 编译器和工具链 (使用ARM交叉编译工具链)
+ifeq ($(CROSS_COMPILE),)
+CROSS_COMPILE = /home/xjy/1106b/ttys2+blooth_but_erofs/rv1106b_rv1103b_linux_ipc_v1.0.0_20241016/tools/linux/toolchain/arm-rockchip831-linux-uclibcgnueabihf/bin/arm-rockchip831-linux-uclibcgnueabihf-
+endif
+
+CC = $(CROSS_COMPILE)gcc
+AR = $(CROSS_COMPILE)ar
+STRIP = $(CROSS_COMPILE)strip
+
+# 编译选项
+CFLAGS = -Wall -g -O2
+CFLAGS += -DLINUX
+CFLAGS += -DOS_LINUX
+CFLAGS += -std=gnu99
+CFLAGS += -D_GNU_SOURCE
+CFLAGS += -DADD_RK_AIQ
+CFLAGS += -fstack-protector-strong -D_FORTIFY_SOURCE=2
+CFLAGS += -Wno-unused-variable -Wno-unused-parameter -Wno-unused-function -Wno-unused-but-set-variable
+
+# 头文件路径 (从ai_media子目录调整路径)
+# 主要头文件路径
+INCLUDES = -I../../output/out/media_out/include
+INCLUDES += -I../../output/out/media_out/include/rkmedia
+# 来自ai_client_socket配置
+INCLUDES += -I../rockit/rockit/mpi/example/include
+INCLUDES += -I../rockit/rockit/mpi/example/common
+# RocKit MPI头文件
+INCLUDES += -I../rockit/rockit/mpi/sdk/include
+INCLUDES += -I../rockit/out/include
+# 来自ai_camera_capture配置
+INCLUDES += -I../isp/release_camera_engine_rkaiq_rv1103b_arm-rockchip831-linux-uclibcgnueabihf/include/rkaiq
+INCLUDES += -I../isp/release_camera_engine_rkaiq_rv1103b_arm-rockchip831-linux-uclibcgnueabihf/include/rkaiq/uAPI2
+INCLUDES += -I../isp/release_camera_engine_rkaiq_rv1103b_arm-rockchip831-linux-uclibcgnueabihf/include/rkaiq/algos
+INCLUDES += -I../isp/release_camera_engine_rkaiq_rv1103b_arm-rockchip831-linux-uclibcgnueabihf/include/rkaiq/common
+INCLUDES += -I../isp/release_camera_engine_rkaiq_rv1103b_arm-rockchip831-linux-uclibcgnueabihf/rkisp_demo/demo/include
+INCLUDES += -I../isp/release_camera_engine_rkaiq_rv1103b_arm-rockchip831-linux-uclibcgnueabihf/rkisp_demo/deps/include
+
+# 库文件路径 (从ai_media子目录调整路径)
+# 主要媒体库路径
+LDFLAGS = -L../../output/out/media_out/lib
+LDFLAGS += -L../../output/out/rootfs_uclibc_rv1103b/usr/lib
+# 来自ai_camera_capture配置 
+LDFLAGS += -L../isp/release_camera_engine_rkaiq_rv1103b_arm-rockchip831-linux-uclibcgnueabihf/lib
+# MPP库路径
+LDFLAGS += -L../mpp/release_mpp_rv1103b_arm-rockchip831-linux-uclibcgnueabihf/lib
+# RocKit库路径
+LDFLAGS += -L../rockit/out/lib
+
+# 链接库 (使用实际存在的库)
+# RocKit库
+LIBS = -lrockit_full
+# 来自ai_camera_capture  
+LIBS += -lrkaiq
+LIBS += -lrockchip_mpp
+# DRM库（rockit_full的依赖）
+LIBS += -ldrm
+# 其他媒体库
+LIBS += -lrockiva
+LIBS += -lrknnmrt
+LIBS += -lsmartIr
+# 系统库
+LIBS += -lpthread
+LIBS += -lm
+LIBS += -ldl
+LIBS += -lrt
+
+# 条件编译：如果启用AIQ 3A功能
+ifdef ENABLE_AIQ
+    CFLAGS += -DENABLE_AIQ
+endif
+
+# 默认目标
+all: $(TARGET)
+
+# 编译主程序
+$(TARGET): $(SOURCES)
+	@echo "编译 AI 媒体服务程序..."
+	$(CC) $(CFLAGS) $(INCLUDES) -o $@ $(SOURCES) $(LDFLAGS) $(LIBS)
+	@echo "✅ 编译完成: $(TARGET)"
+
+# 编译带3A功能的版本
+with-3a:
+	@echo "编译带3A功能的 AI 媒体服务程序..."
+	$(MAKE) -f Makefile.ai_media_service ENABLE_AIQ=1
+
+# 清理编译产物
+clean:
+	@echo "清理编译产物..."
+	rm -f $(TARGET)
+	@echo "✅ 清理完成"
+
+# 安装程序
+install: $(TARGET)
+	@echo "安装 AI 媒体服务程序..."
+	cp $(TARGET) /usr/local/bin/
+	chmod +x /usr/local/bin/$(TARGET)
+	@echo "✅ 安装完成"
+
+# 卸载程序
+uninstall:
+	@echo "卸载 AI 媒体服务程序..."
+	rm -f /usr/local/bin/$(TARGET)
+	@echo "✅ 卸载完成"
+
+# 运行测试
+test: $(TARGET)
+	@echo "运行基本功能测试..."
+	./$(TARGET) --help
+	./$(TARGET) --version
+
+# 调试版本
+debug: CFLAGS += -DDEBUG -O0
+debug: $(TARGET)
+
+# 发布版本 (优化并去除调试信息)
+release: CFLAGS += -O3 -DNDEBUG
+release: $(TARGET)
+	$(STRIP) $(TARGET)
+
+# 显示帮助信息
+help:
+	@echo "AI 媒体服务 Makefile 使用说明:"
+	@echo ""
+	@echo "目标:"
+	@echo "  all       - 编译标准版本"
+	@echo "  with-3a   - 编译带3A功能的版本"
+	@echo "  debug     - 编译调试版本"
+	@echo "  release   - 编译发布版本"
+	@echo "  clean     - 清理编译产物"
+	@echo "  install   - 安装到系统"
+	@echo "  uninstall - 从系统卸载"
+	@echo "  test      - 运行基本测试"
+	@echo "  help      - 显示此帮助信息"
+	@echo ""
+	@echo "使用示例:"
+	@echo "  make -f Makefile.ai_media_service              # 编译标准版本"
+	@echo "  make -f Makefile.ai_media_service with-3a      # 编译带3A功能的版本"
+	@echo "  make -f Makefile.ai_media_service debug        # 编译调试版本"
+	@echo "  make -f Makefile.ai_media_service release      # 编译优化版本"
+	@echo "  make -f Makefile.ai_media_service install      # 安装程序"
+	@echo ""
+
+# 声明伪目标
+.PHONY: all clean install uninstall test debug release help with-3a
+
+# 编译信息
+info:
+	@echo "编译配置信息:"
+	@echo "  编译器: $(CC)"
+	@echo "  编译选项: $(CFLAGS)"
+	@echo "  头文件路径: $(INCLUDES)"
+	@echo "  库文件路径: $(LDFLAGS)"
+	@echo "  链接库: $(LIBS)"
+	@echo "  目标程序: $(TARGET)"
