@@ -186,15 +186,12 @@ int main() {
 
 ## 📚 文档索引
 
-📋 **完整文档目录请参考：[📚 SDK文档中心](docs/README.md)**
-
 ### 核心API文档
 | 文档 | 说明 |
 |------|------|
 | [GPIO_Client_API.md](docs/GPIO_Client_API.md) | GPIO客户端API完整文档（事件订阅、异步回调） |
 | [Camera_Client_API.md](docs/Camera_Client_API.md) | 摄像头客户端API文档（零拷贝图像捕获） |
 | [Audio_Client_API.md](docs/Audio_Client_API.md) | 音频客户端API文档（音频播放控制） |
-| [TTS_Client_API.md](docs/TTS_Client_API.md) | TTS客户端API文档（使用、配置、协议和故障排查） |
 | [Log_API.md](docs/Log_API.md) | 日志系统API文档（统一日志输出、毫秒级时间戳） |
 
 ### 示例程序文档
@@ -282,7 +279,6 @@ ls -la /dev/video*
 
 ## 🔗 相关链接
 
-- **主项目**: `../service/` - AI Core Service服务端实现
 - **示例程序**: `examples/` - 包含GPIO、摄像头、音频三种客户端示例
 
 ## 📧 技术支持

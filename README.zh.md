@@ -8,10 +8,9 @@
 
 [![Build Status](https://img.shields.io/badge/build-passing-brightgreen.svg)](https://github.com/ezxrdev/OpenSource-Ai-Glasses/actions)
 [![License](https://img.shields.io/badge/license-Apache%202.0-blue.svg)](LICENSE)
-[![Version](https://img.shields.io/badge/version-0.6.0-green.svg)](https://github.com/Iam5stillLearning/OpenSource-Ai-Glasses/releases)
+[![Version](https://img.shields.io/badge/version-0.6.0-green.svg)](https://github.com/Iam5tilllearning/OpenSource-Ai-Glasses/releases)
 [![Language](https://img.shields.io/badge/language-English%20%7C%20中文-red.svg)](README.md)
 
-[文档中心](docs/README.md) • [快速入门](docs/tutorials/beginner/getting-started.md) • [API参考](docs/firmware/api-reference.md) • [社区](docs/community/contributing.md)
 
 ---
 <img width="1024" height="747" alt="image" src="https://github.com/user-attachments/assets/af4de9f5-f502-4a74-8a2a-f5a762ff83b9" />
@@ -68,7 +67,7 @@
 
 这是一个基于Linux的开源智能眼镜工程，目前处于早期阶段，文档完善度45%。
 
-**联系作者**: iam5stilllearning@foxmail.com
+**联系作者**: iam5tilllearning@foxmail.com
 
 **语言**: 中文版本 | [English Version](README.md)
 
@@ -188,14 +187,9 @@ docker run -it \
 
 ## 📚 文档
 
-- [📖 完整文档](docs/README.md)
-- [🚀 入门指南](docs/tutorials/beginner/getting-started.md)
 - [🐳 Docker部署指南](docs/DOCKER_DEPLOYMENT.md) | [English](docs/DOCKER_DEPLOYMENT.en.md)
 - [💻 应用开发指南](docs/APPLICATION_DEVELOPMENT.md) | [English](docs/APPLICATION_DEVELOPMENT.en.md)
 - [⚡ 固件烧录指南](docs/FIRMWARE_FLASHING.md) | [English](docs/FIRMWARE_FLASHING.en.md)
-- [🔧 硬件规格](docs/hardware/specifications.md)
-- [💾 固件开发](docs/firmware/getting-started.md)
-- [🔍 故障排除](docs/troubleshooting/common-issues.md)
 
 ## 🛠️ 开发
 
@@ -303,7 +297,7 @@ docker run -it \
 
 ## 🤝 贡献
 
-我们欢迎各种形式的贡献！请查看我们的[贡献指南](docs/community/contributing.md)了解详情。
+我们欢迎各种形式的贡献！
 
 ### 如何贡献
 
@@ -334,14 +328,13 @@ docker run -it \
 
 ## 📞 联系我们
 
-- **项目维护者**: [Iam5stilllearning](mailto:iam5stilllearning@foxmail.com)
-- **问题反馈**: [GitHub Issues](https://github.com/Iam5stillLearning/OpenSource-Ai-Glasses/issues)
-- **讨论**: [GitHub Discussions](https://github.com/Iam5stillLearning/OpenSource-Ai-Glasses/discussions)
-- **文档**: [项目文档](docs/README.md)
+- **项目维护者**: [Iam5tilllearning](mailto:iam5tilllearning@foxmail.com)
+- **问题反馈**: [GitHub Issues](https://github.com/Iam5tilllearning/OpenSource-Ai-Glasses/issues)
+- **讨论**: [GitHub Discussions](https://github.com/Iam5tilllearning/OpenSource-Ai-Glasses/discussions)
 
 ## 🌟 Star历史
 
-[![Star History Chart](https://api.star-history.com/svg?repos=Iam5stillLearning/OpenSource-Ai-Glasses&type=Date)](https://star-history.com/#Iam5stillLearning/OpenSource-Ai-Glasses&Date)
+[![Star History Chart](https://api.star-history.com/svg?repos=Iam5tilllearning/OpenSource-Ai-Glasses&type=Date)](https://star-history.com/#Iam5tilllearning/OpenSource-Ai-Glasses&Date)
 
 ---
 

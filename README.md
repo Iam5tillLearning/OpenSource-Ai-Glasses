@@ -8,10 +8,9 @@
 
 [![Build Status](https://img.shields.io/badge/build-passing-brightgreen.svg)](https://github.com/ezxrdev/OpenSource-Ai-Glasses/actions)
 [![License](https://img.shields.io/badge/license-Apache%202.0-blue.svg)](LICENSE)
-[![Version](https://img.shields.io/badge/version-0.6.0-green.svg)](https://github.com/Iam5stillLearning/OpenSource-Ai-Glasses/releases)
+[![Version](https://img.shields.io/badge/version-0.6.0-green.svg)](https://github.com/Iam5tilllearning/OpenSource-Ai-Glasses/releases)
 [![Language](https://img.shields.io/badge/language-English%20%7C%20中文-red.svg)](README.zh.md)
 
-[Documentation](docs/README.md) • [Quick Start](docs/tutorials/beginner/getting-started.md) • [API Reference](docs/firmware/api-reference.md) • [Community](docs/community/contributing.md)
 
 ---
 <img width="1024" height="747" alt="image" src="https://github.com/user-attachments/assets/af4de9f5-f502-4a74-8a2a-f5a762ff83b9" />
@@ -75,7 +74,7 @@
 
 This is a Linux-based open-source smart glasses project in early development stage (45% documentation completeness).
 
-**Contact**: iam5stilllearning@foxmail.com
+**Contact**: Iam5tilllearning@foxmail.com
 
 **Language**: [中文版本](README.zh.md) | English Version
 
@@ -193,14 +192,9 @@ Please refer to the "Integration" section in the [SDK README](SDK/ai_glass_sdk/R
 
 ## 📚 Documentation
 
-- [📖 Complete Documentation](docs/README.md)
-- [🚀 Getting Started Guide](docs/tutorials/beginner/getting-started.md)
 - [🐳 Docker Deployment Guide](docs/DOCKER_DEPLOYMENT.en.md) | [中文](docs/DOCKER_DEPLOYMENT.md)
 - [💻 Application Development Guide](docs/APPLICATION_DEVELOPMENT.en.md) | [中文](docs/APPLICATION_DEVELOPMENT.md)
 - [⚡ Firmware Flashing Guide](docs/FIRMWARE_FLASHING.en.md) | [中文](docs/FIRMWARE_FLASHING.md)
-- [🔧 Hardware Specifications](docs/hardware/specifications.md)
-- [💾 Firmware Development](docs/firmware/getting-started.md)
-- [🔍 Troubleshooting](docs/troubleshooting/common-issues.md)
 
 ## 🛠️ Development
 
@@ -212,7 +206,7 @@ sudo apt-get update
 sudo apt-get install build-essential git cmake
 
 # Clone and build
-git clone https://github.com/Iam5stillLearning/OpenSource-Ai-Glasses.git
+git clone https://github.com/Iam5tillLearning/OpenSource-Ai-Glasses.git
 cd OpenSource-Ai-Glasses
 mkdir build && cd build
 cmake ..
@@ -337,7 +331,7 @@ New employees can quickly get started with AR guidance, reducing training costs 
 
 ## 🤝 Contributing
 
-We welcome contributions! Please see our [Contributing Guide](docs/community/contributing.md) for details.
+We welcome contributions!
 
 ### How to Contribute
 
@@ -368,14 +362,13 @@ This project is licensed under the Apache License 2.0 - see the [LICENSE](LICENS
 
 ## 📞 Contact
 
-- **Project Maintainer**: [Iam5stilllearning](mailto:iam5stilllearning@foxmail.com)
-- **Issues & Bugs**: [GitHub Issues](https://github.com/Iam5stillLearning/OpenSource-Ai-Glasses/issues)
-- **Discussions**: [GitHub Discussions](https://github.com/Iam5stillLearning/OpenSource-Ai-Glasses/discussions)
-- **Documentation**: [Project Documentation](docs/README.md)
+- **Project Maintainer**: [Iam5tilllearning](mailto:iam5tilllearning@foxmail.com)
+- **Issues & Bugs**: [GitHub Issues](https://github.com/Iam5tilllearning/OpenSource-Ai-Glasses/issues)
+- **Discussions**: [GitHub Discussions](https://github.com/Iam5tilllearning/OpenSource-Ai-Glasses/discussions)
 
 ## 🌟 Star History
 
-[![Star History Chart](https://api.star-history.com/svg?repos=Iam5stillLearning/OpenSource-Ai-Glasses&type=Date)](https://star-history.com/#Iam5stillLearning/OpenSource-Ai-Glasses&Date)
+[![Star History Chart](https://api.star-history.com/svg?repos=Iam5tilllearning/OpenSource-Ai-Glasses&type=Date)](https://star-history.com/#Iam5tilllearning/OpenSource-Ai-Glasses&Date)
 
 ---
 
