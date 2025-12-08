@@ -1,5 +1,7 @@
 # Audio Client API 开发指南
 
+中文版本 | [English Version](Audio_Client_API.en.md)
+
 > **版本**: v1.0 | **日期**: 2025-10-10 | **状态**: ✅ 生产就绪
 
 ---

@@ -1,5 +1,7 @@
 # AI Glass SDK - 客户端开发套件
 
+中文版本 | [English Version](README.en.md)
+
 ## 简介
 
 本SDK为AI Core Service提供完整的客户端开发套件，支持GPIO事件订阅和摄像头调用功能。

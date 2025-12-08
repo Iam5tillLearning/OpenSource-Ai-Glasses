@@ -1,5 +1,7 @@
 # Camera Capture Example 使用说明
 
+中文版本 | [English Version](README.en.md)
+
 ## 简介
 
 `camera_capture_example` 是一个演示程序，展示如何使用 AI Camera SDK 从共享内存中捕获摄像头图像数据。

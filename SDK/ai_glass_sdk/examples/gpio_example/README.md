@@ -1,5 +1,7 @@
 # GPIO Example 使用说明
 
+中文版本 | [English Version](README.en.md)
+
 ## 简介
 
 `gpio_example` 是一个演示程序，展示如何使用 AI Glass SDK 的 GPIO 事件广播服务订阅和处理 GPIO 按键事件。

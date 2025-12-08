@@ -1,5 +1,7 @@
 # 摄像头客户端API - 接入指南
 
+中文版本 | [English Version](Camera_Client_API.en.md)
+
 > **版本**: v1.0 | **日期**: 2025-10-10
 
 ---

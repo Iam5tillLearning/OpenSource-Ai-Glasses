@@ -94,10 +94,10 @@
 **完整镜像**（推荐新手）- 包含完整SDK，开箱即用（如果无法拉取镜像可以参考 [Docker部署指南](docs/DOCKER_DEPLOYMENT.md) 中的【方式二：从网盘下载镜像文件】）：
 ```bash
 # 从Docker Hub拉取镜像
-docker pull aiglasses/rk-rv1106b:ready
+docker pull aiglasses/rk-rv1106b:v0.6.0
 
 # 运行开发容器
-docker run -it --name rk1106_dev aiglasses/rk-rv1106b:ready bash -l
+docker run -it --name rk1106_dev aiglasses/rk-rv1106b:v0.6.0 bash -l
 
 # 编译固件（仅在需要修改系统时）
 ./build.sh
@@ -112,18 +112,18 @@ docker cp rk1106_dev:/opt/aiglass_dev_env/output/image/update.img ./update.img
 **Bare镜像**（推荐使用VS Code/Claude Code/Cursor等IDE的开发者）- 系统SDK放在宿主机：
 ```bash
 # 拉取bare镜像
-docker pull aiglasses/rk-rv1106b-bare:ready
+docker pull aiglasses/rk-rv1106b-bare:v0.6.0
 
-# 运行并挂载操作系统SDK目录
+# 运行并挂载操作系统SDK目录（操作系统SDK下载地址：https://pan.quark.cn/s/827844418531）
 docker run -it \
-  -v /path/to/system_sdk/rv1106b_rv1103b_linux_ipc_v1.0.0_20241016:/opt/aiglass_dev_env \
+  -v /path/to/system_sdk/aiglass_dev_env:/opt/aiglass_dev_env \
   --name rk1106_dev_bare \
-  aiglasses/rk-rv1106b-bare:ready bash -l
+  aiglasses/rk-rv1106b-bare:v0.6.0 bash -l
 ```
 
 > **提示**: Bare镜像适合使用宿主机IDE（VS Code、Claude Code、Cursor等）进行固件开发，可以享受代码智能提示、AI辅助编程等功能，固件代码修改实时同步到容器。
 
-> **说明**: 这里的"操作系统SDK"是指用于固件开发的 `rv1106b_rv1103b_linux_ipc_v1.0.0_20241016`，不是应用开发SDK。应用开发SDK会单独提供。
+> **说明**: 这里的"操作系统SDK"是指用于固件开发的 `aiglass_dev_env`，不是应用开发SDK。应用开发SDK会单独提供。
 
 > **提示**: 如果您需要重新进入已退出的容器，请运行 `docker start rk1106_dev` 启动容器，然后使用 `docker exec -it rk1106_dev bash -l` 进入。
 

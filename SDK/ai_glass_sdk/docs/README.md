@@ -1,5 +1,7 @@
 # AI Glass SDK 文档中心
 
+中文版本 | [English Version](README.en.md)
+
 欢迎来到AI Glass SDK文档中心。这里包含了使用AI Glass客户端SDK所需的所有文档。
 
 ---

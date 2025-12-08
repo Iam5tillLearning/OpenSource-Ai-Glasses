@@ -1,5 +1,7 @@
 # 省电功能说明
 
+中文版本 | [English Version](README_POWER_SAVE.en.md)
+
 ## 功能概述
 在main.c中新增了智能省电功能，当显示设备30秒无活动时会自动关闭显示以节省电量。
 

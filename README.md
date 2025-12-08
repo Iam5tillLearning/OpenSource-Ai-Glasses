@@ -101,10 +101,10 @@ We recommend using Docker as the development environment, which supports both fi
 **Complete Image** (Recommended for beginners) - Includes full SDK, ready to use:
 ```bash
 # Pull image from Docker Hub
-docker pull aiglasses/rk-rv1106b:ready
+docker pull aiglasses/rk-rv1106b:v0.6.0
 
 # Run development container
-docker run -it --name rk1106_dev aiglasses/rk-rv1106b:ready bash -l
+docker run -it --name rk1106_dev aiglasses/rk-rv1106b:v0.6.0 bash -l
 
 # Build firmware (only when modifying system)
 ./build.sh
@@ -119,18 +119,18 @@ docker cp rk1106_dev:/opt/aiglass_dev_env/output/image/update.img ./update.img
 **Bare Image** (Recommended for developers using VS Code/Claude Code/Cursor) - Mount host SDK:
 ```bash
 # Pull bare image
-docker pull aiglasses/rk-rv1106b-bare:ready
+docker pull aiglasses/rk-rv1106b-bare:v0.6.0
 
-# Run with system SDK directory mounted
+# Run with system SDK directory mounted(System SDK download address: https://drive.google.com/file/d/145ayJKRPHGgF13DV0BCm9B3_RDncSXUn/view?usp=sharing)
 docker run -it \
-  -v /path/to/system_sdk/rv1106b_rv1103b_linux_ipc_v1.0.0_20241016:/opt/aiglass_dev_env \
+  -v /path/to/system_sdk/aiglass_dev_env:/opt/aiglass_dev_env \
   --name rk1106_dev_bare \
-  aiglasses/rk-rv1106b-bare:ready bash -l
+  aiglasses/rk-rv1106b-bare:v0.6.0 bash -l
 ```
 
 > **Note**: Bare image is ideal for firmware development using host IDEs (VS Code, Claude Code, Cursor, etc.), enabling intelligent code completion, AI-assisted programming, and real-time firmware code synchronization.
 
-> **Clarification**: The "system SDK" here refers to `rv1106b_rv1103b_linux_ipc_v1.0.0_20241016` for firmware development, not the application development SDK which will be provided separately.
+> **Clarification**: The "system SDK" here refers to `aiglass_dev_env` for firmware development, not the application development SDK which will be provided separately.
 
 > **Note**: If you need to re-enter an exited container, run `docker start rk1106_dev` to start it, then use `docker exec -it rk1106_dev bash -l` to enter.
 
@@ -164,12 +164,12 @@ This project provides a complete C/C++ SDK, allowing developers to easily access
 **SDK Location**: [`SDK/ai_glass_sdk`](SDK/ai_glass_sdk)
 
 **Resource Navigation:**
-*   📖 [SDK Documentation](SDK/ai_glass_sdk/README.md) - Detailed SDK instructions and usage
-*   📚 [API Reference](SDK/ai_glass_sdk/docs/README.md) - Detailed API documentation
+*   📖 [SDK Documentation](SDK/ai_glass_sdk/README.en.md) - Detailed SDK instructions and usage
+*   📚 [API Reference](SDK/ai_glass_sdk/docs/README.en.md) - Detailed API documentation
 *   💡 [Examples](SDK/ai_glass_sdk/examples) - Complete example code for GPIO, camera, audio, etc.
 
 **Integration Guide:**
-Please refer to the "Integration" section in the [SDK README](SDK/ai_glass_sdk/README.md#3-集成到自己的项目) to learn how to link and use the SDK in your application.
+Please refer to the "Integration" section in the [SDK README](SDK/ai_glass_sdk/README.en.md#3-integrate-into-your-project) to learn how to link and use the SDK in your application.
 
 ## 📊 Hardware Specifications
 

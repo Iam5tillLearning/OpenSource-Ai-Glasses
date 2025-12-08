@@ -1,5 +1,7 @@
 # Audio Play Example 使用说明
 
+中文版本 | [English Version](README.en.md)
+
 ## 简介
 
 `audio_play_example` 是一个命令行工具，用于控制 AI Core 的音频播放功能。
