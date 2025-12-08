@@ -74,7 +74,7 @@
 
 This is a Linux-based open-source smart glasses project in early development stage (45% documentation completeness).
 
-**Contact**: Iam5tilllearning@foxmail.com
+**Contact**: iam5stilllearning@foxmail.com
 
 **Language**: [中文版本](README.zh.md) | English Version
 
