@@ -74,6 +74,7 @@ extern lv_obj_t *ui_SubMenu_Personalize;
 extern lv_obj_t *ui_SubMenu_Attitude;
 extern lv_obj_t *ui_SubMenu_Exit;
 extern lv_obj_t *ui_SubMenu_Rect;
+extern lv_obj_t *ui_SubMenu_Volume;
 volatile bool hide_smile_flag = false;  // 线程安全标志位
 static int image_saved = 0;
 int spi_file;
@@ -829,6 +830,14 @@ void* display_update_thread(void* arg) {
                     lv_obj_set_pos(ui_SubMenu_Rect, 69, 174);
                 }
             }
+
+            else if (strcmp(shared_memory, "Volume-change30") == 0) {//音量被选定
+                wake_display_and_touch_activity();
+                Not_Add_To_TextContainer = false;
+                hide_smile_flag = true;
+                
+                
+            }
             else if (strcmp(shared_memory, "SleeP") == 0) {//休眠被选定
                 wake_display_and_touch_activity();
                 Not_Add_To_TextContainer = false;
@@ -880,9 +889,6 @@ void* display_update_thread(void* arg) {
                 wake_display_and_touch_activity();
                 Not_Add_To_TextContainer = false;
                 hide_smile_flag = true;
-                
-
-                
                 // 调整ui_SubMenu_Rect位置：X=269, Y=410
                 if (ui_SubMenu_Rect != NULL) {
                     lv_obj_set_pos(ui_SubMenu_Rect, 269, 410-100+48+48);
@@ -896,6 +902,11 @@ void* display_update_thread(void* arg) {
                 // 隐藏ui_subMenu
                 if (ui_subMenu != NULL) {
                     lv_obj_add_flag(ui_subMenu, LV_OBJ_FLAG_HIDDEN);
+                }
+                
+                // 显示ui_Menu3
+                if (ui_Menu3 != NULL) {
+                    lv_obj_clear_flag(ui_Menu3, LV_OBJ_FLAG_HIDDEN);
                 }
             }
             else if (strcmp(shared_memory, "IntoSleep") == 0) {//关闭屏幕
