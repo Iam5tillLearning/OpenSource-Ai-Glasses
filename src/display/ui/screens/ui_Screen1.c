@@ -57,6 +57,7 @@ lv_obj_t *ui_SubMenu_Sleep = NULL;
 lv_obj_t *ui_SubMenu_Personalize = NULL;
 lv_obj_t *ui_SubMenu_Attitude = NULL;  // 姿态
 lv_obj_t *ui_SubMenu_Exit = NULL;     // 退出
+lv_obj_t *ui_SubMenu_Volume = NULL;   // 音量
 // 对外暴露的subMenu矩形
 lv_obj_t *ui_SubMenu_Rect = NULL;     // subMenu矩形指示器
 
@@ -959,6 +960,18 @@ void ui_Screen1_screen_init(void)
     lv_obj_set_style_text_color(ui_SubMenu_Exit, lv_color_white(), LV_PART_MAIN | LV_STATE_DEFAULT);
     lv_label_set_long_mode(ui_SubMenu_Exit, LV_LABEL_LONG_WRAP);
     lv_obj_set_style_text_line_space(ui_SubMenu_Exit, 10, LV_PART_MAIN | LV_STATE_DEFAULT);
+    
+    // 音量
+    ui_SubMenu_Volume = lv_label_create(ui_subMenu);
+    lv_obj_set_width(ui_SubMenu_Volume, 600);
+    lv_obj_set_height(ui_SubMenu_Volume, LV_SIZE_CONTENT);
+    lv_obj_set_align(ui_SubMenu_Volume, LV_ALIGN_TOP_LEFT);
+    lv_label_set_text(ui_SubMenu_Volume, "音量");
+    lv_obj_set_pos(ui_SubMenu_Volume, 428+12, 310+50);
+    lv_obj_set_style_text_font(ui_SubMenu_Volume, &ui_font_alibaba_48, LV_PART_MAIN | LV_STATE_DEFAULT);
+    lv_obj_set_style_text_color(ui_SubMenu_Volume, lv_color_white(), LV_PART_MAIN | LV_STATE_DEFAULT);
+    lv_label_set_long_mode(ui_SubMenu_Volume, LV_LABEL_LONG_WRAP);
+    lv_obj_set_style_text_line_space(ui_SubMenu_Volume, 10, LV_PART_MAIN | LV_STATE_DEFAULT);
     
     // 创建subMenu矩形指示器
     ui_SubMenu_Rect = lv_obj_create(ui_subMenu);
