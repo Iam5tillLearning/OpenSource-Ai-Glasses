@@ -15,6 +15,14 @@
 ---
 <img width="1024" height="747" alt="image" src="https://github.com/user-attachments/assets/af4de9f5-f502-4a74-8a2a-f5a762ff83b9" />
 
+## 📋 项目概述
+
+这是一个基于Linux的开源智能眼镜工程，目前处于早期阶段，文档完善度45%。
+
+**联系作者**: iam5tilllearning@foxmail.com
+
+**语言**: 中文版本 | [English Version](README.md)
+
 ## ✅ 当前版本概要 (v0.6.0)
 
 - 适配固件版本：v0.6.0。开机会进入网络配置模式，配置完成后可以直接通过长按左侧镜腿按键进行ai对话
@@ -62,14 +70,6 @@
 - 实现了基础的AI对话
 
 </details>
-
-## 📋 项目概述
-
-这是一个基于Linux的开源智能眼镜工程，目前处于早期阶段，文档完善度45%。
-
-**联系作者**: iam5tilllearning@foxmail.com
-
-**语言**: 中文版本 | [English Version](README.md)
 
 ## ✨ 核心特性
 
@@ -347,7 +347,5 @@ docker run -it \
 </div>
 
 ---
-
-**注意**: 本项目处于早期开发阶段（文档完整度5%）。我们积极寻求贡献者和反馈！
 
 **最后更新**: 2025-12-05 | **版本**: v0.6.0

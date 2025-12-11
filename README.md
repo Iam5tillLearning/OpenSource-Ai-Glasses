@@ -15,6 +15,14 @@
 ---
 <img width="1024" height="747" alt="image" src="https://github.com/user-attachments/assets/af4de9f5-f502-4a74-8a2a-f5a762ff83b9" />
 
+## 📋 Project Overview
+
+This is a Linux-based open-source smart glasses project in early development stage (45% documentation completeness).
+
+**Contact**: iam5stilllearning@foxmail.com
+
+**Language**: [中文版本](README.zh.md) | English Version
+
 ## ✅ Current Version Features (v0.6.0)
 
 - **Firmware Version: v0.6.0**
@@ -28,12 +36,6 @@
 
 <details>
 <summary>📜 Version History summary</summary>
-
-### v0.6.0
-- **Firmware Version: v0.6.0**
-- Implemented network configuration mode (auto on boot + 10 short presses).
-- Released SDK for application development.
-- Abstracted hardware, ISP, and audio complexity.
 
 ### v0.5.0
 - Firmware Version: v0.5.0
@@ -69,14 +71,6 @@
 - Implemented basic AI conversation
 
 </details>
-
-## 📋 Project Overview
-
-This is a Linux-based open-source smart glasses project in early development stage (45% documentation completeness).
-
-**Contact**: iam5stilllearning@foxmail.com
-
-**Language**: [中文版本](README.zh.md) | English Version
 
 ## ✨ Key Features
 
@@ -381,7 +375,5 @@ Made with ❤️ by the open-source community
 </div>
 
 ---
-
-**Note**: This project is in early development stage (5% documentation completeness). We're actively seeking contributors and feedback!
 
 **Last Updated**: 2025-12-05 | **Version**: v0.6.0
