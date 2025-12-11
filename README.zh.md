@@ -114,7 +114,7 @@ docker cp rk1106_dev:/opt/aiglass_dev_env/output/image/update.img ./update.img
 # 拉取bare镜像
 docker pull aiglasses/rk-rv1106b-bare:v0.6.0
 
-# 运行并挂载操作系统SDK目录（操作系统SDK下载地址：https://pan.quark.cn/s/827844418531）
+# 运行并挂载操作系统SDK目录（操作系统SDK下载地址：[国内用户](https://pan.quark.cn/s/827844418531) | [海外用户](https://drive.google.com/drive/folders/1mZnHhKv-sV4owZLXMEmUNvj3Vq2AGbXa?usp=drive_link)）
 docker run -it \
   -v /path/to/system_sdk/aiglass_dev_env:/opt/aiglass_dev_env \
   --name rk1106_dev_bare \

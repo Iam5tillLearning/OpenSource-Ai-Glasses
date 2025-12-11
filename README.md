@@ -115,7 +115,7 @@ docker cp rk1106_dev:/opt/aiglass_dev_env/output/image/update.img ./update.img
 # Pull bare image
 docker pull aiglasses/rk-rv1106b-bare:v0.6.0
 
-# Run with system SDK directory mounted(System SDK download address: https://drive.google.com/file/d/145ayJKRPHGgF13DV0BCm9B3_RDncSXUn/view?usp=sharing)
+# Run with system SDK directory mounted (System SDK download: [International](https://drive.google.com/drive/folders/1mZnHhKv-sV4owZLXMEmUNvj3Vq2AGbXa?usp=drive_link) | [Mainland China](https://pan.quark.cn/s/827844418531))
 docker run -it \
   -v /path/to/system_sdk/aiglass_dev_env:/opt/aiglass_dev_env \
   --name rk1106_dev_bare \
