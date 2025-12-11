@@ -466,7 +466,7 @@ docker run -it \
 - **Bare镜像**: https://hub.docker.com/r/aiglasses/rk-rv1106b-bare (tag: `ready`)
 
 ### 网盘下载地址
-- **夸克网盘**: https://pan.quark.cn/s/516588c0596a
+- **夸克网盘**: https://pan.quark.cn/s/6e5342d39e62
   - `aiglasses_rv1106b_dev_docker.tar` - 完整镜像
   - `aiglasses_rv1106b_bare_docker.tar` - Bare镜像
 
