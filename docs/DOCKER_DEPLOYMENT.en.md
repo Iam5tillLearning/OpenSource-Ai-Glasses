@@ -51,7 +51,7 @@ If you cannot access Docker Hub, you can download the Docker image tar file from
 
 Download Docker image files from the following link (both complete and bare images available):
 
-🔗 **Quark Cloud Storage**: https://pan.quark.cn/s/516588c0596a
+🔗 **Quark Cloud Storage**: https://pan.quark.cn/s/6e5342d39e62
 
 File list:
 - `aiglasses_rv1106b_dev_docker.tar` - Complete image
@@ -459,7 +459,7 @@ docker run -it \
 - **Bare Image**: https://hub.docker.com/r/aiglasses/rk-rv1106b-bare (tag: `ready`)
 
 ### Cloud Storage Download
-- **Quark Cloud**: https://pan.quark.cn/s/516588c0596a
+- **Quark Cloud**: https://pan.quark.cn/s/6e5342d39e62
   - `aiglasses_rv1106b_dev_docker.tar` - Complete image
   - `aiglasses_rv1106b_bare_docker.tar` - Bare image
 

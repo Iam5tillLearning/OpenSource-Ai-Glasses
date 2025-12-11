@@ -51,7 +51,7 @@ docker run -it --name rk1106_dev aiglasses/rk-rv1106b:ready bash -l
 
 从以下链接下载 Docker 镜像文件（提供完整镜像和bare镜像两个版本）：
 
-🔗 **夸克网盘下载地址**: https://pan.quark.cn/s/516588c0596a
+🔗 **夸克网盘下载地址**: https://pan.quark.cn/s/6e5342d39e62
 
 文件列表：
 - `aiglasses_rv1106b_dev_docker.tar` - 完整镜像
