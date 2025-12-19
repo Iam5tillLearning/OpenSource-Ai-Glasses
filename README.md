@@ -19,7 +19,9 @@
 
 This is a Linux-based open-source smart glasses project in early development stage (45% documentation completeness).
 
-**Contact**: iam5stilllearning@foxmail.com
+**Developer Community** (Scan to join WeChat group) | **Contact**: iam5stilllearning@foxmail.com
+
+<img width="200" alt="WeChat Developer Group" src="docs/Images/weixin.png" />
 
 **Language**: [中文版本](README.zh.md) | English Version
 
@@ -359,9 +361,6 @@ This project is licensed under the Apache License 2.0 - see the [LICENSE](LICENS
 - **Project Maintainer**: [Iam5tilllearning](mailto:iam5tilllearning@foxmail.com)
 - **Issues & Bugs**: [GitHub Issues](https://github.com/Iam5tilllearning/OpenSource-Ai-Glasses/issues)
 - **Discussions**: [GitHub Discussions](https://github.com/Iam5tilllearning/OpenSource-Ai-Glasses/discussions)
-- **Developer Community**: Scan the QR code below to join the WeChat group
-
-<img width="200" alt="WeChat Developer Group" src="docs/Images/weixin.png" />
 
 ## 🌟 Star History
 

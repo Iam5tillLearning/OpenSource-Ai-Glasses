@@ -19,7 +19,9 @@
 
 这是一个基于Linux的开源智能眼镜工程，目前处于早期阶段，文档完善度45%。
 
-**联系作者**: iam5tilllearning@foxmail.com
+**开发者交流群**（微信扫码加入）| **联系作者**: iam5tilllearning@foxmail.com
+
+<img width="200" alt="微信开发者交流群" src="docs/Images/weixin.png" />
 
 **语言**: 中文版本 | [English Version](README.md)
 
@@ -331,9 +333,6 @@ docker run -it \
 - **项目维护者**: [Iam5tilllearning](mailto:iam5tilllearning@foxmail.com)
 - **问题反馈**: [GitHub Issues](https://github.com/Iam5tilllearning/OpenSource-Ai-Glasses/issues)
 - **讨论**: [GitHub Discussions](https://github.com/Iam5tilllearning/OpenSource-Ai-Glasses/discussions)
-- **开发者交流群**: 扫描下方二维码加入微信群
-
-<img width="200" alt="微信开发者交流群" src="docs/Images/weixin.png" />
 
 ## 🌟 Star历史
 
