@@ -331,6 +331,9 @@ docker run -it \
 - **项目维护者**: [Iam5tilllearning](mailto:iam5tilllearning@foxmail.com)
 - **问题反馈**: [GitHub Issues](https://github.com/Iam5tilllearning/OpenSource-Ai-Glasses/issues)
 - **讨论**: [GitHub Discussions](https://github.com/Iam5tilllearning/OpenSource-Ai-Glasses/discussions)
+- **开发者交流群**: 扫描下方二维码加入微信群
+
+<img width="200" alt="微信开发者交流群" src="docs/Images/weixin.png" />
 
 ## 🌟 Star历史
 
