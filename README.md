@@ -77,14 +77,14 @@ This is a Linux-based open-source smart glasses project in early development sta
 ## ✨ Key Features
 
 - 🖥️ **Display**: 30°FOV 640×480 monocular display (optional)
-- 📸 **Camera**: 4K photo capture, 1080P video recording
-- 🔊 **Audio**: Dual microphones + speaker system
-- 📡 **Connectivity**: WiFi, Bluetooth 5.0, USB 2.0
-- ⚡ **Performance**: Single Cortex-A7 core, 32GB storage
-- 🔋 **Battery Life**: 3hr music, 4hr display, 45min recording
+- 📸 **Camera**: 1080P video recording
+- 🔊 **Audio**: microphone + speaker system
+- 📡 **Connectivity**: WiFi 802.11b/g/n, Bluetooth 5.3, USB 2.0
+- ⚡ **Performance**: Single Cortex-A7 core, 8GB storage
+- 🔋 **Battery**: 180mAh, 2hr music, 3hr display, 45min recording
 - ⚖️ **Lightweight**: Only 43g
 - 🧠 **Sensors**: Optional geomagnetic sensor, IMU
-- 🐧 **OS**: Full Linux-based system
+- 🐧 **OS**: Embedded Linux-based system
 
 ## 🚀 Quick Start
 
@@ -167,19 +167,6 @@ This project provides a complete C/C++ SDK, allowing developers to easily access
 **Integration Guide:**
 Please refer to the "Integration" section in the [SDK README](SDK/ai_glass_sdk/README.en.md#3-integrate-into-your-project) to learn how to link and use the SDK in your application.
 
-## 📊 Hardware Specifications
-
-| Component | Specification |
-|-----------|---------------
-| **Processor** | Single Cortex-A7 core |
-| **Memory** | 32GB storage (configurable) |
-| **Display** | 30°FOV 640×480 monocular (optional) |
-| **Camera** | 4K photo, 1080P video |
-| **Audio** | Dual microphones + speaker |
-| **Connectivity** | WiFi, Bluetooth 5.0, USB 2.0 |
-| **Battery** | 180mAh |
-| **Weight** | 43g |
-| **Battery Life** | 3hr music, 4hr display, 45min recording |
 
 ## 🏗️ System Architecture
 
