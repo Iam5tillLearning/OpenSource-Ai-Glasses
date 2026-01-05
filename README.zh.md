@@ -6,10 +6,11 @@
 
 **一个基于Linux的开源智能眼镜平台，适用于医疗、工业、教育和消费应用**
 
+**中文** | [English](README.md)
+
 [![Build Status](https://img.shields.io/badge/build-passing-brightgreen.svg)](https://github.com/ezxrdev/OpenSource-Ai-Glasses/actions)
 [![License](https://img.shields.io/badge/license-Apache%202.0-blue.svg)](LICENSE)
 [![Version](https://img.shields.io/badge/version-0.6.0-green.svg)](https://github.com/Iam5tilllearning/OpenSource-Ai-Glasses/releases)
-[![Language](https://img.shields.io/badge/language-English%20%7C%20中文-red.svg)](README.md)
 
 
 ---
@@ -21,9 +22,11 @@
 
 **开发者交流群**（微信扫码加入）| **联系作者**: iam5tilllearning@foxmail.com
 
+> 🛒 [**获取开发套件**](https://item.taobao.com/item.htm?id=1007109700786) — 预装固件，开箱即用
+
 <img width="200" alt="微信开发者交流群" src="docs/Images/weixin.png" />
 
-**语言**: 中文版本 | [English Version](README.md)
+
 
 ## ✅ 当前版本概要 (v0.6.0)
 

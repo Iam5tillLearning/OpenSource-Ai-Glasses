@@ -6,10 +6,11 @@
 
 **An open-source Linux-based smart glasses platform for medical, industrial, educational, and consumer applications**
 
+[中文](README.zh.md) | **English**
+
 [![Build Status](https://img.shields.io/badge/build-passing-brightgreen.svg)](https://github.com/ezxrdev/OpenSource-Ai-Glasses/actions)
 [![License](https://img.shields.io/badge/license-Apache%202.0-blue.svg)](LICENSE)
 [![Version](https://img.shields.io/badge/version-0.6.0-green.svg)](https://github.com/Iam5tilllearning/OpenSource-Ai-Glasses/releases)
-[![Language](https://img.shields.io/badge/language-English%20%7C%20中文-red.svg)](README.zh.md)
 
 
 ---
@@ -23,7 +24,7 @@ This is a Linux-based open-source smart glasses project in early development sta
 
 <img width="200" alt="WeChat Developer Group" src="docs/Images/weixin.png" />
 
-**Language**: [中文版本](README.zh.md) | English Version
+
 
 ## ✅ Current Version Features (v0.6.0)
 
