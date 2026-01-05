@@ -22,6 +22,8 @@ This is a Linux-based open-source smart glasses project in early development sta
 
 **Developer Community** (Scan to join WeChat group) | **Contact**: iam5stilllearning@foxmail.com
 
+> 🛒 [**Get Dev Kit**](https://www.ebay.com/itm/136920980546) — Pre-installed firmware, ready to use
+
 <img width="200" alt="WeChat Developer Group" src="docs/Images/weixin.png" />
 
 
