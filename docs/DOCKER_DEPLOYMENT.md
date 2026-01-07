@@ -148,30 +148,36 @@ docker exec -it rk1106_dev bash -l
 
 **准备工作**:
 
-首先在宿主机上准备系统开发SDK：
-
+首先在宿主机上准备系统开发SDK，以Windows用户为例：
+1. 下载 aiglass_dev_env.tar.gz 到任意路径，这里以 D:\aiglass_dev_env.tar.gz 为例
+2. 命令行进入wsl2
 ```bash
-# 在宿主机上创建系统SDK目录
-mkdir -p ~/aiglasses_system_sdk
-
-# 下载或解压系统SDK到该目录
-# 系统SDK目录名应为：rv1106b_rv1103b_linux_ipc_v1.0.0_20241016
+wsl
+```
+3. 创建目录 ~/DockerMountPoint
+```bash
+mkdir ~/DockerMountPoint
+```
+4. 解压到 ~/DockerMountPoint
+```bash
+tar -xzf /mnt/d/aiglass_dev_env.tar.gz -C ~/DockerMountPoint
 ```
 
 **运行方式**:
 
 ```bash
-# 运行容器并挂载系统SDK目录
-docker run -it \
-  -v ~/aiglasses_system_sdk/rv1106b_rv1103b_linux_ipc_v1.0.0_20241016:/opt/aiglass_dev_env \
-  --name rk1106_dev_bare \
-  aiglasses/rk-rv1106b-bare:ready \
-  /bin/bash -l
+# 进入wsl2环境
+wsl
+
+# 运行容器并挂载系统SDK目录（这里以v0.6.0版本为例，需要替换成你需要的版本）
+docker run -it -v ~/DockerMountPoint/aiglass_dev_env:/opt/aiglass_dev_env --name rk1106_dev_bare aiglasses/rk-rv1106b-bare:v0.6.0 /bin/bash -l
+
+# 提示：如果提示无法连接docker，需要先在docker desktop的设置 Resources->WSL Integration 中勾选 “Enable integration with my default WSL distro”，下面列表里把你的 Ubuntu 也勾上，Apply & Restart
 ```
 
 **重要说明**:
 - 🔴 `-v` 参数将宿主机的系统SDK目录挂载到容器的 `/opt/aiglass_dev_env`
-- 🔴 挂载路径必须是完整的系统SDK目录（包含 `rv1106b_rv1103b_linux_ipc_v1.0.0_20241016`）
+- 🔴 挂载路径必须是完整的系统SDK目录（包含 `aiglass_dev_env`）
 - 🔴 容器启动后，在宿主机修改固件代码，容器内立即生效
 - 🔴 必须使用 `/bin/bash -l` 或 `bash -l`，`-l` 参数不能省略
 

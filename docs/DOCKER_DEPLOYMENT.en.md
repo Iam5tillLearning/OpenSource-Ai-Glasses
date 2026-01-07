@@ -148,30 +148,36 @@ docker exec -it rk1106_dev bash -l
 
 **Preparation**:
 
-First prepare the system development SDK on the host:
-
+First prepare the system development SDK on the host. Taking Windows users as an example:
+1. Download aiglass_dev_env.tar.gz to any path. Here we use D:\aiglass_dev_env.tar.gz as an example
+2. Enter WSL2 from command line
 ```bash
-# Create system SDK directory on host
-mkdir -p ~/aiglasses_system_sdk
-
-# Download or extract system SDK to this directory
-# System SDK directory name should be: rv1106b_rv1103b_linux_ipc_v1.0.0_20241016
+wsl
+```
+3. Create directory ~/DockerMountPoint
+```bash
+mkdir ~/DockerMountPoint
+```
+4. Extract to ~/DockerMountPoint
+```bash
+tar -xzf /mnt/d/aiglass_dev_env.tar.gz -C ~/DockerMountPoint
 ```
 
 **How to Run**:
 
 ```bash
-# Run container and mount system SDK directory
-docker run -it \
-  -v ~/aiglasses_system_sdk/rv1106b_rv1103b_linux_ipc_v1.0.0_20241016:/opt/aiglass_dev_env \
-  --name rk1106_dev_bare \
-  aiglasses/rk-rv1106b-bare:ready \
-  /bin/bash -l
+# Enter WSL2 environment
+wsl
+
+# Run container and mount system SDK directory (example uses v0.6.0, replace with your version)
+docker run -it -v ~/DockerMountPoint/aiglass_dev_env:/opt/aiglass_dev_env --name rk1106_dev_bare aiglasses/rk-rv1106b-bare:v0.6.0 /bin/bash -l
+
+# Tip: If you get a "cannot connect to docker" error, go to Docker Desktop settings -> Resources -> WSL Integration, check "Enable integration with my default WSL distro", also check your Ubuntu in the list below, then Apply & Restart
 ```
 
 **Important Notes**:
 - 🔴 `-v` parameter mounts host system SDK directory to container's `/opt/aiglass_dev_env`
-- 🔴 Mount path must be complete system SDK directory (containing `rv1106b_rv1103b_linux_ipc_v1.0.0_20241016`)
+- 🔴 Mount path must be complete system SDK directory (containing `aiglass_dev_env`)
 - 🔴 After container starts, firmware code modifications on host take effect immediately in container
 - 🔴 Must use `/bin/bash -l` or `bash -l`, `-l` parameter cannot be omitted
 
