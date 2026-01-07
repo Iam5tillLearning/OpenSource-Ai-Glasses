@@ -77,6 +77,10 @@ This is a Linux-based open-source smart glasses project in early development sta
 
 </details>
 
+## 🔍 Hardware Layout
+
+<img width="800" alt="Hardware Layout" src="resources/media/layout.png" />
+
 ## ✨ Key Features
 
 - 🖥️ **Display**: 30°FOV 640×480 monocular display (optional)
@@ -178,6 +182,7 @@ Please refer to the "Integration" section in the [SDK README](SDK/ai_glass_sdk/R
 
 ## 📚 Documentation
 
+- [📖 User Manual](docs/USER_GUIDE.en.md) - Read this after glasses assembly
 - [🐳 Docker Deployment Guide](docs/DOCKER_DEPLOYMENT.en.md) | [中文](docs/DOCKER_DEPLOYMENT.md)
 - [💻 Application Development Guide](docs/APPLICATION_DEVELOPMENT.en.md) | [中文](docs/APPLICATION_DEVELOPMENT.md)
 - [⚡ Firmware Flashing Guide](docs/FIRMWARE_FLASHING.en.md) | [中文](docs/FIRMWARE_FLASHING.md)
