@@ -76,6 +76,10 @@
 
 </details>
 
+## 🔍 硬件布局
+
+<img width="800" alt="硬件布局图" src="resources/media/布局图.png" />
+
 ## ✨ 核心特性
 
 - 🖥️ **显示**: 30°FOV 640×480单色单目显示（选配）
@@ -179,6 +183,7 @@ docker run -it \
 
 ## 📚 文档
 
+- [📖 用户使用手册](docs/USER_GUIDE.md) - 眼镜组装完毕之后读这个
 - [🐳 Docker部署指南](docs/DOCKER_DEPLOYMENT.md) | [English](docs/DOCKER_DEPLOYMENT.en.md)
 - [💻 应用开发指南](docs/APPLICATION_DEVELOPMENT.md) | [English](docs/APPLICATION_DEVELOPMENT.en.md)
 - [⚡ 固件烧录指南](docs/FIRMWARE_FLASHING.md) | [English](docs/FIRMWARE_FLASHING.en.md)
