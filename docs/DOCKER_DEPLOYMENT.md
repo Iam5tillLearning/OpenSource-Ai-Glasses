@@ -51,7 +51,7 @@ docker run -it --name rk1106_dev aiglasses/rk-rv1106b:ready bash -l
 
 从以下链接下载 Docker 镜像文件（提供完整镜像和bare镜像两个版本）：
 
-🔗 **下载地址**: [国内用户(夸克)](https://pan.quark.cn/s/6e5342d39e62) | [海外用户(Google Drive)](https://drive.google.com/drive/folders/1mZnHhKv-sV4owZLXMEmUNvj3Vq2AGbXa?usp=drive_link)
+🔗 **下载地址**: [国内用户(夸克)](https://pan.quark.cn/s/efe46ae65bfd) | [海外用户(Google Drive)](https://drive.google.com/drive/folders/1mZnHhKv-sV4owZLXMEmUNvj3Vq2AGbXa?usp=drive_link)
 
 文件列表：
 - `aiglasses_rv1106b_dev_docker.tar` - 完整镜像
@@ -472,7 +472,7 @@ docker run -it \
 - **Bare镜像**: https://hub.docker.com/r/aiglasses/rk-rv1106b-bare (tag: `ready`)
 
 ### 网盘下载地址
-- **网盘下载**: [国内用户(夸克)](https://pan.quark.cn/s/6e5342d39e62) | [海外用户(Google Drive)](https://drive.google.com/drive/folders/1mZnHhKv-sV4owZLXMEmUNvj3Vq2AGbXa?usp=drive_link)
+- **网盘下载**: [国内用户(夸克)](https://pan.quark.cn/s/efe46ae65bfd) | [海外用户(Google Drive)](https://drive.google.com/drive/folders/1mZnHhKv-sV4owZLXMEmUNvj3Vq2AGbXa?usp=drive_link)
   - `aiglasses_rv1106b_dev_docker.tar` - 完整镜像
   - `aiglasses_rv1106b_bare_docker.tar` - Bare镜像
 

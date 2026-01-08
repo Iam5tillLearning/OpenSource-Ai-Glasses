@@ -51,7 +51,7 @@ If you cannot access Docker Hub, you can download the Docker image tar file from
 
 Download Docker image files from the following link (both complete and bare images available):
 
-🔗 **Download Link**: [International (Google Drive)](https://drive.google.com/drive/folders/1mZnHhKv-sV4owZLXMEmUNvj3Vq2AGbXa?usp=drive_link) | [Mainland China (Quark)](https://pan.quark.cn/s/6e5342d39e62)
+🔗 **Download Link**: [International (Google Drive)](https://drive.google.com/drive/folders/1mZnHhKv-sV4owZLXMEmUNvj3Vq2AGbXa?usp=drive_link) | [Mainland China (Quark)](https://pan.quark.cn/s/efe46ae65bfd)
 
 File list:
 - `aiglasses_rv1106b_dev_docker.tar` - Complete image
@@ -465,7 +465,7 @@ docker run -it \
 - **Bare Image**: https://hub.docker.com/r/aiglasses/rk-rv1106b-bare (tag: `ready`)
 
 ### Cloud Storage Download
-- **Cloud Storage**: [International (Google Drive)](https://drive.google.com/drive/folders/1mZnHhKv-sV4owZLXMEmUNvj3Vq2AGbXa?usp=drive_link) | [Mainland China (Quark)](https://pan.quark.cn/s/6e5342d39e62)
+- **Cloud Storage**: [International (Google Drive)](https://drive.google.com/drive/folders/1mZnHhKv-sV4owZLXMEmUNvj3Vq2AGbXa?usp=drive_link) | [Mainland China (Quark)](https://pan.quark.cn/s/efe46ae65bfd)
   - `aiglasses_rv1106b_dev_docker.tar` - Complete image
   - `aiglasses_rv1106b_bare_docker.tar` - Bare image
 
