@@ -10,7 +10,7 @@
 
 [![Build Status](https://img.shields.io/badge/build-passing-brightgreen.svg)](https://github.com/ezxrdev/OpenSource-Ai-Glasses/actions)
 [![License](https://img.shields.io/badge/license-Apache%202.0-blue.svg)](LICENSE)
-[![Version](https://img.shields.io/badge/version-0.6.0-green.svg)](https://github.com/Iam5tilllearning/OpenSource-Ai-Glasses/releases)
+[![Version](https://img.shields.io/badge/version-0.6.1-green.svg)](https://github.com/Iam5tilllearning/OpenSource-Ai-Glasses/releases)
 
 
 ---
@@ -31,10 +31,10 @@ This is a Linux-based open-source smart glasses project in early development sta
 > [!CAUTION]
 > **Firmware Compatibility Notice**: v0.6.1 firmware is **only compatible with hardware produced after January 1, 2026**. If your device was purchased/produced before this date, please use v0.6.0 or earlier firmware versions.
 
-## ✅ Current Version Features (v0.6.0)
+## ✅ Current Version Features (v0.6.1)
 
-- **Firmware Version: v0.6.0**
-  - Enters network configuration mode on boot. After configuration, long press the left temple button to start AI conversation.
+- **Firmware Version: v0.6.1**
+  - Compatible with new hardware produced after January 1, 2026. Enters network configuration mode on boot. After configuration, long press the left temple button to start AI conversation.
 - **New SDK Available**: Developers can develop applications based on the SDK, avoiding the difficulty of developing Linux programs from scratch. No need to manage parallel hardware operations or deal with ISP/audio devices. Focus on upper-layer business logic.
     - **GPIO Event Subscription**: Supports multi-process concurrent listening for button events, providing asynchronous callback mechanism with latency < 13ms.
     - **Efficient Camera Access**: Zero-copy image transmission based on shared memory, supports JPEG and NV12 formats, supports multi-client concurrent access.
@@ -44,6 +44,14 @@ This is a Linux-based open-source smart glasses project in early development sta
 
 <details>
 <summary>📜 Version History summary</summary>
+
+### v0.6.1
+- Firmware Version: v0.6.1
+- Compatible with new hardware produced after January 1, 2026
+
+### v0.6.0
+- Firmware Version: v0.6.0
+- New SDK released
 
 ### v0.5.0
 - Firmware Version: v0.5.0
@@ -376,4 +384,4 @@ Made with ❤️ by the open-source community
 
 ---
 
-**Last Updated**: 2025-12-05 | **Version**: v0.6.0
+**Last Updated**: 2026-01-08 | **Version**: v0.6.1

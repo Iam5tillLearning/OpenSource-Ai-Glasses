@@ -10,7 +10,7 @@
 
 [![Build Status](https://img.shields.io/badge/build-passing-brightgreen.svg)](https://github.com/ezxrdev/OpenSource-Ai-Glasses/actions)
 [![License](https://img.shields.io/badge/license-Apache%202.0-blue.svg)](LICENSE)
-[![Version](https://img.shields.io/badge/version-0.6.0-green.svg)](https://github.com/Iam5tilllearning/OpenSource-Ai-Glasses/releases)
+[![Version](https://img.shields.io/badge/version-0.6.1-green.svg)](https://github.com/Iam5tilllearning/OpenSource-Ai-Glasses/releases)
 
 
 ---
@@ -31,9 +31,9 @@
 > [!CAUTION]
 > **固件兼容性提示**：v0.6.1 版本固件**仅适配 2026年1月1日之后生产的硬件**。如果您的设备是在此日期之前购买/生产的，请使用 v0.6.0 及更早版本的固件。
 
-## ✅ 当前版本概要 (v0.6.0)
+## ✅ 当前版本概要 (v0.6.1)
 
-- 适配固件版本：v0.6.0。开机会进入网络配置模式，配置完成后可以直接通过长按左侧镜腿按键进行ai对话
+- 适配固件版本：v0.6.1。兼容 2026年1月1日之后生产的新硬件。开机会进入网络配置模式，配置完成后可以直接通过长按左侧镜腿按键进行ai对话
 - 全新推出SDK，开发者可以基于SDK进行应用开发，从而避免了从0开发linux程序的难度，不需要去管理多个硬件的并行操作，不需要去处理ISP、音频设备等等让人困扰的东西，只需要专注于上层业务逻辑。
     - **GPIO事件订阅**：支持多进程并发监听按键事件，提供异步回调机制，延迟低于13ms
     - **摄像头高效调用**：基于共享内存的零拷贝图像传输，支持JPEG和NV12格式，支持多客户端同时访问
@@ -43,6 +43,14 @@
 
 <details>
 <summary>📜 版本历史概要</summary>
+
+### v0.6.1
+- 适配固件版本：v0.6.1
+- 兼容 2026年1月1日之后生产的新硬件
+
+### v0.6.0
+- 适配固件版本：v0.6.0
+- 全新推出SDK
 
 ### v0.5.0
 - 适配固件版本：v0.5.0
@@ -348,4 +356,4 @@ docker run -it \
 
 ---
 
-**最后更新**: 2025-12-05 | **版本**: v0.6.0
+**最后更新**: 2026-01-08 | **版本**: v0.6.1
