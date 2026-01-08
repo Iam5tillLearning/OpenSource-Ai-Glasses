@@ -20,6 +20,7 @@
 #include <arpa/inet.h>
 #include <sys/stat.h>  // 添加文件状态检查
 #include <sys/time.h>  // 添加时间测量支持
+#include <dirent.h>    // 添加目录读取支持
 #include <jbd013_api.h>
 #include <hal_driver.h>
 #include <font.h>
@@ -75,6 +76,7 @@ extern lv_obj_t *ui_SubMenu_Attitude;
 extern lv_obj_t *ui_SubMenu_Exit;
 extern lv_obj_t *ui_SubMenu_Rect;
 extern lv_obj_t *ui_SubMenu_Volume;
+extern lv_obj_t *ui_SubMenu_Dial;
 volatile bool hide_smile_flag = false;  // 线程安全标志位
 static int image_saved = 0;
 int spi_file;
@@ -100,6 +102,10 @@ static char teleprompter_buffer[301] = {0};  // 存储读取的文本（100个�
 // 备忘录相关变量
 static int memo_read_position = 0;  // 当前读取位置（已读字符数）
 static char memo_buffer[301] = {0};  // 存储读取的文本（100个汉字 + 1个结束符）
+
+// 电话簿相关变量
+static int phone_file_index = 0;  // 当前读取的电话文件索引
+static char current_phone_filename[256] = {0};  // 当前显示的电话文件名
 
 // 省电功能相关变量
 volatile bool display_power_save_mode = false;  // 省电模式标志
@@ -296,6 +302,7 @@ void update_battery_display(void) {
     } else {
         // <=20%: 只显示 D（低电量警告）
         if (ui_LineD != NULL) lv_obj_clear_flag(ui_LineD, LV_OBJ_FLAG_HIDDEN);
+        //ui_Chinese_status
     }
 }
 // ================== 电池显示更新函数结束 ==================
@@ -530,6 +537,12 @@ void* display_update_thread(void* arg) {
                 system("ai_media_service &");
                 lv_obj_add_flag(ui_TeleprompTerContainer, LV_OBJ_FLAG_HIDDEN);//设置提词器隐藏
             }
+            else if (strcmp(shared_memory, "AlbumSync") == 0) {//兼容新旧，后面简化
+                wake_display_and_touch_activity();
+                Not_Add_To_TextContainer = false;
+                system("ai_media_service &");
+                lv_obj_add_flag(ui_TeleprompTerContainer, LV_OBJ_FLAG_HIDDEN);//设置提词器隐藏
+            }
             else if (strcmp(shared_memory, "Finish-Photo") == 0) {
                 wake_display_and_touch_activity();
                 Not_Add_To_TextContainer = false;
@@ -564,16 +577,111 @@ void* display_update_thread(void* arg) {
                 }
 
             }  
+            else if (strncmp(shared_memory, "ADD", 3) == 0) {//处理ADD开头的字符串
+                wake_display_and_touch_activity();
+                Not_Add_To_TextContainer = false;
+                hide_smile_flag = true;
+                
+                // 提取ADD后面的内容
+                const char* filename = shared_memory + 3;  // 跳过"ADD"三个字符
+                
+                if (strlen(filename) > 0) {
+                    // 创建目录路径
+                    const char* dir_path = "/userdata/phone";
+                    char file_path[256];
+                    
+                    // 构建完整文件路径
+                    snprintf(file_path, sizeof(file_path), "%s/%s", dir_path, filename);
+                    
+                    // 创建目录（如果不存在）
+                    struct stat st = {0};
+                    if (stat(dir_path, &st) == -1) {
+                        // 目录不存在，创建它
+                        if (mkdir(dir_path, 0755) != 0) {
+                            perror("创建目录失败");
+                            printf("无法创建目录: %s\n", dir_path);
+                        } else {
+                            printf("成功创建目录: %s\n", dir_path);
+                        }
+                    }
+                    
+                    // 创建文件
+                    FILE* file = fopen(file_path, "w");
+                    if (file != NULL) {
+                        fclose(file);
+                        printf("成功创建文件: %s\n", file_path);
+                    } else {
+                        perror("创建文件失败");
+                        printf("无法创建文件: %s\n", file_path);
+                    }
+                }
+            }
             else if (strcmp(shared_memory, "NavigaT-ON") == 0) {//电话
                 wake_display_and_touch_activity();
                 Not_Add_To_TextContainer = false;
                 hide_smile_flag = true;
                 //需要打开电话簿
-                lv_label_set_text(ui_StatusLabel, " ");
-                lv_obj_add_flag(ui_subMenu, LV_OBJ_FLAG_HIDDEN);
+                
+                // 读取/userdata/phone/目录下的文件名
+                const char* phone_dir = "/userdata/phone";
+                DIR* dir = opendir(phone_dir);
+                if (dir != NULL) {
+                    struct dirent* entry;
+                    int current_index = 0;
+                    int file_count = 0;
+                    char filename[256] = {0};
+                    
+                    // 第一次遍历：统计文件总数并找到对应索引的文件
+                    while ((entry = readdir(dir)) != NULL) {
+                        // 跳过 . 和 .. 目录
+                        if (strcmp(entry->d_name, ".") == 0 || strcmp(entry->d_name, "..") == 0) {
+                            continue;
+                        }
+                        
+                        // 检查是否为普通文件
+                        char full_path[512];
+                        snprintf(full_path, sizeof(full_path), "%s/%s", phone_dir, entry->d_name);
+                        struct stat st;
+                        if (stat(full_path, &st) == 0 && S_ISREG(st.st_mode)) {
+                            // 找到对应索引的文件
+                            if (current_index == phone_file_index) {
+                                strncpy(filename, entry->d_name, sizeof(filename) - 1);
+                                filename[sizeof(filename) - 1] = '\0';
+                            }
+                            current_index++;
+                            file_count++;
+                        }
+                    }
+                    closedir(dir);
+                    
+                    // 如果找到文件，显示文件名
+                    if (filename[0] != '\0') {
+                        lv_label_set_text(ui_StatusLabel, filename);
+                        // 保存当前显示的文件名
+                        strncpy(current_phone_filename, filename, sizeof(current_phone_filename) - 1);
+                        current_phone_filename[sizeof(current_phone_filename) - 1] = '\0';
+                        // 更新索引，下次读取下一个文件（循环）
+                        phone_file_index++;
+                        // 如果索引超出范围，重置为0（循环）
+                        if (phone_file_index >= file_count) {
+                            phone_file_index = 0;
+                        }
+                    } else {
+                        // 没有找到文件，重置索引和文件名
+                        phone_file_index = 0;
+                        current_phone_filename[0] = '\0';
+                        lv_label_set_text(ui_StatusLabel, "无电话记录");
+                    }
+                } else {
+                    // 目录不存在或无法打开
+                    lv_label_set_text(ui_StatusLabel, "电话簿为空");
+                    phone_file_index = 0;
+                    current_phone_filename[0] = '\0';
+                }
+                
+                //lv_obj_add_flag(ui_subMenu, LV_OBJ_FLAG_HIDDEN);
                 lv_obj_add_flag(ui_Menu3, LV_OBJ_FLAG_HIDDEN);
-                read_and_display_file("/usr/bin/phone.txt", &memo_read_position, 
-                                      memo_buffer, "无法打开电话本");
+
             }  
             else if (strcmp(shared_memory, "IMUtest-ON") == 0) {//姿态
                 wake_display_and_touch_activity();
@@ -737,7 +845,7 @@ void* display_update_thread(void* arg) {
                 
                 // 调整ui_SubMenu_Rect位置：X=269, Y=289
                 if (ui_SubMenu_Rect != NULL) {
-                    lv_obj_set_pos(ui_SubMenu_Rect, 269, 289);
+                    lv_obj_set_pos(ui_SubMenu_Rect, 269-50, 289);
                 }
             }
             else if (strcmp(shared_memory, "DisplayPhoto") == 0) {//显示图被选定
@@ -803,6 +911,12 @@ void* display_update_thread(void* arg) {
                 if (ui_SubMenu_Exit != NULL) {
                     lv_obj_set_style_text_font(ui_SubMenu_Exit, &ui_font_alibaba_30, LV_PART_MAIN | LV_STATE_DEFAULT);
                 }
+                if (ui_SubMenu_Dial != NULL) {
+                    lv_obj_set_style_text_font(ui_SubMenu_Dial, &ui_font_alibaba_30, LV_PART_MAIN | LV_STATE_DEFAULT);
+                }
+                if (ui_SubMenu_Volume != NULL) {
+                    lv_obj_set_style_text_font(ui_SubMenu_Volume, &ui_font_alibaba_30, LV_PART_MAIN | LV_STATE_DEFAULT);
+                }
 
                 // 强制刷新屏幕，让用户看得到效果
                 lv_obj_invalidate(lv_scr_act());  // invalidate整个屏幕
@@ -836,7 +950,32 @@ void* display_update_thread(void* arg) {
                 Not_Add_To_TextContainer = false;
                 hide_smile_flag = true;
                 
+                lv_label_set_text(ui_SubMenu_Volume, "低音量");
+            }
+            else if (strcmp(shared_memory, "Volume-change60") == 0) {//音量被选定
+                wake_display_and_touch_activity();
+                Not_Add_To_TextContainer = false;
+                hide_smile_flag = true;
                 
+                lv_label_set_text(ui_SubMenu_Volume, "中音量");
+            }
+            else if (strcmp(shared_memory, "Volume-change100") == 0) {//音量被选定
+                wake_display_and_touch_activity();
+                Not_Add_To_TextContainer = false;
+                hide_smile_flag = true;
+                
+                lv_label_set_text(ui_SubMenu_Volume, "高音量");
+            }
+            else if (strcmp(shared_memory, "Volume-Select") == 0) {//音量被选定
+                wake_display_and_touch_activity();
+                Not_Add_To_TextContainer = false;
+                hide_smile_flag = true;
+                lv_obj_set_pos(ui_SubMenu_Rect, 428+12+48, 310+60);
+            }
+            else if (strcmp(shared_memory, "ShutDown") == 0) {//关机
+                send_cmd(SPI_DISPLAY_DISABLE);
+                send_cmd(SPI_SYNC);
+                system("echo mem > /sys/power/state");
             }
             else if (strcmp(shared_memory, "SleeP") == 0) {//休眠被选定
                 wake_display_and_touch_activity();
@@ -848,7 +987,7 @@ void* display_update_thread(void* arg) {
                     lv_obj_set_pos(ui_SubMenu_Rect, 269, 174);
                 }
 
-                lv_label_set_text(ui_StatusLabel, "  ");//清空上一个
+                //lv_label_set_text(ui_StatusLabel, "  ");//清空上一个
                 
                 // 隐藏ui_Label2和ui_Menu3
                 if (ui_Label2 != NULL) {
@@ -860,6 +999,36 @@ void* display_update_thread(void* arg) {
                 // 显示ui_subMenu
                 if (ui_subMenu != NULL) {
                     lv_obj_clear_flag(ui_subMenu, LV_OBJ_FLAG_HIDDEN);
+                }
+            }
+            else if (strcmp(shared_memory, "Dial-ON") == 0) {//接听启动
+                wake_display_and_touch_activity();
+                Not_Add_To_TextContainer = false;
+                hide_smile_flag = true;
+                system("rk_mpi_amix_test --control \"DAC LINEOUT Volume\" --value \"20\"");
+                // 使用保存的当前显示的文件名启动audio_client
+                if (current_phone_filename[0] != '\0') {
+                    pid_t pid = fork();
+                    if (pid == 0) {
+                        // 子进程：执行audio_client，传入IP地址
+                        char* args[] = {"audio_client", current_phone_filename, NULL};
+                        execvp("audio_client", args);
+                        // 如果execvp失败，退出子进程
+                        exit(1);
+                    } else if (pid < 0) {
+                        // fork失败
+                        perror("fork failed");
+                    }
+                    // 父进程继续执行，不等待子进程
+                }
+                
+            }
+            else if (strcmp(shared_memory, "Dial") == 0) {//接听被选定
+                wake_display_and_touch_activity();
+                Not_Add_To_TextContainer = false;
+                hide_smile_flag = true;
+                if (ui_SubMenu_Rect != NULL) {
+                    lv_obj_set_pos(ui_SubMenu_Rect, 269+50, 289);
                 }
             }
             else if (strcmp(shared_memory, "FontSize") == 0) {//个性化被选定
@@ -1208,7 +1377,7 @@ void disp_flush(lv_disp_drv_t *drv, const lv_area_t *area, lv_color_t *color_p) 
     }
     
     // 打印传输次数
-    printf("spi_wr_buffer called %d times\n", transfer_count);
+    //printf("spi_wr_buffer called %d times\n", transfer_count);
     
     // 验证传输字节数（4位色深：总字节数 = 总像素数 ÷ 2 向上取整）
     uint32_t expected_bytes = (pixel_count + 1) / 2;

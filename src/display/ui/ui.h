@@ -95,6 +95,7 @@ extern lv_obj_t *ui_SubMenu_Sleep;
 extern lv_obj_t *ui_SubMenu_Personalize;
 extern lv_obj_t *ui_SubMenu_Attitude;
 extern lv_obj_t *ui_SubMenu_Exit;
+extern lv_obj_t *ui_SubMenu_Dial;
 extern lv_obj_t *ui_SubMenu_Rect;
 extern lv_obj_t *ui_SubMenu_Volume;
 // EVENTS
