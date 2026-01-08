@@ -28,6 +28,9 @@ This is a Linux-based open-source smart glasses project in early development sta
 
 
 
+> [!CAUTION]
+> **Firmware Compatibility Notice**: v0.6.1 firmware is **only compatible with hardware produced after January 1, 2026**. If your device was purchased/produced before this date, please use v0.6.0 or earlier firmware versions.
+
 ## ✅ Current Version Features (v0.6.0)
 
 - **Firmware Version: v0.6.0**
