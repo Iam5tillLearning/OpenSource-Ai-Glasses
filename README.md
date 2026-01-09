@@ -110,41 +110,29 @@ This is a Linux-based open-source smart glasses project in early development sta
 
 ### Using Docker Development Environment (Recommended)
 
-We recommend using Docker as the development environment, which supports both firmware development and application development. Two image types available:
+We recommend using Docker as the development environment for both firmware and application development. Starting from v0.6.1, only Bare image is provided.
 
-**Complete Image** (Recommended for beginners) - Includes full SDK, ready to use:
+> **Note**: Bare image does not include the system SDK. You need to mount the host's system SDK directory to the container. This approach is ideal for development using VS Code, Claude Code, Cursor, etc., enabling intelligent code completion and AI-assisted programming.
+
 ```bash
-# Pull image from Docker Hub
-docker pull aiglasses/rk-rv1106b:v0.6.0
+# Pull image
+docker pull aiglasses/rk-rv1106b-bare:v0.6.1
 
-# Run development container
-docker run -it --name rk1106_dev aiglasses/rk-rv1106b:v0.6.0 bash -l
+# Download and extract system SDK (Download: [International](https://drive.google.com/drive/folders/1mZnHhKv-sV4owZLXMEmUNvj3Vq2AGbXa?usp=drive_link) | [Mainland China](https://pan.quark.cn/s/efe46ae65bfd))
+# Extract SDK to a local directory, e.g., ~/DockerMountPoint/aiglass_dev_env
+
+# Run container with system SDK directory mounted
+docker run -it \
+  -v /path/to/aiglass_dev_env:/opt/aiglass_dev_env \
+  --name rk1106_dev \
+  aiglasses/rk-rv1106b-bare:v0.6.1 bash -l
 
 # Build firmware (only when modifying system)
 ./build.sh
 
 # Copy firmware to host (only when flashing needed)
 docker cp rk1106_dev:/opt/aiglass_dev_env/output/image/update.img ./update.img
-
-# Develop applications
-# The Docker environment includes a complete toolchain for application development
 ```
-
-**Bare Image** (Recommended for developers using VS Code/Claude Code/Cursor) - Mount host SDK:
-```bash
-# Pull bare image
-docker pull aiglasses/rk-rv1106b-bare:v0.6.0
-
-# Run with system SDK directory mounted (System SDK download: [International](https://drive.google.com/drive/folders/1mZnHhKv-sV4owZLXMEmUNvj3Vq2AGbXa?usp=drive_link) | [Mainland China](https://pan.quark.cn/s/efe46ae65bfd))
-docker run -it \
-  -v /path/to/system_sdk/aiglass_dev_env:/opt/aiglass_dev_env \
-  --name rk1106_dev_bare \
-  aiglasses/rk-rv1106b-bare:v0.6.0 bash -l
-```
-
-> **Note**: Bare image is ideal for firmware development using host IDEs (VS Code, Claude Code, Cursor, etc.), enabling intelligent code completion, AI-assisted programming, and real-time firmware code synchronization.
-
-> **Clarification**: The "system SDK" here refers to `aiglass_dev_env` for firmware development, not the application development SDK which will be provided separately.
 
 > **Note**: If you need to re-enter an exited container, run `docker start rk1106_dev` to start it, then use `docker exec -it rk1106_dev bash -l` to enter.
 
