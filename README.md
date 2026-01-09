@@ -22,11 +22,15 @@ This is a Linux-based open-source smart glasses project in early development sta
 
 **Developer Community** (Scan to join WeChat group) | **Contact**: iam5stilllearning@foxmail.com
 
-> 🛒 [**Get Dev Kit**](https://www.ebay.com/itm/136920980546) — Pre-installed firmware, ready to use
 
 <img width="200" alt="WeChat Developer Group" src="docs/Images/weixin.png" />
 
 
+
+
+## 🛒 Get Dev Kit
+
+[**Get Dev Kit Here**](https://www.ebay.com/itm/136920980546) — *Pre-installed firmware, ready to use*
 
 > [!CAUTION]
 > **Firmware Compatibility Notice**: v0.6.1 firmware is **only compatible with hardware produced after January 1, 2026**. If your device was purchased/produced before this date, please use v0.6.0 or earlier firmware versions.

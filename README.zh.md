@@ -22,11 +22,15 @@
 
 **开发者交流群**（微信扫码加入）| **联系作者**: iam5tilllearning@foxmail.com
 
-> 🛒 [**获取开发套件**](https://item.taobao.com/item.htm?id=1007109700786) — 预装固件，开箱即用
 
 <img width="200" alt="微信开发者交流群" src="docs/Images/weixin.png" />
 
 
+
+
+## 🛒 获取开发套件
+
+[**点击这里购买开发套件**](https://item.taobao.com/item.htm?id=1007109700786) — *预装固件，开箱即用*
 
 > [!CAUTION]
 > **固件兼容性提示**：v0.6.1 版本固件**仅适配 2026年1月1日之后生产的硬件**。如果您的设备是在此日期之前购买/生产的，请使用 v0.6.0 及更早版本的固件。
