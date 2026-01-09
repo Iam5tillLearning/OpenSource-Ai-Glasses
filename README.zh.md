@@ -109,41 +109,29 @@
 
 ### 使用Docker开发环境（推荐）
 
-推荐使用Docker作为开发环境，支持固件开发和应用程序开发。项目提供两种镜像：
+推荐使用Docker作为开发环境，支持固件开发和应用程序开发。从v0.6.1开始，项目仅提供Bare镜像。
 
-**完整镜像**（推荐新手）- 包含完整SDK，开箱即用（如果无法拉取镜像可以参考 [Docker部署指南](docs/DOCKER_DEPLOYMENT.md) 中的【方式二：从网盘下载镜像文件】）：
+> **说明**: Bare镜像不包含系统SDK，需要将宿主机的系统SDK目录挂载到容器中。这种方式适合使用VS Code、Claude Code、Cursor等IDE进行开发，可以享受代码智能提示、AI辅助编程等功能。
+
 ```bash
-# 从Docker Hub拉取镜像
-docker pull aiglasses/rk-rv1106b:v0.6.0
+# 拉取镜像
+docker pull aiglasses/rk-rv1106b-bare:v0.6.1
 
-# 运行开发容器
-docker run -it --name rk1106_dev aiglasses/rk-rv1106b:v0.6.0 bash -l
+# 下载并解压系统SDK（下载地址：[国内用户](https://pan.quark.cn/s/efe46ae65bfd) | [海外用户](https://drive.google.com/drive/folders/1mZnHhKv-sV4owZLXMEmUNvj3Vq2AGbXa?usp=drive_link)）
+# 将SDK解压到本地目录，例如：~/DockerMountPoint/aiglass_dev_env
+
+# 运行容器并挂载系统SDK目录
+docker run -it \
+  -v /path/to/aiglass_dev_env:/opt/aiglass_dev_env \
+  --name rk1106_dev \
+  aiglasses/rk-rv1106b-bare:v0.6.1 bash -l
 
 # 编译固件（仅在需要修改系统时）
 ./build.sh
 
 # 拷贝固件到本机（仅在需要烧录时）
 docker cp rk1106_dev:/opt/aiglass_dev_env/output/image/update.img ./update.img
-
-# 开发应用程序
-# Docker环境中包含完整的开发工具链，可直接进行应用开发
 ```
-
-**Bare镜像**（推荐使用VS Code/Claude Code/Cursor等IDE的开发者）- 系统SDK放在宿主机：
-```bash
-# 拉取bare镜像
-docker pull aiglasses/rk-rv1106b-bare:v0.6.0
-
-# 运行并挂载操作系统SDK目录（操作系统SDK下载地址：[国内用户](https://pan.quark.cn/s/efe46ae65bfd) | [海外用户](https://drive.google.com/drive/folders/1mZnHhKv-sV4owZLXMEmUNvj3Vq2AGbXa?usp=drive_link)）
-docker run -it \
-  -v /path/to/system_sdk/aiglass_dev_env:/opt/aiglass_dev_env \
-  --name rk1106_dev_bare \
-  aiglasses/rk-rv1106b-bare:v0.6.0 bash -l
-```
-
-> **提示**: Bare镜像适合使用宿主机IDE（VS Code、Claude Code、Cursor等）进行固件开发，可以享受代码智能提示、AI辅助编程等功能，固件代码修改实时同步到容器。
-
-> **说明**: 这里的"操作系统SDK"是指用于固件开发的 `aiglass_dev_env`，不是应用开发SDK。应用开发SDK会单独提供。
 
 > **提示**: 如果您需要重新进入已退出的容器，请运行 `docker start rk1106_dev` 启动容器，然后使用 `docker exec -it rk1106_dev bash -l` 进入。
 

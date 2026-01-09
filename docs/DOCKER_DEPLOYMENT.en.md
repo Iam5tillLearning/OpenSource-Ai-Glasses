@@ -12,6 +12,9 @@ The Docker development environment provides a complete toolchain supporting:
 - 🛠️ **Cross Compilation**: Compile programs for RV1106B chip
 - 🧪 **Testing & Debugging**: Complete development and debugging tools
 
+> [!IMPORTANT]
+> **Starting from v0.6.1, only Bare image is provided**. Bare image does not include system SDK, you need to mount the host's system SDK directory to the container. This approach is ideal for development using VS Code, Claude Code, Cursor, etc.
+
 > **Terminology**:
 > - **System SDK** (or System Development SDK): Used for firmware compilation and system customization, i.e., `rv1106b_rv1103b_linux_ipc_v1.0.0_20241016`
 > - **Software Development SDK**: API libraries and tools for application development (provided separately to developers)
@@ -30,15 +33,28 @@ The Docker development environment provides a complete toolchain supporting:
 If you can access Docker Hub normally, pull the image directly:
 
 ```bash
-docker pull aiglasses/rk-rv1106b:ready
+docker pull aiglasses/rk-rv1106b-bare:v0.6.1
 ```
 
-### 2. Run Container
+### 2. Download System SDK
 
-After pulling, run the container:
+Download system SDK package from the following link:
+
+🔗 **Download Link**: [International (Google Drive)](https://drive.google.com/drive/folders/1mZnHhKv-sV4owZLXMEmUNvj3Vq2AGbXa?usp=drive_link) | [Mainland China (Quark)](https://pan.quark.cn/s/efe46ae65bfd)
+
+File list:
+- `aiglass_dev_env.tar.gz` - System SDK package
+- `aiglasses_rv1106b_bare_docker.tar` - Bare image (optional, use when cannot access Docker Hub)
+
+### 3. Run Container
+
+After pulling, run the container (requires mounting system SDK directory):
 
 ```bash
-docker run -it --name rk1106_dev aiglasses/rk-rv1106b:ready bash -l
+docker run -it \
+  -v /path/to/aiglass_dev_env:/opt/aiglass_dev_env \
+  --name rk1106_dev \
+  aiglasses/rk-rv1106b-bare:v0.6.1 bash -l
 ```
 
 **Note**: Must use `bash -l` parameter, otherwise the environment will have issues.
@@ -461,17 +477,16 @@ docker run -it \
 ## 📚 More Resources
 
 ### Docker Hub Image Addresses
-- **Complete Image**: https://hub.docker.com/r/aiglasses/rk-rv1106b (tag: `ready`)
-- **Bare Image**: https://hub.docker.com/r/aiglasses/rk-rv1106b-bare (tag: `ready`)
+- **Bare Image**: https://hub.docker.com/r/aiglasses/rk-rv1106b-bare (tag: `v0.6.1`)
 
 ### Cloud Storage Download
 - **Cloud Storage**: [International (Google Drive)](https://drive.google.com/drive/folders/1mZnHhKv-sV4owZLXMEmUNvj3Vq2AGbXa?usp=drive_link) | [Mainland China (Quark)](https://pan.quark.cn/s/efe46ae65bfd)
-  - `aiglasses_rv1106b_dev_docker.tar` - Complete image
+  - `aiglass_dev_env.tar.gz` - System SDK package
   - `aiglasses_rv1106b_bare_docker.tar` - Bare image
 
 ### Other Resources
 - **Project Home**: https://github.com/Iam5stillLearning/OpenSource-Ai-Glasses
-- **System Development SDK**: rv1106b_rv1103b_linux_ipc_v1.0.0_20241016 (for firmware development, required by Bare image)
+- **System Development SDK**: aiglass_dev_env.tar.gz (for firmware development, required by Bare image)
 - **Software Development SDK**: Provided separately to application developers (for application development)
 
 ## 💡 Best Practices

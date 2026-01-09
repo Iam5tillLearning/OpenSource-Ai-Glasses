@@ -12,6 +12,9 @@ Docker 开发环境提供了完整的工具链，支持：
 - 🛠️ **交叉编译**: 为 RV1106B 芯片编译程序
 - 🧪 **测试调试**: 完整的开发和调试工具
 
+> [!IMPORTANT]
+> **从 v0.6.1 版本开始，项目仅提供 Bare 镜像**。Bare镜像不包含系统SDK，需要将宿主机的系统SDK目录挂载到容器中。这种方式适合使用 VS Code、Claude Code、Cursor 等 IDE 进行开发。
+
 > **术语说明**:
 > - **系统SDK**（或系统开发SDK）：用于固件编译和系统定制，即 `rv1106b_rv1103b_linux_ipc_v1.0.0_20241016`
 > - **软件开发SDK**：用于应用程序开发的API库和工具（单独提供给开发者）
@@ -30,15 +33,28 @@ Docker 开发环境提供了完整的工具链，支持：
 如果你可以正常访问 Docker Hub，使用以下命令直接拉取镜像：
 
 ```bash
-docker pull aiglasses/rk-rv1106b:ready
+docker pull aiglasses/rk-rv1106b-bare:v0.6.1
 ```
 
-### 2. 运行容器
+### 2. 下载系统SDK
 
-拉取完成后，运行容器：
+从以下链接下载系统SDK压缩包：
+
+🔗 **下载地址**: [国内用户(夸克)](https://pan.quark.cn/s/efe46ae65bfd) | [海外用户(Google Drive)](https://drive.google.com/drive/folders/1mZnHhKv-sV4owZLXMEmUNvj3Vq2AGbXa?usp=drive_link)
+
+文件列表：
+- `aiglass_dev_env.tar.gz` - 系统SDK压缩包
+- `aiglasses_rv1106b_bare_docker.tar` - Bare镜像（可选，无法访问Docker Hub时使用）
+
+### 3. 运行容器
+
+拉取完成后，运行容器（需挂载系统SDK目录）：
 
 ```bash
-docker run -it --name rk1106_dev aiglasses/rk-rv1106b:ready bash -l
+docker run -it \
+  -v /path/to/aiglass_dev_env:/opt/aiglass_dev_env \
+  --name rk1106_dev \
+  aiglasses/rk-rv1106b-bare:v0.6.1 bash -l
 ```
 
 **注意**: 必须使用 `bash -l` 参数，否则运行环境会有问题。
@@ -47,26 +63,20 @@ docker run -it --name rk1106_dev aiglasses/rk-rv1106b:ready bash -l
 
 如果无法访问 Docker Hub，可以从网盘下载 Docker 镜像 tar 文件。
 
-### 1. 下载镜像
+### 1. 下载镜像和系统SDK
 
-从以下链接下载 Docker 镜像文件（提供完整镜像和bare镜像两个版本）：
+从以下链接下载文件：
 
 🔗 **下载地址**: [国内用户(夸克)](https://pan.quark.cn/s/efe46ae65bfd) | [海外用户(Google Drive)](https://drive.google.com/drive/folders/1mZnHhKv-sV4owZLXMEmUNvj3Vq2AGbXa?usp=drive_link)
 
 文件列表：
-- `aiglasses_rv1106b_dev_docker.tar` - 完整镜像
-- `aiglasses_rv1106b_bare_docker.tar` - Bare镜像（可选）
+- `aiglass_dev_env.tar.gz` - 系统SDK压缩包
+- `aiglasses_rv1106b_bare_docker.tar` - Bare镜像
 
 ### 2. 加载镜像
 
 下载完成后，使用以下命令加载镜像：
 
-**加载完整镜像**:
-```bash
-docker load -i aiglasses_rv1106b_dev_docker.tar
-```
-
-**加载Bare镜像**（可选）:
 ```bash
 docker load -i aiglasses_rv1106b_bare_docker.tar
 ```
@@ -75,57 +85,23 @@ docker load -i aiglasses_rv1106b_bare_docker.tar
 
 ### 3. 运行容器
 
-加载完成后，运行容器：
+加载完成后，运行容器（需挂载系统SDK目录）：
 
-**使用完整镜像**:
-```bash
-docker run -it --name rk1106_dev aiglasses/rk-rv1106b:ready bash -l
-```
-
-**使用Bare镜像**（需挂载系统SDK）:
 ```bash
 docker run -it \
-  -v /path/to/system_sdk/rv1106b_rv1103b_linux_ipc_v1.0.0_20241016:/opt/aiglass_dev_env \
-  --name rk1106_dev_bare \
-  aiglasses/rk-rv1106b-bare:ready bash -l
+  -v /path/to/aiglass_dev_env:/opt/aiglass_dev_env \
+  --name rk1106_dev \
+  aiglasses/rk-rv1106b-bare:v0.6.1 bash -l
 ```
 
-## 🎨 镜像类型选择
+## 🎨 Bare 镜像使用指南
 
-项目提供了两种 Docker 镜像，根据你的开发习惯选择合适的版本：
+从 v0.6.1 版本开始，项目仅提供 Bare 镜像。
 
-### 完整镜像（推荐新手）
-
-**镜像名称**: `aiglasses/rk-rv1106b:ready`
+**镜像名称**: `aiglasses/rk-rv1106b-bare:v0.6.1`
 
 **特点**:
-- ✅ 包含完整的系统开发SDK（用于固件编译）
-- ✅ 开箱即用，无需额外配置
-- ✅ 适合快速上手和简单开发
-
-**使用场景**:
-- 快速体验和学习
-- 不需要频繁修改固件代码
-- 容器内开发即可满足需求
-
-**运行方式**:
-```bash
-docker run -it --name rk1106_dev aiglasses/rk-rv1106b:ready bash -l
-```
-
-**进入已运行的容器**:
-
-```bash
-# 同样必须带 -l 参数
-docker exec -it rk1106_dev bash -l
-```
-
-### Bare 镜像（推荐使用IDE的开发者）
-
-**镜像名称**: `aiglasses/rk-rv1106b-bare:ready`
-
-**特点**:
-- 🎯 不包含系统开发SDK，镜像体积更小
+- 🎯 不包含系统开发SDK，镜像体积小（~2GB）
 - 🔗 需要挂载宿主机的系统SDK目录
 - 💻 系统SDK代码在宿主机，可使用任何喜欢的 IDE/编辑器
 - 🔄 宿主机修改固件代码后，容器内立即生效，无需拷贝
@@ -134,10 +110,8 @@ docker exec -it rk1106_dev bash -l
 **适合这些开发者**:
 - ✅ **使用现代 IDE 进行开发**：VS Code、Claude Code、Cursor、IntelliJ IDEA 等
 - ✅ **需要 AI 辅助编程**：Claude Code、GitHub Copilot、Cursor 等 AI 编程工具
-- ✅ **习惯图形界面编辑器**：不习惯在容器内使用 vim/nano
 - ✅ **需要代码智能提示**：自动补全、语法检查、重构等 IDE 功能
 - ✅ **团队协作开发**：使用 Git 在宿主机管理代码版本
-- ✅ **多项目开发**：在不同终端/IDE窗口同时编辑多个项目
 
 **典型工作流程**:
 1. 在宿主机用 VS Code/Claude Code 打开系统SDK目录
@@ -169,10 +143,10 @@ tar -xzf /mnt/d/aiglass_dev_env.tar.gz -C ~/DockerMountPoint
 # 进入wsl2环境
 wsl
 
-# 运行容器并挂载系统SDK目录（这里以v0.6.0版本为例，需要替换成你需要的版本）
-docker run -it -v ~/DockerMountPoint/aiglass_dev_env:/opt/aiglass_dev_env --name rk1106_dev_bare aiglasses/rk-rv1106b-bare:v0.6.0 /bin/bash -l
+# 运行容器并挂载系统SDK目录
+docker run -it -v ~/DockerMountPoint/aiglass_dev_env:/opt/aiglass_dev_env --name rk1106_dev aiglasses/rk-rv1106b-bare:v0.6.1 /bin/bash -l
 
-# 提示：如果提示无法连接docker，需要先在docker desktop的设置 Resources->WSL Integration 中勾选 “Enable integration with my default WSL distro”，下面列表里把你的 Ubuntu 也勾上，Apply & Restart
+# 提示：如果提示无法连接docker，需要先在docker desktop的设置 Resources->WSL Integration 中勾选 "Enable integration with my default WSL distro"，下面列表里把你的 Ubuntu 也勾上，Apply & Restart
 ```
 
 **重要说明**:
@@ -189,43 +163,12 @@ cd /opt/aiglass_dev_env
 ./build.sh
 ```
 
-**进入已运行的 Bare 容器**:
+**进入已运行的容器**:
 
 ```bash
 # 同样必须带 -l 参数
-docker exec -it rk1106_dev_bare bash -l
+docker exec -it rk1106_dev bash -l
 ```
-
-### 镜像对比
-
-| 特性 | 完整镜像 (ready) | Bare 镜像 (bare:ready) |
-|------|-----------------|----------------------|
-| 包含系统SDK | ✅ 是 | ❌ 否（需挂载） |
-| 镜像大小 | 较大（~5GB） | 较小（~2GB） |
-| 启动速度 | 快 | 快 |
-| IDE 支持 | 容器内编辑 | 宿主机 IDE |
-| 固件代码同步 | 需 docker cp | 实时同步 |
-| 适合新手 | ✅ 是 | ❌ 否 |
-| 适合 IDE 用户 | ❌ 否 | ✅ 是 |
-| 适合团队协作 | 一般 | ✅ 是 |
-
-### 选择建议
-
-**选择完整镜像，如果你**:
-- 🌟 刚开始学习智能眼镜开发
-- 🌟 习惯在终端使用 vim/nano 编辑代码
-- 🌟 只需要简单测试或学习，不需要大量编写代码
-- 🌟 想要快速体验，不想配置挂载路径
-- 🌟 主要进行应用开发，很少修改固件
-
-**选择 Bare 镜像，如果你**:
-- 🔥 在宿主机使用 **VS Code**、**Claude Code**、**Cursor** 等 IDE 进行开发
-- 🔥 需要使用 **AI 编程助手**（GitHub Copilot、Claude Code、Cursor 等）
-- 🔥 需要 IDE 的**代码智能提示、自动补全、语法检查**等功能
-- 🔥 希望在图形化编辑器中浏览和编辑代码，而不是 vim/nano
-- 🔥 需要频繁修改固件代码，实时看到修改效果
-- 🔥 使用 Git 图形化工具（VS Code Git、GitKraken 等）管理版本
-- 🔥 团队协作开发，需要在宿主机上进行代码审查和合并
 
 ## 🔧 开发环境使用
 
@@ -468,17 +411,16 @@ docker run -it \
 ## 📚 更多资源
 
 ### Docker Hub 镜像地址
-- **完整镜像**: https://hub.docker.com/r/aiglasses/rk-rv1106b (tag: `ready`)
-- **Bare镜像**: https://hub.docker.com/r/aiglasses/rk-rv1106b-bare (tag: `ready`)
+- **Bare镜像**: https://hub.docker.com/r/aiglasses/rk-rv1106b-bare (tag: `v0.6.1`)
 
 ### 网盘下载地址
 - **网盘下载**: [国内用户(夸克)](https://pan.quark.cn/s/efe46ae65bfd) | [海外用户(Google Drive)](https://drive.google.com/drive/folders/1mZnHhKv-sV4owZLXMEmUNvj3Vq2AGbXa?usp=drive_link)
-  - `aiglasses_rv1106b_dev_docker.tar` - 完整镜像
+  - `aiglass_dev_env.tar.gz` - 系统SDK压缩包
   - `aiglasses_rv1106b_bare_docker.tar` - Bare镜像
 
 ### 其他资源
 - **项目主页**: https://github.com/Iam5stillLearning/OpenSource-Ai-Glasses
-- **系统开发SDK**: rv1106b_rv1103b_linux_ipc_v1.0.0_20241016（用于固件开发，Bare镜像需要）
+- **系统开发SDK**: aiglass_dev_env.tar.gz（用于固件开发，Bare镜像需要）
 - **软件开发SDK**: 单独提供给应用开发者（用于应用程序开发）
 
 ## 💡 最佳实践
