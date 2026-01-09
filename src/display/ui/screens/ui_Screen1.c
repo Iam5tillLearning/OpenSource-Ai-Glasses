@@ -57,6 +57,7 @@ lv_obj_t *ui_SubMenu_Sleep = NULL;
 lv_obj_t *ui_SubMenu_Personalize = NULL;
 lv_obj_t *ui_SubMenu_Attitude = NULL;  // 姿态
 lv_obj_t *ui_SubMenu_Exit = NULL;     // 退出
+lv_obj_t *ui_SubMenu_Dial = NULL;     // 拨通
 lv_obj_t *ui_SubMenu_Volume = NULL;   // 音量
 // 对外暴露的subMenu矩形
 lv_obj_t *ui_SubMenu_Rect = NULL;     // subMenu矩形指示器
@@ -838,7 +839,7 @@ void ui_Screen1_screen_init(void)
     lv_obj_set_width(ui_StatusLabel, LV_SIZE_CONTENT);
     lv_obj_set_height(ui_StatusLabel, LV_SIZE_CONTENT);
     lv_obj_set_align(ui_StatusLabel, LV_ALIGN_BOTTOM_LEFT);
-    lv_obj_set_y(ui_StatusLabel, 10); // Y轴向下偏移10像素
+    lv_obj_set_y(ui_StatusLabel, 5); // Y轴向下偏移10像素
     lv_label_set_text(ui_StatusLabel, ""); // 默认显示空
     lv_obj_set_style_text_font(ui_StatusLabel, &ui_font_alibaba_30, LV_PART_MAIN | LV_STATE_DEFAULT);
     lv_obj_set_style_text_color(ui_StatusLabel, lv_color_white(), LV_PART_MAIN | LV_STATE_DEFAULT);
@@ -881,11 +882,23 @@ void ui_Screen1_screen_init(void)
     lv_obj_set_height(ui_SubMenu_Navigation, LV_SIZE_CONTENT);
     lv_obj_set_align(ui_SubMenu_Navigation, LV_ALIGN_TOP_LEFT);
     lv_label_set_text(ui_SubMenu_Navigation, "电话");
-    lv_obj_set_pos(ui_SubMenu_Navigation, 280-30, 239);
+    lv_obj_set_pos(ui_SubMenu_Navigation, 280-30-60, 239);
     lv_obj_set_style_text_font(ui_SubMenu_Navigation, &ui_font_alibaba_48, LV_PART_MAIN | LV_STATE_DEFAULT);
     lv_obj_set_style_text_color(ui_SubMenu_Navigation, lv_color_white(), LV_PART_MAIN | LV_STATE_DEFAULT);
     lv_label_set_long_mode(ui_SubMenu_Navigation, LV_LABEL_LONG_WRAP);
     lv_obj_set_style_text_line_space(ui_SubMenu_Navigation, 10, LV_PART_MAIN | LV_STATE_DEFAULT);
+
+    // 拨通
+    ui_SubMenu_Dial = lv_label_create(ui_subMenu);
+    lv_obj_set_width(ui_SubMenu_Dial, 600);
+    lv_obj_set_height(ui_SubMenu_Dial, LV_SIZE_CONTENT);
+    lv_obj_set_align(ui_SubMenu_Dial, LV_ALIGN_TOP_LEFT);
+    lv_label_set_text(ui_SubMenu_Dial, "/拨通");
+    lv_obj_set_pos(ui_SubMenu_Dial, 280-30+40, 239);
+    lv_obj_set_style_text_font(ui_SubMenu_Dial, &ui_font_alibaba_48, LV_PART_MAIN | LV_STATE_DEFAULT);
+    lv_obj_set_style_text_color(ui_SubMenu_Dial, lv_color_white(), LV_PART_MAIN | LV_STATE_DEFAULT);
+    lv_label_set_long_mode(ui_SubMenu_Dial, LV_LABEL_LONG_WRAP);
+    lv_obj_set_style_text_line_space(ui_SubMenu_Dial, 10, LV_PART_MAIN | LV_STATE_DEFAULT);
     
     // 显示图
     ui_SubMenu_DisplayImage = lv_label_create(ui_subMenu);
@@ -905,7 +918,7 @@ void ui_Screen1_screen_init(void)
     lv_obj_set_width(ui_SubMenu_ASR, 600);
     lv_obj_set_height(ui_SubMenu_ASR, LV_SIZE_CONTENT);
     lv_obj_set_align(ui_SubMenu_ASR, LV_ALIGN_TOP_LEFT);
-    lv_label_set_text(ui_SubMenu_ASR, "ASR");
+    lv_label_set_text(ui_SubMenu_ASR, "接听");
     lv_obj_set_pos(ui_SubMenu_ASR, 60-10, 124);
     lv_obj_set_style_text_font(ui_SubMenu_ASR, &ui_font_alibaba_48, LV_PART_MAIN | LV_STATE_DEFAULT);
     lv_obj_set_style_text_color(ui_SubMenu_ASR, lv_color_white(), LV_PART_MAIN | LV_STATE_DEFAULT);
