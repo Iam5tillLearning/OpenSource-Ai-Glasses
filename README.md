@@ -90,7 +90,7 @@ This is a Linux-based open-source smart glasses project in early development sta
 
 ## 🔍 Hardware Layout
 
-<img width="800" alt="Hardware Layout" src="resources/media/layout.png" />
+<img width="800" alt="Hardware Layout" src="docs/Images/layout.png" />
 
 ## ✨ Key Features
 

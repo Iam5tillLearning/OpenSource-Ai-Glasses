@@ -89,7 +89,7 @@
 
 ## 🔍 硬件布局
 
-<img width="800" alt="硬件布局图" src="resources/media/布局图.png" />
+<img width="800" alt="硬件布局图" src="docs/Images/布局图.png" />
 
 ## ✨ 核心特性
 

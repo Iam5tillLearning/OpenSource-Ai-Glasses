@@ -81,7 +81,7 @@ tools/Linux/SocToolKit/SocToolKit
 在 SocToolKit 界面中：
 1. 找到芯片选择下拉菜单
 2. 选择 **RV1106B** 芯片型号
-![alt text](image.png)
+![alt text](Images/SocToolKit-1.png)
 
 ### 第三步：连接设备
 
@@ -111,7 +111,7 @@ tools/Linux/SocToolKit/SocToolKit
 在 SocToolKit 界面中：
 - 查看 **USB设备** 区域
 - 确认设备已被识别并显示在列表中
-![alt text](image-1.png)
+![alt text](Images/SocToolKit-2.png)
 
 ### 第六步：选择固件文件
 

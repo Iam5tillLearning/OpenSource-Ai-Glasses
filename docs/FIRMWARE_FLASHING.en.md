@@ -76,6 +76,7 @@ tools/Linux/SocToolKit/SocToolKit
 In the SocToolKit interface:
 1. Find the chip selection dropdown menu
 2. Select **RV1106B** chip model
+![alt text](Images/SocToolKit-1.png)
 
 ### Step 3: Connect Device
 
@@ -105,7 +106,7 @@ In the SocToolKit interface:
 In the SocToolKit interface:
 - Check **USB Device** area
 - Confirm device is recognized and displayed in list
-- Device status should show as flashable
+![alt text](Images/SocToolKit-2.png)
 
 ### Step 6: Select Firmware File
 
