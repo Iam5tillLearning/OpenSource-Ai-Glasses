@@ -198,6 +198,7 @@ sudo apt-get install build-essential git cmake
 # Clone and build
 git clone https://github.com/Iam5tillLearning/OpenSource-Ai-Glasses.git
 cd OpenSource-Ai-Glasses
+git submodule update --init --recursive  # Initialize third-party dependencies
 mkdir build && cd build
 cmake ..
 make -j4
@@ -325,11 +326,29 @@ We welcome contributions!
 
 ### How to Contribute
 
+> [!IMPORTANT]
+> **Clone Directory Requirement**: If you need to compile the code in the `src` or `samples` directories, **you MUST clone this project into the `aiglass_dev_env` directory**. This is because the build system relies on relative path relationships with the system SDK.
+>
+> Correct directory structure example:
+> ```
+> ~/DockerMountPoint/aiglass_dev_env/
+> ├── OpenSource-Ai-Glasses/    # This project
+> ├── luckfox-pico/             # System SDK
+> └── ...
+> ```
+
 1. 🍴 Fork the repository
-2. 🌿 Create a feature branch (`git checkout -b feature/AmazingFeature`)
-3. 💻 Commit your changes (`git commit -m 'Add some AmazingFeature'`)
-4. 📤 Push to the branch (`git push origin feature/AmazingFeature`)
-5. 🔃 Create a Pull Request
+2. 📥 Clone your fork locally (Note: must clone into the `aiglass_dev_env` directory), and initialize submodules
+   ```bash
+   cd /path/to/aiglass_dev_env  # Navigate to the directory containing the system SDK
+   git clone https://github.com/YOUR_USERNAME/OpenSource-Ai-Glasses.git
+   cd OpenSource-Ai-Glasses
+   git submodule update --init --recursive
+   ```
+3. 🌿 Create a feature branch (`git checkout -b feature/AmazingFeature`)
+4. 💻 Commit your changes (`git commit -m 'Add some AmazingFeature'`)
+5. 📤 Push to the branch (`git push origin feature/AmazingFeature`)
+6. 🔃 Create a Pull Request
 
 ### Development Areas
 

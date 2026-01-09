@@ -2,7 +2,10 @@
 #include <stdlib.h>
 #include <sys/time.h>
 #include <font.h>
-#include "lv_font_montserrat_48.c"
+#include "lvgl/lvgl.h"
+
+// 字体已在 LVGL 库中定义，使用 extern 声明引用
+extern const lv_font_t lv_font_montserrat_48;
 
 #define Font lv_font_montserrat_48
 

@@ -297,11 +297,29 @@ docker cp rk1106_dev:/opt/aiglass_dev_env/output/image/update.img ./update.img
 
 ### 如何贡献
 
+> [!IMPORTANT]
+> **克隆目录要求**：如果您需要编译 `src` 或 `samples` 目录下的代码，**必须将本项目克隆到 `aiglass_dev_env` 目录下**。这是因为编译系统依赖于与系统 SDK 的相对路径关系。
+>
+> 正确的目录结构示例：
+> ```
+> ~/DockerMountPoint/aiglass_dev_env/
+> ├── OpenSource-Ai-Glasses/    # 本项目
+> ├── luckfox-pico/             # 系统SDK
+> └── ...
+> ```
+
 1. 🍴 Fork 本仓库
-2. 🌿 创建功能分支 (`git checkout -b feature/AmazingFeature`)
-3. 💻 提交您的更改 (`git commit -m 'Add some AmazingFeature'`)
-4. 📤 推送到分支 (`git push origin feature/AmazingFeature`)
-5. 🔃 创建 Pull Request
+2. 📥 克隆您的 Fork 到本地（注意：需要克隆到 `aiglass_dev_env` 目录下），并初始化 submodule
+   ```bash
+   cd /path/to/aiglass_dev_env  # 进入系统SDK所在的目录
+   git clone https://github.com/YOUR_USERNAME/OpenSource-Ai-Glasses.git
+   cd OpenSource-Ai-Glasses
+   git submodule update --init --recursive
+   ```
+3. 🌿 创建功能分支 (`git checkout -b feature/AmazingFeature`)
+4. 💻 提交您的更改 (`git commit -m 'Add some AmazingFeature'`)
+5. 📤 推送到分支 (`git push origin feature/AmazingFeature`)
+6. 🔃 创建 Pull Request
 
 ### 开发领域
 

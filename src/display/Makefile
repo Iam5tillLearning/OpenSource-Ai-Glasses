@@ -76,9 +76,16 @@
 
 
 
-CC = /home/xjy/1106b/ttys2+blooth_but_erofs/rv1106b_rv1103b_linux_ipc_v1.0.0_20241016/tools/linux/toolchain/arm-rockchip831-linux-uclibcgnueabihf/bin/arm-rockchip831-linux-uclibcgnueabihf-gcc
+# 项目根目录相对路径 (相对于 Makefile 所在目录)
+# 假设 OpenSource-Ai-Glasses 项目放在 aiglass_dev_env 目录下
+DEV_ENV_ROOT    := ../../..
+
+# 交叉编译工具链设置
+TOOLCHAIN_PREFIX := $(DEV_ENV_ROOT)/tools/linux/toolchain/arm-rockchip831-linux-uclibcgnueabihf/bin/arm-rockchip831-linux-uclibcgnueabihf-
+CC = $(TOOLCHAIN_PREFIX)gcc
+
 LVGL_DIR_NAME   ?= lvgl
-LVGL_DIR        ?= .
+LVGL_DIR        ?= ../../third_party
 
 WARNINGS        := -Wall -Wshadow -Wundef -Wmissing-prototypes -Wno-discarded-qualifiers -Wall -Wextra -Wno-unused-function -Wno-error=strict-prototypes -Wpointer-arith \
                     -fno-strict-aliasing -Wno-error=cpp -Wuninitialized -Wmaybe-uninitialized -Wno-unused-parameter -Wno-missing-field-initializers -Wtype-limits -Wsizeof-pointer-memaccess \
@@ -98,7 +105,10 @@ CFLAGS          ?= -O0 -g0 -I. -I$(LVGL_DIR)/ -I$(UI_DIR)  $(WARNINGS) \
                     -DLV_LOG_TRACE_MEM=0 \
                     -DLV_LOG_TRACE_TIMER=0
 
-LDFLAGS         := -L/home/kkk/luckfox-pico/sysdrv/source/kernel/lib -L. -lm -lpthread -ldl -lbat
+# SDK 库路径
+SDK_LIB_PATH    := $(DEV_ENV_ROOT)/sysdrv/source/kernel/lib
+LDFLAGS         := -L$(SDK_LIB_PATH) -L. -lm -lpthread -ldl -lbat
+
 BIN             = display
 BUILD_DIR       = ./build
 BUILD_OBJ_DIR   = $(BUILD_DIR)/obj
@@ -112,15 +122,9 @@ UI_OBJ = $(UI_SRC:.c=.o)
 
 include $(LVGL_DIR)/lvgl/lvgl.mk
 
-# 包含所有额外组件
-CSRCS += $(wildcard $(LVGL_DIR)/lvgl/src/extra/widgets/*/*.c)
-CSRCS += $(wildcard $(LVGL_DIR)/lvgl/src/extra/themes/*/*.c)
-CSRCS += $(wildcard $(LVGL_DIR)/lvgl/src/extra/libs/*/*.c)
-CSRCS += $(wildcard $(LVGL_DIR)/lvgl/src/extra/layouts/*/*.c)
-
-# 包含字体
-CSRCS += $(LVGL_DIR)/lvgl/src/font/lv_customer_font_simhei_20.c
-CSRCS += $(LVGL_DIR)/lvgl/src/font/lv_font_montserrat_24.c
+# lvgl.mk 已经包含了所有 LVGL 源文件，不需要再额外添加
+# 如果需要中文字体支持，需要自行生成字体文件并添加到 CSRCS
+# 可以使用 LVGL 字体转换工具：https://lvgl.io/tools/fontconverter
 
 OBJEXT          ?= .o
 AOBJS           = $(ASRCS:.S=$(OBJEXT))
