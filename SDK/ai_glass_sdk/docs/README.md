@@ -16,6 +16,7 @@
 - [GPIO客户端API](GPIO_Client_API.md) - GPIO按键事件订阅和异步回调
 - [摄像头客户端API](Camera_Client_API.md) - 图像捕获和零拷贝传输
 - [音频客户端API](Audio_Client_API.md) - 音频播放和TTS功能
+- [显示客户端API](Display_Client_API.md) - 帧缓冲提交和焦点管理
 - [日志系统API](Log_API.md) - 统一日志输出和毫秒级时间戳
 
 ### 🗣️ TTS功能专题
@@ -68,6 +69,7 @@ AI Media Service (服务端)
 - **GPIO事件订阅** - 多进程GPIO事件监听
 - **摄像头调用** - 零拷贝图像传输
 - **音频播放控制** - PCM播放和TTS文本转语音
+- **显示服务** - 帧缓冲传输和多客户端焦点管理
 - **TTS缓存** - 智能MD5缓存减少云端调用
 
 ---
@@ -79,6 +81,8 @@ AI Media Service (服务端)
 - `ai_core_init()` - 初始化摄像头客户端
 - `ai_audio_init()` - 初始化音频客户端
 - `ai_audio_play_tts_simple()` - 简单TTS播放
+- `ai_display_init()` - 初始化显示客户端
+- `ai_display_commit_frame()` - 提交帧更新
 - `log_info()` - 输出信息日志（带时间戳）
 - `log_error()` - 输出错误日志（带时间戳）
 
@@ -91,6 +95,7 @@ AI Media Service (服务端)
 - GPIO API：`../include/ai_gpio.h`
 - 摄像头API：`../include/ai_camera.h`
 - 音频API：`../include/ai_audio.h`
+- 显示API：`../include/ai_display.h`
 - IPC基础：`../include/ai_ipc.h`
 - 日志API：`../include/ai_log.h`
 

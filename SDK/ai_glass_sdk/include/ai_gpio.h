@@ -67,9 +67,18 @@ typedef void (*gpio_event_callback_t)(gpio_event_t event_type, int gpio_number, 
 /**
  * GPIO事件服务配置常量
  */
-#define GPIO_EVENT_SHM_NAME            "/ai_gpio_event_shm"          // 共享内存名称
+#define GPIO_EVENT_SHM_NAME            "/ai_gpio_event_shm"          // 共享内存名称（向后兼容，默认GPIO1）
 #define GPIO_EVENT_SHM_SIZE            4096                          // 共享内存大小（4KB）
-#define GPIO_EVENT_SOCKET_PATH         "/tmp/ai_gpio_event_broadcast" // Unix Socket路径
+#define GPIO_EVENT_SOCKET_PATH         "/tmp/ai_gpio_event_broadcast" // Unix Socket路径（向后兼容，默认GPIO1）
+
+/**
+ * 多GPIO支持路径模板（v1.1新增）
+ * 用法：snprintf(buffer, size, GPIO_EVENT_SHM_NAME_FMT, gpio_number)
+ */
+#define GPIO_EVENT_MAX_GPIO_COUNT      8                              // 最大支持的GPIO数量
+#define GPIO_EVENT_SHM_NAME_FMT        "/ai_gpio_event_shm_%d"        // 共享内存名称模板
+#define GPIO_EVENT_SOCKET_PATH_FMT     "/tmp/ai_gpio_event_broadcast_%d" // Unix Socket路径模板
+
 #define GPIO_EVENT_CLIENT_PATH_MAX     108                            // 客户端回调Socket路径长度
 #define GPIO_EVENT_REGISTER_CMD        "GPIO_EVENT_REGISTER"         // 客户端注册命令
 #define GPIO_EVENT_UNREGISTER_CMD      "GPIO_EVENT_UNREGISTER"       // 客户端注销命令
@@ -77,6 +86,7 @@ typedef void (*gpio_event_callback_t)(gpio_event_t event_type, int gpio_number, 
 #define GPIO_EVENT_MAX_CLIENTS         64                            // 最大客户端数量
 #define GPIO_EVENT_HEARTBEAT_INTERVAL  1000                          // 心跳间隔（毫秒）
 #define GPIO_EVENT_RECONNECT_DELAY     500                           // 重连延迟（毫秒）
+
 
 // =============================================================================
 // 数据结构定义 - 共享内存部分
@@ -308,13 +318,24 @@ void ai_gpio_get_stats(
 int ai_gpio_event_client_create(gpio_event_client_t *client);
 
 /**
- * 连接到GPIO事件广播服务
+ * 连接到GPIO事件广播服务（默认GPIO1）
  * 【功能】打开共享内存并连接到Unix Socket服务器
  * 【参数】client - 客户端描述符指针
  * 【返回】成功返回0，失败返回-1
- * 【注意】如果服务未启动，此函数会失败
+ * 【注意】如果服务未启动，此函数会失败。此函数默认连接GPIO1（向后兼容）。
  */
 int ai_gpio_event_client_connect(gpio_event_client_t *client);
+
+/**
+ * 连接到指定GPIO的事件广播服务（v1.1新增）
+ * 【功能】连接到指定GPIO编号的广播服务
+ * 【参数】client - 客户端描述符指针
+ *         gpio_number - 要连接的GPIO编号
+ * 【返回】成功返回0，失败返回-1
+ * 【示例】ai_gpio_event_client_connect_gpio(&client, 0) - 连接GPIO0
+ */
+int ai_gpio_event_client_connect_gpio(gpio_event_client_t *client, int gpio_number);
+
 
 /**
  * 订阅GPIO事件（启动监听线程）
@@ -401,6 +422,24 @@ uint64_t ai_gpio_get_timestamp_sec(void);
  * 【返回】事件类型字符串
  */
 const char* ai_gpio_event_type_to_string(gpio_event_t event_type);
+
+/**
+ * 获取指定GPIO的共享内存名称（v1.1新增）
+ * 【功能】生成带GPIO编号后缀的共享内存名称
+ * 【参数】gpio_number - GPIO编号
+ *         buffer - 输出缓冲区
+ *         buffer_size - 缓冲区大小
+ */
+void ai_gpio_get_shm_name(int gpio_number, char *buffer, size_t buffer_size);
+
+/**
+ * 获取指定GPIO的Socket路径（v1.1新增）
+ * 【功能】生成带GPIO编号后缀的Unix Socket路径
+ * 【参数】gpio_number - GPIO编号
+ *         buffer - 输出缓冲区
+ *         buffer_size - 缓冲区大小
+ */
+void ai_gpio_get_socket_path(int gpio_number, char *buffer, size_t buffer_size);
 
 #ifdef __cplusplus
 }
