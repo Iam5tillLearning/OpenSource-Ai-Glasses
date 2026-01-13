@@ -3,7 +3,8 @@ TOOLCHAIN_PATH := $(DEV_ENV_ROOT)/tools/linux/toolchain/arm-rockchip831-linux-uc
 CC = $(TOOLCHAIN_PATH)/arm-rockchip831-linux-uclibcgnueabihf-gcc
 
 CFLAGS = -Wall -O2 -I. -I../../SDK/ai_glass_sdk/include -D_GNU_SOURCE
-LDFLAGS = -lpthread -lrt
+SDK_LIB = ../../SDK/ai_glass_sdk/lib
+LDFLAGS = $(SDK_LIB)/libai_glass_sdk.a -lpthread -lrt
 
 # Build Directories
 BUILD_DIR = build

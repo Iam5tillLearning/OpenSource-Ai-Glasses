@@ -8,15 +8,58 @@
 
 ## 📖 目录
 
-- [快速开始](#快速开始)
-- [接入指南](#二外部接入指南)
-- [配置参数](#三配置参数)
 - [故障排查](#四故障排查)
 - [完整示例](#五完整示例)
+- [v2.0 GPIO事件中心](#六v20-gpio事件中心)
 
 ---
 
-## 🚀 快速开始
+## 🚀 快速开始 (v2.0 推荐)
+
+### 功能简介
+
+**GPIO事件中心 (Event Hub)** 是v2.0引入的统一架构，支持单个客户端订阅多个GPIO事件，资源占用更低，使用更便捷。
+
+### 最小客户端代码 (v2.0)
+
+```c
+#include "ai_gpio.h"
+
+void hub_callback(gpio_event_t event, int gpio, void *data) {
+    const char *evt_str = (event == GPIO_EVENT_PRESS) ? "按下" : "释放";
+    printf("GPIO%d %s\n", gpio, evt_str);
+}
+
+int main() {
+    gpio_event_hub_client_t client; // 注意使用新的结构体
+
+    // 1. 创建并连接
+    ai_gpio_hub_client_create(&client);
+    ai_gpio_hub_client_connect(&client);
+
+    // 2. 订阅特定GPIO (如订阅GPIO 0, 1, 75)
+    int gpios[] = {0, 1, 75};
+    ai_gpio_hub_client_subscribe_gpios(&client, gpios, 3, hub_callback, NULL);
+    
+    // 或订阅所有GPIO
+    ai_gpio_hub_client_subscribe_all(&client, hub_callback, NULL);
+
+    // 3. 等待事件...
+    while (1) sleep(1);
+
+    // 4. 清理
+    ai_gpio_hub_client_destroy(&client);
+    return 0;
+}
+```
+
+### 兼容性说明
+
+v2.0 SDK 完全兼容 v1.1 代码。旧的 API (`ai_gpio_event_client_*`) 依然可用，但在内部会尝试优先连接到新的事件中心（如果支持）或回退到旧服务。建议新项目直接使用 `ai_gpio_hub_client_*` 系列 API。
+
+---
+
+## 🚀 快速开始 (v1.1 兼容)
 
 ### 功能简介
 
@@ -337,7 +380,35 @@ int main() {
 
 ---
 
-**版本**: v1.1
-**日期**: 2025-10-10
+**版本**: v2.0
+**日期**: 2025-10-25
 **作者**: AI Media Service Team
 **状态**: ✅ 生产就绪
+
+---
+
+## 六、v2.0 GPIO事件中心
+
+### 6.1 核心API (ai_gpio_hub_client_*)
+
+| API | 说明 |
+|-----|------|
+| `ai_gpio_hub_client_create()` | 创建客户端实例 |
+| `ai_gpio_hub_client_connect()` | 连接到事件中心 |
+| `ai_gpio_hub_client_subscribe_gpios()` | 订阅指定列表的GPIO |
+| `ai_gpio_hub_client_subscribe_all()` | 订阅所有GPIO |
+| `ai_gpio_hub_client_get_gpio_state()` | 获取某GPIO当前电平 |
+| `ai_gpio_hub_client_get_active_gpios()` | 获取当前活跃的GPIO列表 |
+| `ai_gpio_hub_client_unsubscribe()` | 取消订阅 |
+| `ai_gpio_hub_client_disconnect()` | 断开连接 |
+| `ai_gpio_hub_client_destroy()` | 销毁客户端 |
+
+### 6.2 迁移指南
+
+如果您正在使用 v1.1 API，迁移非常简单：
+
+1. 将 `gpio_event_client_t` 替换为 `gpio_event_hub_client_t`
+2. 将 `ai_gpio_event_client_*` 函数替换为 `ai_gpio_hub_client_*`
+3. 使用 `subscribe_gpios` 或 `subscribe_all` 替代原有的 `subscribe`
+
+旧代码无需修改即可运行，但无法享受到单一连接订阅多GPIO的优势。

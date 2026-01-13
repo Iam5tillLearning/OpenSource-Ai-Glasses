@@ -10,17 +10,45 @@
 #include <sys/socket.h>
 #include <sys/un.h>
 #include <errno.h>
+#include <time.h>
 
 #include "jbd013_api.h"
 #include "hal_driver.h"
 #include "../../SDK/ai_glass_sdk/include/ai_display.h"
+#include "../../SDK/ai_glass_sdk/include/ai_gpio.h"
 
 #define LOG_TAG "DisplayService"
+
+// ==================== 省电功能配置 ====================
+#define POWER_SAVE_TIMEOUT  30  // 30秒无活动息屏
+#define GPIO_KEY_0   0
+#define GPIO_KEY_1   1
+#define GPIO_KEY_75  75
 
 static volatile int keeping_running = 1;
 static int shm_fd = -1;
 static ai_display_shm_t *shm_ptr = NULL;
 static int server_socket = -1;
+
+// 省电功能变量
+static volatile time_t last_activity_time = 0;
+static volatile int display_off = 0;
+static gpio_event_hub_client_t gpio_hub_client;  // v2.0 GPIO Hub 客户端
+
+
+// ==================== GPIO 唤醒回调 ====================
+void gpio_wakeup_callback(gpio_event_t event, int gpio, void *data) {
+    // 任何 GPIO 事件都重置活动时间
+    last_activity_time = time(NULL);
+    
+    // 如果屏幕已关闭，则唤醒
+    if (display_off) {
+        send_cmd(SPI_DISPLAY_ENABLE);
+        send_cmd(SPI_SYNC);
+        display_off = 0;
+        printf("[%s] Display woken by GPIO %d\n", LOG_TAG, gpio);
+    }
+}
 
 void sig_handler(int signo) {
     if (signo == SIGINT || signo == SIGTERM) {
@@ -72,6 +100,17 @@ void *handle_client_thread(void *arg) {
         }
 
         if (msg.type == AI_DISPLAY_MSG_COMMIT) {
+            // 如果屏幕已关闭，先唤醒
+            if (display_off) {
+                send_cmd(SPI_DISPLAY_ENABLE);
+                send_cmd(SPI_SYNC);
+                display_off = 0;
+                printf("[%s] Display woken by frame commit\n", LOG_TAG);
+            }
+            
+            // 更新活动时间
+            last_activity_time = time(NULL);
+            
             uint8_t *frame_data = NULL;
             if (msg.slot_index == 0) {
                 frame_data = shm_ptr->framebuffer_slot_0;
@@ -80,7 +119,6 @@ void *handle_client_thread(void *arg) {
             }
 
             if (frame_data) {
-                printf("[%s] Frame commit (Slot %d)\n", LOG_TAG, msg.slot_index);
                 display_image(0, 0, frame_data, AI_DISPLAY_FRAME_SIZE);
             }
         } else if (msg.type == AI_DISPLAY_MSG_REQUEST_FOCUS) {
@@ -160,17 +198,46 @@ int main(int argc, char **argv) {
     }
     panel_init(); // JBD013 初始化
     printf("[%s] Hardware initialized\n", LOG_TAG);
+    
+    // 3. 初始化 GPIO Hub 客户端 (省电唤醒)
+    ai_gpio_hub_client_create(&gpio_hub_client);
+    if (ai_gpio_hub_client_connect(&gpio_hub_client) == 0) {
+        int gpios[] = {GPIO_KEY_0, GPIO_KEY_1, GPIO_KEY_75};
+        if (ai_gpio_hub_client_subscribe_gpios(&gpio_hub_client, gpios, 3, 
+                                                gpio_wakeup_callback, NULL) == 0) {
+            printf("[%s] GPIO Hub connected, monitoring GPIO %d/%d/%d\n", 
+                   LOG_TAG, GPIO_KEY_0, GPIO_KEY_1, GPIO_KEY_75);
+        } else {
+            printf("[%s] Warning: GPIO Hub subscribe failed\n", LOG_TAG);
+        }
+    } else {
+        printf("[%s] Warning: GPIO Hub connect failed\n", LOG_TAG);
+    }
+    
+    // 初始化活动时间
+    last_activity_time = time(NULL);
 
-    // 3. 启动 Socket 服务
-    // 为简单起见，直接在主线程跑，或者开个线程
+    // 4. 启动 Socket 服务
     pthread_t tid;
     pthread_create(&tid, NULL, socket_server_thread, NULL);
 
+    // 5. 主循环 - 省电检测
     while (keeping_running) {
+        // 检查是否需要息屏
+        if (!display_off && last_activity_time > 0) {
+            if (time(NULL) - last_activity_time >= POWER_SAVE_TIMEOUT) {
+                send_cmd(SPI_DISPLAY_DISABLE);
+                send_cmd(SPI_SYNC);
+                display_off = 1;
+                printf("[%s] Display off (power save after %ds)\n", 
+                       LOG_TAG, POWER_SAVE_TIMEOUT);
+            }
+        }
         sleep(1);
     }
 
     // 清理
+    ai_gpio_hub_client_destroy(&gpio_hub_client);
     close(server_socket);
     unlink("/tmp/ai_display_service");
     munmap(shm_ptr, AI_DISPLAY_SHM_SIZE);

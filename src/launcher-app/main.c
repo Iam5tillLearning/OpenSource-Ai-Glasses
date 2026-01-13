@@ -21,9 +21,8 @@
 ai_display_client_t *disp_client = NULL;
 uint8_t *shm_buf = NULL;
 
-// GPIO 事件客户端 (改为使用两个独立的客户端)
-gpio_event_client_t gpio_client_page;    // 负责 GPIO 0
-gpio_event_client_t gpio_client_confirm; // 负责 GPIO 75
+// GPIO 事件客户端 (v2.0 Hub 架构)
+gpio_event_hub_client_t gpio_hub_client;
 
 // ==================== 菜单状态管理 ====================
 // 主菜单项枚举
@@ -166,33 +165,21 @@ void handle_confirm_key(void) {
     pthread_mutex_unlock(&ui_mutex);
 }
 
-// ==================== GPIO 事件回调 (各自分开) ====================
+// ==================== GPIO 事件回调 (统一回调) ====================
 
-// GPIO 0 回调 (翻页)
-void gpio_page_callback(gpio_event_t event_type, int gpio_number, void *user_data) {
+// v2.0 GPIO Hub 统一回调
+void gpio_hub_callback(gpio_event_t event_type, int gpio_number, void *user_data) {
     printf("[Launcher] GPIO%d Event received (type=%d)\n", gpio_number, event_type);
     fflush(stdout);
 
     if (event_type == GPIO_EVENT_PRESS) {
         pthread_mutex_lock(&ui_mutex);
-        pending_gpio_event = GPIO_PAGE;
+        pending_gpio_event = gpio_number;  // 直接使用 GPIO 编号
         ui_update_pending = 1;
         pthread_mutex_unlock(&ui_mutex);
     }
 }
 
-// GPIO 75 回调 (确认)
-void gpio_confirm_callback(gpio_event_t event_type, int gpio_number, void *user_data) {
-    printf("[Launcher] GPIO%d Event received (type=%d)\n", gpio_number, event_type);
-    fflush(stdout);
-
-    if (event_type == GPIO_EVENT_PRESS) {
-        pthread_mutex_lock(&ui_mutex);
-        pending_gpio_event = GPIO_CONFIRM;
-        ui_update_pending = 1;
-        pthread_mutex_unlock(&ui_mutex);
-    }
-}
 
 // ==================== LVGL Flush Callback ====================
 static void disp_flush(lv_disp_drv_t * disp_drv, const lv_area_t * area, lv_color_t * color_p) {
@@ -253,24 +240,19 @@ int init_display_client(void) {
 }
 
 int init_gpio_clients(void) {
-    // 1. 初始化并连接 GPIO 0 (翻页)
-    if (ai_gpio_event_client_create(&gpio_client_page) == 0) {
-        if (ai_gpio_event_client_connect_gpio(&gpio_client_page, GPIO_PAGE) == 0) {
-            ai_gpio_event_client_subscribe(&gpio_client_page, gpio_page_callback, NULL);
-            printf("[Launcher] Connected to GPIO %d (Page)\n", GPIO_PAGE);
+    // v2.0 GPIO Hub: 使用单一客户端订阅多个 GPIO
+    ai_gpio_hub_client_create(&gpio_hub_client);
+    
+    if (ai_gpio_hub_client_connect(&gpio_hub_client) == 0) {
+        int gpios[] = {GPIO_PAGE, GPIO_CONFIRM};  // GPIO 0 和 75
+        if (ai_gpio_hub_client_subscribe_gpios(&gpio_hub_client, gpios, 2, 
+                                                gpio_hub_callback, NULL) == 0) {
+            printf("[Launcher] GPIO Hub connected (GPIO %d, %d)\n", GPIO_PAGE, GPIO_CONFIRM);
         } else {
-            printf("[Launcher] Failed to connect to GPIO %d\n", GPIO_PAGE);
+            printf("[Launcher] Failed to subscribe to GPIOs\n");
         }
-    }
-
-    // 2. 初始化并连接 GPIO 75 (确认)
-    if (ai_gpio_event_client_create(&gpio_client_confirm) == 0) {
-        if (ai_gpio_event_client_connect_gpio(&gpio_client_confirm, GPIO_CONFIRM) == 0) {
-            ai_gpio_event_client_subscribe(&gpio_client_confirm, gpio_confirm_callback, NULL);
-            printf("[Launcher] Connected to GPIO %d (Confirm)\n", GPIO_CONFIRM);
-        } else {
-            printf("[Launcher] Failed to connect to GPIO %d\n", GPIO_CONFIRM);
-        }
+    } else {
+        printf("[Launcher] Failed to connect GPIO Hub\n");
     }
     
     return 0;
@@ -294,11 +276,7 @@ int init_lvgl(void) {
 
 // ==================== 清理函数 ====================
 void cleanup(void) {
-    ai_gpio_event_client_unsubscribe(&gpio_client_page);
-    ai_gpio_event_client_destroy(&gpio_client_page);
-    
-    ai_gpio_event_client_unsubscribe(&gpio_client_confirm);
-    ai_gpio_event_client_destroy(&gpio_client_confirm);
+    ai_gpio_hub_client_destroy(&gpio_hub_client);
     
     ai_display_disconnect(disp_client);
     pthread_mutex_destroy(&ui_mutex);

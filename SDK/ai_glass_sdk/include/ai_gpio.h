@@ -441,6 +441,203 @@ void ai_gpio_get_shm_name(int gpio_number, char *buffer, size_t buffer_size);
  */
 void ai_gpio_get_socket_path(int gpio_number, char *buffer, size_t buffer_size);
 
+// =============================================================================
+// GPIO事件中心常量定义（v2.0新增）
+// =============================================================================
+
+#define GPIO_HUB_SHM_NAME              "/ai_gpio_event_hub"           // 事件中心共享内存
+#define GPIO_HUB_SOCKET_PATH           "/tmp/ai_gpio_event_hub_broadcast" // 事件中心Socket
+#define GPIO_HUB_SHM_MAGIC             0x47504855                     // 魔数："GPHU"
+#define GPIO_HUB_MAX_GPIO              16                             // 最大GPIO数量
+#define GPIO_HUB_EVENT_QUEUE_SIZE      64                             // 事件队列大小
+#define GPIO_HUB_SHM_SIZE              8192                           // 共享内存大小
+
+// =============================================================================
+// GPIO事件中心共享内存结构（v2.0新增）
+// =============================================================================
+
+/**
+ * 单个GPIO的状态信息
+ */
+typedef struct {
+    int          gpio_number;        // GPIO编号（-1表示槽位未使用）
+    int          is_active;          // 是否已激活监控
+    int          current_state;      // 当前电平状态
+    int          is_pressed;         // 按键逻辑状态
+    uint64_t     last_event_time;    // 最后事件时间（微秒）
+    uint64_t     press_count;        // 按下次数统计
+    uint64_t     release_count;      // 释放次数统计
+} gpio_hub_gpio_state_t;
+
+/**
+ * GPIO事件中心共享内存结构
+ */
+typedef struct {
+    volatile uint32_t magic;                // 魔数校验
+    volatile int     service_running;       // 服务运行状态
+    uint64_t         service_start_time;    // 服务启动时间
+    uint64_t         last_heartbeat_time;   // 最后心跳时间
+
+    // GPIO状态数组
+    gpio_hub_gpio_state_t gpio_states[GPIO_HUB_MAX_GPIO];
+    int              active_gpio_count;     // 已激活GPIO数量
+
+    // 统一事件队列
+    gpio_event_data_t event_queue[GPIO_HUB_EVENT_QUEUE_SIZE];
+    volatile uint32_t queue_write_index;    // 写入索引
+
+    // 广播控制
+    volatile uint32_t broadcast_sequence;   // 广播序列号
+
+    // 统计信息
+    uint64_t         total_event_count;     // 总事件数
+
+    // 客户端管理
+    volatile int     client_count;          // 客户端数量
+} gpio_event_hub_shm_t;
+
+// =============================================================================
+// GPIO事件中心客户端数据结构（v2.0新增）
+// =============================================================================
+
+/**
+ * GPIO事件中心订阅客户端结构体
+ * 【功能】连接到事件中心，接收所有或指定GPIO的事件
+ */
+typedef struct {
+    // 【IPC连接】
+    ai_shared_memory_t    shm;              // 共享内存连接
+    gpio_event_hub_shm_t *shm_ptr;          // 共享内存数据指针
+
+    // 【订阅配置】
+    int                   subscribed_gpios[GPIO_HUB_MAX_GPIO];  // 订阅的GPIO列表
+    int                   subscribed_count;  // 订阅数量（0表示订阅全部）
+    int                   subscribe_all;     // 是否订阅全部GPIO
+
+    // 【事件追踪】
+    uint32_t              last_sequence;     // 最后处理的事件序列号
+
+    // 【回调函数】
+    gpio_event_callback_t event_callback;    // 用户事件回调
+    void                 *user_data;         // 用户数据
+
+    // 【客户端通知服务】
+    ai_unix_socket_server_t notify_server;   // 通知Socket服务器
+    int                   notify_server_started;
+    char                  notify_socket_path[108];
+
+    // 【状态】
+    volatile int          is_listening;      // 是否已订阅
+    int                   is_connected;      // 连接状态
+} gpio_event_hub_client_t;
+
+// =============================================================================
+// GPIO事件中心客户端API（v2.0新增）
+// =============================================================================
+
+/**
+ * 创建GPIO事件中心客户端
+ * 【功能】初始化客户端结构体
+ * 【参数】client - 客户端描述符指针
+ * 【返回】成功返回0，失败返回-1
+ */
+int ai_gpio_hub_client_create(gpio_event_hub_client_t *client);
+
+/**
+ * 连接到GPIO事件中心
+ * 【功能】打开共享内存连接
+ * 【参数】client - 客户端描述符指针
+ * 【返回】成功返回0，失败返回-1
+ */
+int ai_gpio_hub_client_connect(gpio_event_hub_client_t *client);
+
+/**
+ * 订阅指定GPIO列表的事件
+ * 【功能】订阅指定GPIO列表的事件，当这些GPIO状态变化时触发回调
+ * 【参数】client - 客户端描述符指针
+ *         gpio_list - GPIO编号数组
+ *         gpio_count - 数组大小
+ *         callback - 事件回调函数
+ *         user_data - 用户数据指针
+ * 【返回】成功返回0，失败返回-1
+ */
+int ai_gpio_hub_client_subscribe_gpios(
+    gpio_event_hub_client_t *client,
+    const int *gpio_list,
+    int gpio_count,
+    gpio_event_callback_t callback,
+    void *user_data
+);
+
+/**
+ * 订阅所有GPIO事件
+ * 【功能】订阅事件中心管理的所有GPIO事件
+ * 【参数】client - 客户端描述符指针
+ *         callback - 事件回调函数
+ *         user_data - 用户数据指针
+ * 【返回】成功返回0，失败返回-1
+ */
+int ai_gpio_hub_client_subscribe_all(
+    gpio_event_hub_client_t *client,
+    gpio_event_callback_t callback,
+    void *user_data
+);
+
+/**
+ * 获取指定GPIO的状态
+ * 【功能】从共享内存读取GPIO状态
+ * 【参数】client - 客户端描述符指针
+ *         gpio_number - GPIO编号
+ * 【返回】GPIO状态（0=释放，1=按下），失败返回-1
+ */
+int ai_gpio_hub_client_get_gpio_state(
+    gpio_event_hub_client_t *client,
+    int gpio_number
+);
+
+/**
+ * 获取所有活跃GPIO的列表
+ * 【功能】获取事件中心当前监控的所有GPIO编号
+ * 【参数】client - 客户端描述符指针
+ *         gpio_list - 输出GPIO编号数组
+ *         max_count - 数组最大容量
+ * 【返回】活跃GPIO数量（可能小于max_count）
+ */
+int ai_gpio_hub_client_get_active_gpios(
+    gpio_event_hub_client_t *client,
+    int *gpio_list,
+    int max_count
+);
+
+/**
+ * 取消订阅
+ * 【功能】停止接收GPIO事件
+ * 【参数】client - 客户端描述符指针
+ */
+void ai_gpio_hub_client_unsubscribe(gpio_event_hub_client_t *client);
+
+/**
+ * 断开与事件中心的连接
+ * 【功能】关闭共享内存连接
+ * 【参数】client - 客户端描述符指针
+ */
+void ai_gpio_hub_client_disconnect(gpio_event_hub_client_t *client);
+
+/**
+ * 销毁客户端并清理资源
+ * 【功能】释放所有资源
+ * 【参数】client - 客户端描述符指针
+ */
+void ai_gpio_hub_client_destroy(gpio_event_hub_client_t *client);
+
+/**
+ * 检查事件中心服务是否可用
+ * 【功能】检查事件中心是否正在运行
+ * 【参数】client - 客户端描述符指针
+ * 【返回】服务可用返回1，不可用返回0
+ */
+int ai_gpio_hub_client_is_service_alive(gpio_event_hub_client_t *client);
+
 #ifdef __cplusplus
 }
 #endif
