@@ -283,12 +283,44 @@ void cleanup(void) {
     printf("[Launcher] Cleanup complete\n");
 }
 
+// 打印帮助信息
+void print_usage(const char *prog_name) {
+    printf("Usage: %s [OPTIONS]\n", prog_name);
+    printf("Options:\n");
+    printf("  -h, --help                 Show this help message\n");
+    printf("  --powersave_timeout <sec>  Set screen power save timeout in seconds (0 to disable)\n");
+    printf("\n");
+    printf("Examples:\n");
+    printf("  %s --powersave_timeout 60  (Set timeout to 60s)\n", prog_name);
+    printf("  %s --powersave_timeout 0   (Disable power save)\n", prog_name);
+}
+
 // ==================== 主函数 ====================
-int main(void) {
+int main(int argc, char **argv) {
     setbuf(stdout, NULL); // 禁用 stdout 缓冲，确保立即输出
+    
+    // 解析命令行参数
+    int power_save_timeout = -1;
+    for (int i = 1; i < argc; i++) {
+        if (strcmp(argv[i], "--powersave_timeout") == 0 && i + 1 < argc) {
+            power_save_timeout = atoi(argv[i+1]);
+            i++; // Skip value
+        } else if (strcmp(argv[i], "-h") == 0 || strcmp(argv[i], "--help") == 0) {
+            print_usage(argv[0]);
+            return 0;
+        }
+    }
+
     printf("Launcher App Starting...\n");
 
     if (init_display_client() != 0) return -1;
+    
+    // 如果指定了超时参数，则设置
+    if (power_save_timeout >= 0) {
+        ai_display_set_power_save_timeout(disp_client, power_save_timeout);
+        printf("[Launcher] Configured power save timeout: %d seconds\n", power_save_timeout);
+    }
+
     init_gpio_clients();
     if (init_lvgl() != 0) return -1;
 

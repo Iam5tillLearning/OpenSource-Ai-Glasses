@@ -16,6 +16,7 @@
 #include "hal_driver.h"
 #include "../../SDK/ai_glass_sdk/include/ai_display.h"
 #include "../../SDK/ai_glass_sdk/include/ai_gpio.h"
+#include "config_utils.h"
 
 #define LOG_TAG "DisplayService"
 
@@ -128,6 +129,9 @@ void *handle_client_thread(void *arg) {
             int new_timeout = msg.x;
             if (new_timeout >= 0) {
                 power_save_timeout = new_timeout;
+                // 保存到配置文件
+                config_set_int("display_power_save_timeout", power_save_timeout);
+
                 printf("[%s] Power save timeout set to %d seconds%s\n", 
                        LOG_TAG, power_save_timeout,
                        new_timeout == 0 ? " (disabled)" : "");
@@ -233,6 +237,10 @@ int main(int argc, char **argv) {
     
     // 初始化活动时间
     last_activity_time = time(NULL);
+
+    // 加载持久化配置
+    power_save_timeout = config_get_int("display_power_save_timeout", 30);
+    printf("[%s] Loaded power save timeout: %d\n", LOG_TAG, power_save_timeout);
 
     // 4. 启动 Socket 服务
     pthread_t tid;
