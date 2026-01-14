@@ -91,8 +91,9 @@ typedef struct {
  * Socket 通信消息类型枚举
  */
 typedef enum {
-    AI_DISPLAY_MSG_COMMIT = 1,        // 提交帧更新
-    AI_DISPLAY_MSG_REQUEST_FOCUS = 2  // 请求显示焦点
+    AI_DISPLAY_MSG_COMMIT = 1,              // 提交帧更新
+    AI_DISPLAY_MSG_REQUEST_FOCUS = 2,       // 请求显示焦点
+    AI_DISPLAY_MSG_SET_POWER_SAVE_TIMEOUT = 3  // 设置息屏超时时间
 } ai_display_msg_type_t;
 
 /**
@@ -187,6 +188,16 @@ int ai_display_request_focus(ai_display_client_t *client);
  * 【注意】调用后句柄将无效，不可再使用
  */
 void ai_display_cleanup(ai_display_client_t *client);
+
+/**
+ * 设置息屏超时时间
+ * 【功能】设置屏幕自动息屏的超时时间
+ * 【参数】client - 客户端句柄
+ *         timeout_sec - 超时秒数，0表示关闭自动息屏
+ * 【返回】成功返回 AI_DISPLAY_SUCCESS，失败返回相应错误码
+ * 【注意】设置后立即生效；设为0时会立即唤醒屏幕（如果已息屏）
+ */
+int ai_display_set_power_save_timeout(ai_display_client_t *client, int timeout_sec);
 
 // =============================================================================
 // 辅助函数

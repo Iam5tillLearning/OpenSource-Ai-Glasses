@@ -41,6 +41,7 @@ AI Display 客户端 API 提供与 `ai_display_service` 显示服务进行通信
 | `ai_display_get_framebuffer_slot()` | 获取指定槽位的帧缓冲指针 |
 | `ai_display_commit_frame()` | 提交帧更新到屏幕 |
 | `ai_display_request_focus()` | 请求显示焦点 |
+| `ai_display_set_power_save_timeout()` | 设置息屏超时时间（0=禁用息屏） |
 | `ai_display_cleanup()` | 清理资源 |
 
 ### 辅助函数
@@ -131,6 +132,16 @@ int ret = ai_display_request_focus(client);
 if (ret == AI_DISPLAY_SUCCESS) {
     printf("已获得显示焦点\n");
 }
+```
+
+### 息屏控制
+
+```c
+// 设置 10 秒
+ai_display_set_power_save_timeout(client, 10);
+
+// 禁用自动息屏功能
+ai_display_set_power_save_timeout(client, 0);
 ```
 
 ## 编译链接

@@ -20,7 +20,7 @@
 #define LOG_TAG "DisplayService"
 
 // ==================== 省电功能配置 ====================
-#define POWER_SAVE_TIMEOUT  30  // 30秒无活动息屏
+static volatile int power_save_timeout = 30;  // 动态可配置的息屏超时（秒），0=禁用
 #define GPIO_KEY_0   0
 #define GPIO_KEY_1   1
 #define GPIO_KEY_75  75
@@ -124,6 +124,23 @@ void *handle_client_thread(void *arg) {
         } else if (msg.type == AI_DISPLAY_MSG_REQUEST_FOCUS) {
             shm_ptr->active_client_pid = msg.pid;
             printf("[%s] Client %d acquired focus\n", LOG_TAG, msg.pid);
+        } else if (msg.type == AI_DISPLAY_MSG_SET_POWER_SAVE_TIMEOUT) {
+            int new_timeout = msg.x;
+            if (new_timeout >= 0) {
+                power_save_timeout = new_timeout;
+                printf("[%s] Power save timeout set to %d seconds%s\n", 
+                       LOG_TAG, power_save_timeout,
+                       new_timeout == 0 ? " (disabled)" : "");
+                // 如果设置为0（禁用息屏），立即唤醒屏幕
+                if (new_timeout == 0 && display_off) {
+                    send_cmd(SPI_DISPLAY_ENABLE);
+                    send_cmd(SPI_SYNC);
+                    display_off = 0;
+                    printf("[%s] Display woken (power save disabled)\n", LOG_TAG);
+                }
+                // 重置活动时间
+                last_activity_time = time(NULL);
+            }
         }
     }
     
@@ -223,14 +240,14 @@ int main(int argc, char **argv) {
 
     // 5. 主循环 - 省电检测
     while (keeping_running) {
-        // 检查是否需要息屏
-        if (!display_off && last_activity_time > 0) {
-            if (time(NULL) - last_activity_time >= POWER_SAVE_TIMEOUT) {
+        // 检查是否需要息屏（power_save_timeout > 0 时才启用）
+        if (!display_off && power_save_timeout > 0 && last_activity_time > 0) {
+            if (time(NULL) - last_activity_time >= power_save_timeout) {
                 send_cmd(SPI_DISPLAY_DISABLE);
                 send_cmd(SPI_SYNC);
                 display_off = 1;
                 printf("[%s] Display off (power save after %ds)\n", 
-                       LOG_TAG, POWER_SAVE_TIMEOUT);
+                       LOG_TAG, power_save_timeout);
             }
         }
         sleep(1);
