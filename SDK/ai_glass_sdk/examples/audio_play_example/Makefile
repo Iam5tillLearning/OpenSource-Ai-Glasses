@@ -25,13 +25,17 @@ SDK_SOURCES = $(SDK_DIR)/src/ai_audio.c
 EXAMPLE_SOURCE = audio_play_example.c
 
 # 目标文件
-TARGET = audio_play_example
+BUILD_DIR = ../build
+TARGET = $(BUILD_DIR)/audio_play_example
 
 # 默认目标
-all: $(TARGET)
+all: $(BUILD_DIR) $(TARGET)
+
+$(BUILD_DIR):
+	mkdir -p $@
 
 # 编译程序（链接SDK源文件）
-$(TARGET): $(EXAMPLE_SOURCE) $(SDK_SOURCES)
+$(TARGET): $(EXAMPLE_SOURCE) $(SDK_SOURCES) | $(BUILD_DIR)
 	@echo "🔨 编译音频播放示例程序..."
 	$(CC) $(CFLAGS) $(INCLUDES) -o $@ $(EXAMPLE_SOURCE) $(SDK_SOURCES) -lpthread -lrt
 	@echo "✅ 编译完成: $(TARGET)"

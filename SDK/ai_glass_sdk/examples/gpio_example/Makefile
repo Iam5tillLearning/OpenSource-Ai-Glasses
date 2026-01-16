@@ -31,13 +31,17 @@ SDK_SOURCES = $(SDK_DIR)/src/ai_gpio.c \
               $(SDK_DIR)/src/ai_ipc.c
 
 # 目标文件
-TARGET = gpio_example
+BUILD_DIR = ../build
+TARGET = $(BUILD_DIR)/gpio_example
 
 # 默认目标
-all: $(TARGET)
+all: $(BUILD_DIR) $(TARGET)
+
+$(BUILD_DIR):
+	mkdir -p $@
 
 # 编译示例程序（使用SDK）
-$(TARGET): $(EXAMPLE_SOURCE) $(SDK_SOURCES)
+$(TARGET): $(EXAMPLE_SOURCE) $(SDK_SOURCES) | $(BUILD_DIR)
 	@echo "编译GPIO示例程序（使用SDK）..."
 	$(CC) $(CFLAGS) $(INCLUDES) -o $@ $(EXAMPLE_SOURCE) $(SDK_SOURCES) $(LIBS)
 	@echo "✅ 编译完成: $(TARGET)"

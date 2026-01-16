@@ -1,0 +1,59 @@
+# Makefile for HTTP Example
+
+# 输出目录
+BUILD_DIR = ../build
+
+# 交叉编译工具链
+ifeq ($(CROSS_COMPILE),)
+CROSS_COMPILE = arm-rockchip831-linux-uclibcgnueabihf-
+endif
+
+CC = $(CROSS_COMPILE)gcc
+
+# 编译选项
+CFLAGS = -Wall -O2 -std=gnu99
+CFLAGS += -DMG_ENABLE_PACKED_FS=0
+CFLAGS += -DMG_ENABLE_SSI=0
+CFLAGS += -DMG_ENABLE_DIRECTORY_LISTING=0
+CFLAGS += -DMG_ENABLE_LOG=1
+# 使用mbedTLS（支持更多HTTPS网站）
+CFLAGS += -DMG_TLS=1
+# 启用详细调试日志（0=ERROR, 1=ERROR, 2=INFO, 3=DEBUG, 4=VERBOSE）
+CFLAGS += -DMG_LOG_LEVEL=4
+
+# 头文件路径
+INCLUDES = -I../../include -I../../third_party/mongoose -I../../third_party/mbedtls/include
+
+# 源文件
+HTTP_CLIENT_SRC = ../../src/http_client.c
+MONGOOSE_SRC = ../../third_party/mongoose/mongoose.c
+
+# mbedTLS静态库
+MBEDTLS_LIBS = ../../third_party/mbedtls/library/libmbedtls.a \
+               ../../third_party/mbedtls/library/libmbedx509.a \
+               ../../third_party/mbedtls/library/libmbedcrypto.a
+
+# 链接库
+LIBS = -lpthread -lm
+
+# 目标程序
+TARGET = $(BUILD_DIR)/http_example
+
+all: $(BUILD_DIR) $(TARGET)
+
+# 创建构建目录
+$(BUILD_DIR):
+	mkdir -p $(BUILD_DIR)
+
+# 编译HTTP示例
+$(TARGET): http_example.c $(HTTP_CLIENT_SRC) $(MONGOOSE_SRC) | $(BUILD_DIR)
+	@echo "编译 HTTP 示例 (with mbedTLS)..."
+	$(CC) $(CFLAGS) $(INCLUDES) -o $@ $< $(HTTP_CLIENT_SRC) $(MONGOOSE_SRC) $(MBEDTLS_LIBS) $(LIBS)
+	@echo "✅ 编译完成: $@"
+
+clean:
+	@echo "清理 HTTP 示例程序..."
+	rm -f $(TARGET)
+	@echo "✅ 清理完成"
+
+.PHONY: all clean

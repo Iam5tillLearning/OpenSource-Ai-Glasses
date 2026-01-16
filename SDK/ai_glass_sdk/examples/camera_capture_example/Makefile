@@ -26,13 +26,17 @@ EXAMPLE_SOURCE = camera_capture_example.c
 SDK_SOURCES = $(SDK_DIR)/src/ai_camera.c
 
 # 目标文件
-TARGET = camera_capture_example
+BUILD_DIR = ../build
+TARGET = $(BUILD_DIR)/camera_capture_example
 
 # 默认目标
-all: $(TARGET)
+all: $(BUILD_DIR) $(TARGET)
+
+$(BUILD_DIR):
+	mkdir -p $@
 
 # 编译程序
-$(TARGET): $(EXAMPLE_SOURCE) $(SDK_SOURCES)
+$(TARGET): $(EXAMPLE_SOURCE) $(SDK_SOURCES) | $(BUILD_DIR)
 	@echo "编译摄像头捕获示例程序..."
 	$(CC) $(CFLAGS) $(INCLUDES) -o $@ $(EXAMPLE_SOURCE) $(SDK_SOURCES) $(LIBS)
 	@echo "✅ 编译完成: $(TARGET)"

@@ -97,6 +97,9 @@ void my_gpio_event_callback(gpio_event_t event_type, int gpio_number, void *user
     fflush(stdout);
 }
 
+// 全局变量：GPIO编号，默认为1（向后兼容）
+static int g_target_gpio = 1;
+
 /**
  * 打印程序使用说明
  */
@@ -109,11 +112,15 @@ void print_usage(const char *program_name) {
     printf("【功能】订阅GPIO事件，实时接收按键通知\n");
     printf("\n");
     printf("【使用方法】\n");
-    printf("  %s\n", program_name);
+    printf("  %s [-g <gpio_number>]\n", program_name);
+    printf("\n");
+    printf("  选项:\n");
+    printf("    -g <gpio_number>  指定要监听的GPIO编号（默认：1）\n");
     printf("\n");
     printf("【前置条件】\n");
     printf("  1. 确保ai-core服务端已启动\n");
     printf("  2. 服务端需要启用GPIO功能（--enable-gpio）\n");
+    printf("  3. 若监听非主按键，服务端需指定--gpio-numbers\n");
     printf("\n");
     printf("【退出方式】\n");
     printf("  按 Ctrl+C 退出程序\n");
@@ -125,12 +132,13 @@ void print_usage(const char *program_name) {
 /**
  * GPIO事件客户端示例：事件驱动模式（异步回调）
  */
-int run_gpio_event_client(void) {
+int run_gpio_event_client(int gpio_number) {
     gpio_event_client_t client = {0};
 
     printf("\n");
     printf("═══════════════════════════════════════════════════════════\n");
     printf("  GPIO事件客户端 - 异步回调模式\n");
+    printf("  监听目标: GPIO %d\n", gpio_number);
     printf("═══════════════════════════════════════════════════════════\n");
     printf("\n");
 
@@ -143,9 +151,12 @@ int run_gpio_event_client(void) {
     printf("✅ 客户端已创建\n\n");
 
     // 步骤2: 连接到服务
-    printf("📝 [步骤2/3] 连接到GPIO事件广播服务...\n");
-    if (ai_gpio_event_client_connect(&client) != 0) {
+    printf("📝 [步骤2/3] 连接到GPIO事件广播服务 (GPIO %d)...\n", gpio_number);
+    
+    // 【修改】连接到指定的GPIO服务
+    if (ai_gpio_event_client_connect_gpio(&client, gpio_number) != 0) {
         printf("❌ 连接失败，请确保ai-core已启动并启用GPIO功能\n");
+        printf("   提示：服务端是否添加了 --gpio-numbers %d 参数？\n", gpio_number);
         ai_gpio_event_client_destroy(&client);
         return -1;
     }
@@ -169,7 +180,7 @@ int run_gpio_event_client(void) {
     printf("   - 当前事件序列号: %u\n\n", client.last_sequence);
 
     printf("═══════════════════════════════════════════════════════════\n");
-    printf("  🎧 监听中... 请按下GPIO按键\n");
+    printf("  🎧 监听中... 请按下GPIO %d 按键\n", gpio_number);
     printf("  💡 提示：按 Ctrl+C 退出程序\n");
     printf("═══════════════════════════════════════════════════════════\n");
     printf("\n");
@@ -207,15 +218,31 @@ int run_gpio_event_client(void) {
  * 主函数
  */
 int main(int argc, char *argv[]) {
+    // 解析命令行参数
+    int opt;
+    while ((opt = getopt(argc, argv, "g:h")) != -1) {
+        switch (opt) {
+        case 'g':
+            g_target_gpio = atoi(optarg);
+            break;
+        case 'h':
+            print_usage(argv[0]);
+            return 0;
+        default:
+            print_usage(argv[0]);
+            return -1;
+        }
+    }
+
     // 注册信号处理函数
     signal(SIGINT, signal_handler);
     signal(SIGTERM, signal_handler);
 
     // 打印使用说明
-    print_usage(argv[0]);
+    // print_usage(argv[0]); // 启动时不强制打印，保持清爽
 
     // 运行GPIO事件客户端
-    int result = run_gpio_event_client();
+    int result = run_gpio_event_client(g_target_gpio);
 
     printf("\n");
     printf("═══════════════════════════════════════════════════════════\n");
@@ -228,3 +255,4 @@ int main(int argc, char *argv[]) {
 
     return result;
 }
+
