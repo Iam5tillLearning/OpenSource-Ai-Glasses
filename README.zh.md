@@ -10,7 +10,7 @@
 
 [![Build Status](https://img.shields.io/badge/build-passing-brightgreen.svg)](https://github.com/ezxrdev/OpenSource-Ai-Glasses/actions)
 [![License](https://img.shields.io/badge/license-Apache%202.0-blue.svg)](LICENSE)
-[![Version](https://img.shields.io/badge/version-0.6.1-green.svg)](https://github.com/Iam5tilllearning/OpenSource-Ai-Glasses/releases)
+[![Version](https://img.shields.io/badge/version-0.6.2-green.svg)](https://github.com/Iam5tilllearning/OpenSource-Ai-Glasses/releases)
 
 
 ---
@@ -33,20 +33,28 @@
 [**点击这里购买开发套件**](https://item.taobao.com/item.htm?id=1007109700786) — *预装固件，开箱即用*
 
 > [!CAUTION]
-> **固件兼容性提示**：v0.6.1 版本固件**仅适配 2026年1月1日之后生产的硬件**。如果您的设备是在此日期之前购买/生产的，请使用 v0.6.0 及更早版本的固件。
+> **固件兼容性提示**：v0.6.2 版本固件**仅适配 2026年1月1日之后生产的硬件**。如果您的设备是在此日期之前购买/生产的，请使用 v0.6.0 及更早版本的固件。
 
-## ✅ 当前版本概要 (v0.6.1)
+## ✅ 当前版本概要 (v0.6.2)
 
-- 适配固件版本：v0.6.1。兼容 2026年1月1日之后生产的新硬件。开机会进入网络配置模式，配置完成后可以直接通过长按左侧镜腿按键进行ai对话
-- 全新推出SDK，开发者可以基于SDK进行应用开发，从而避免了从0开发linux程序的难度，不需要去管理多个硬件的并行操作，不需要去处理ISP、音频设备等等让人困扰的东西，只需要专注于上层业务逻辑。
-    - **GPIO事件订阅**：支持多进程并发监听按键事件，提供异步回调机制，延迟低于13ms
-    - **摄像头高效调用**：基于共享内存的零拷贝图像传输，支持JPEG和NV12格式，支持多客户端同时访问
-    - **音频播放控制**：提供基于Unix Socket的音频控制接口，支持音量调节和采样率配置
-    - **进程间通信**：封装了基于Unix Domain Socket的可靠通信机制
-    - **系统日志**：提供统一的日志接口，包含精确的毫秒级时间戳
+- 适配固件版本：v0.6.2。兼容 2026年1月1日之后生产的新硬件。
+- 📱 **显示增强**：SDK新增显示模块，支持显示UI和图片，并可设置屏幕节能超时，优化了30秒无操作自动熄屏逻辑。
+- 🗣️ **文本交互**：SDK新增获取ASR和LLM文本的能力，并提供了新的示例（参考 `Text_Event_Client_API.md`）。
+- 🛠️ **架构升级**：采用全新的 GPIO Hub 架构，增强了系统的稳定性和可扩展性。
+- 🏗️ **结构优化**：优化了眼镜的3D模型设计，结构更加稳定。
+- 🗑️ **精简优化**：移除了旧的显示应用，引入 cJSON 第三方库以增强JSON处理能力。
 
 <details>
 <summary>📜 版本历史概要</summary>
+
+### v0.6.2
+- 适配固件版本：v0.6.2
+- SDK新增显示模块（UI/图片）及节能设置
+- SDK新增ASR和LLM文本获取能力
+- 优化30秒熄屏逻辑
+- 升级GPIO Hub架构
+- 优化3D模型结构
+- 引入cJSON库，移除旧显示应用
 
 ### v0.6.1
 - 适配固件版本：v0.6.1
@@ -366,4 +374,4 @@ docker cp rk1106_dev:/opt/aiglass_dev_env/output/image/update.img ./update.img
 
 ---
 
-**最后更新**: 2026-01-08 | **版本**: v0.6.1
+**最后更新**: 2026-01-19 | **版本**: v0.6.2

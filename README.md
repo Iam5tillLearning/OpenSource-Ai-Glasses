@@ -10,7 +10,7 @@
 
 [![Build Status](https://img.shields.io/badge/build-passing-brightgreen.svg)](https://github.com/ezxrdev/OpenSource-Ai-Glasses/actions)
 [![License](https://img.shields.io/badge/license-Apache%202.0-blue.svg)](LICENSE)
-[![Version](https://img.shields.io/badge/version-0.6.1-green.svg)](https://github.com/Iam5tilllearning/OpenSource-Ai-Glasses/releases)
+[![Version](https://img.shields.io/badge/version-0.6.2-green.svg)](https://github.com/Iam5tilllearning/OpenSource-Ai-Glasses/releases)
 
 
 ---
@@ -33,21 +33,29 @@ This is a Linux-based open-source smart glasses project in early development sta
 [**Get Dev Kit Here**](https://www.ebay.com/itm/136920980546) — *Pre-installed firmware, ready to use*
 
 > [!CAUTION]
-> **Firmware Compatibility Notice**: v0.6.1 firmware is **only compatible with hardware produced after January 1, 2026**. If your device was purchased/produced before this date, please use v0.6.0 or earlier firmware versions.
+> **Firmware Compatibility Notice**: v0.6.2 firmware is **only compatible with hardware produced after January 1, 2026**. If your device was purchased/produced before this date, please use v0.6.0 or earlier firmware versions.
 
-## ✅ Current Version Features (v0.6.1)
+## ✅ Current Version Features (v0.6.2)
 
-- **Firmware Version: v0.6.1**
-  - Compatible with new hardware produced after January 1, 2026. Enters network configuration mode on boot. After configuration, long press the left temple button to start AI conversation.
-- **New SDK Available**: Developers can develop applications based on the SDK, avoiding the difficulty of developing Linux programs from scratch. No need to manage parallel hardware operations or deal with ISP/audio devices. Focus on upper-layer business logic.
-    - **GPIO Event Subscription**: Supports multi-process concurrent listening for button events, providing asynchronous callback mechanism with latency < 13ms.
-    - **Efficient Camera Access**: Zero-copy image transmission based on shared memory, supports JPEG and NV12 formats, supports multi-client concurrent access.
-    - **Audio Playback Control**: Provides audio control interface based on Unix Socket, supports volume adjustment and sample rate configuration.
-    - **Inter-Process Communication**: Encapsulates reliable communication mechanism based on Unix Domain Socket.
-    - **System Logging**: Provides unified logging interface with precise millisecond timestamps.
+- **Firmware Version: v0.6.2**
+  - Compatible with new hardware produced after January 1, 2026.
+- **📱 Display Enhancements**: SDK now includes a display module supporting UI and images, configurable power-save timeout, and optimized 30-second auto-off logic.
+- **🗣️ Text Interaction**: SDK can now retrieve ASR and LLM text, with new examples (see `Text_Event_Client_API.md`).
+- **🛠️ Architecture Upgrade**: Adopted new GPIO Hub architecture for better system stability and scalability.
+- **🏗️ Structural Optimization**: Optimized 3D model of the glasses for improved stability.
+- **🗑️ Streamlining**: Removed old display application and introduced cJSON library for enhanced JSON handling.
 
 <details>
 <summary>📜 Version History summary</summary>
+
+### v0.6.2
+- Firmware Version: v0.6.2
+- SDK: Added display module (UI/Image) & power save settings
+- SDK: Added ASR and LLM text retrieval capability
+- Optimized 30s screen auto-off logic
+- Upgraded to GPIO Hub architecture
+- Optimized 3D model structure
+- Added cJSON, removed old display app
 
 ### v0.6.1
 - Firmware Version: v0.6.1
@@ -395,4 +403,4 @@ Made with ❤️ by the open-source community
 
 ---
 
-**Last Updated**: 2026-01-08 | **Version**: v0.6.1
+**Last Updated**: 2026-01-19 | **Version**: v0.6.2
