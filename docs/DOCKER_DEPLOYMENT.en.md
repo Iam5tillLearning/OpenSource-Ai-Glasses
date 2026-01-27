@@ -73,25 +73,25 @@ File list:
 - `aiglasses_rv1106b_dev_docker.tar` - Complete image
 - `aiglasses_rv1106b_bare_docker.tar` - Bare image (optional)
 
-### 2. Load Image
+### 2. Import Image
 
-After downloading, load the image:
+After downloading, import the image:
 
-**Load Complete Image**:
+**Import Complete Image**:
 ```bash
-docker load -i aiglasses_rv1106b_dev_docker.tar
+docker import aiglasses_rv1106b_dev_docker.tar aiglasses/rk-rv1106b:ready
 ```
 
-**Load Bare Image** (optional):
+**Import Bare Image** (optional):
 ```bash
-docker load -i aiglasses_rv1106b_bare_docker.tar
+docker import aiglasses_rv1106b_bare_docker.tar aiglasses/rk-rv1106b-bare:ready
 ```
 
 **Note**: Replace the filename with your actual downloaded filename.
 
 ### 3. Run Container
 
-After loading, run the container:
+After importing, run the container:
 
 **Using Complete Image**:
 ```bash
@@ -385,9 +385,9 @@ adb shell "cd /userdata && chmod +x myapp && ./myapp"
 docker exec -it rk1106_dev bash -l
 ```
 
-### 2. Image Load Failed
+### 2. Image Import Failed
 
-**Problem**: `docker load` command reports error
+**Problem**: `docker import` command reports error
 
 **Solutions**:
 - Check if tar file downloaded completely (can compare file sizes)

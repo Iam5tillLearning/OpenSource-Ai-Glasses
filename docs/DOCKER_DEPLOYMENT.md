@@ -73,19 +73,19 @@ docker run -it \
 - `aiglass_dev_env.tar.gz` - 系统SDK压缩包
 - `aiglasses_rv1106b_bare_docker.tar` - Bare镜像
 
-### 2. 加载镜像
+### 2. 导入镜像
 
-下载完成后，使用以下命令加载镜像：
+下载完成后，使用以下命令导入镜像：
 
 ```bash
-docker load -i aiglasses_rv1106b_bare_docker.tar
+docker import aiglasses_rv1106b_bare_docker.tar aiglasses/rk-rv1106b-bare:v0.6.1
 ```
 
 **注意**: 请将文件名替换为你实际下载的文件名。
 
 ### 3. 运行容器
 
-加载完成后，运行容器（需挂载系统SDK目录）：
+导入完成后，运行容器（需挂载系统SDK目录）：
 
 ```bash
 docker run -it \
@@ -319,9 +319,9 @@ adb shell "cd /userdata && chmod +x myapp && ./myapp"
 docker exec -it rk1106_dev bash -l
 ```
 
-### 2. 镜像加载失败
+### 2. 镜像导入失败
 
-**问题**: `docker load` 命令报错
+**问题**: `docker import` 命令报错
 
 **解决方案**:
 - 检查 tar 文件是否下载完整（可以对比文件大小）
