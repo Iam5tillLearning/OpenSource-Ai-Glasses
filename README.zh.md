@@ -20,10 +20,12 @@
 
 这是一个基于Linux的开源智能眼镜工程，目前处于早期阶段，文档完善度45%。
 
-**开发者交流群**（微信扫码加入）| **联系作者**: iam5tilllearning@foxmail.com
+**开发者交流群** | **联系作者**: iam5tilllearning@foxmail.com
 
-
-<img width="200" alt="微信开发者交流群" src="docs/Images/weixin.png" />
+| 微信交流群 | Discord社区 |
+|:---:|:---:|
+| <img width="200" alt="微信开发者交流群" src="docs/Images/weixin.png" /> | <a href="https://discord.gg/7KqjKFZ7xA"><img width="200" alt="Discord社区" src="docs/Images/discord.jpg" /></a> |
+| 扫码加入微信群 | [加入Discord](https://discord.gg/7KqjKFZ7xA) |
 
 
 

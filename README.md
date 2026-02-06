@@ -20,10 +20,12 @@
 
 This is a Linux-based open-source smart glasses project in early development stage (45% documentation completeness).
 
-**Developer Community** (Scan to join WeChat group) | **Contact**: iam5stilllearning@foxmail.com
+**Developer Community** | **Contact**: iam5tilllearning@foxmail.com
 
-
-<img width="200" alt="WeChat Developer Group" src="docs/Images/weixin.png" />
+| WeChat Group | Discord Community |
+|:---:|:---:|
+| <img width="200" alt="WeChat Developer Group" src="docs/Images/weixin.png" /> | <a href="https://discord.gg/7KqjKFZ7xA"><img width="200" alt="Discord Community" src="docs/Images/discord.jpg" /></a> |
+| Scan to join WeChat group | [Join Discord](https://discord.gg/7KqjKFZ7xA) |
 
 
 
