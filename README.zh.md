@@ -10,7 +10,7 @@
 
 [![Build Status](https://img.shields.io/badge/build-passing-brightgreen.svg)](https://github.com/ezxrdev/OpenSource-Ai-Glasses/actions)
 [![License](https://img.shields.io/badge/license-Apache%202.0-blue.svg)](LICENSE)
-[![Version](https://img.shields.io/badge/version-0.6.2-green.svg)](https://github.com/Iam5tilllearning/OpenSource-Ai-Glasses/releases)
+[![Version](https://img.shields.io/badge/version-0.6.3-green.svg)](https://github.com/Iam5tilllearning/OpenSource-Ai-Glasses/releases)
 
 
 ---
@@ -35,19 +35,26 @@
 [**点击这里购买开发套件**](https://item.taobao.com/item.htm?id=1007109700786) — *预装固件，开箱即用*
 
 > [!CAUTION]
-> **固件兼容性提示**：v0.6.2 版本固件**仅适配 2026年1月1日之后生产的硬件**。如果您的设备是在此日期之前购买/生产的，请使用 v0.6.0 及更早版本的固件。
+> **固件兼容性提示**：v0.6.3 版本固件**仅适配 2026年1月1日之后生产的硬件**。如果您的设备是在此日期之前购买/生产的，请使用 v0.6.0 及更早版本的固件。
 
-## ✅ 当前版本概要 (v0.6.2)
+## ✅ 当前版本概要 (v0.6.3)
 
-- 适配固件版本：v0.6.2。兼容 2026年1月1日之后生产的新硬件。
-- 📱 **显示增强**：SDK新增显示模块，支持显示UI和图片，并可设置屏幕节能超时，优化了30秒无操作自动熄屏逻辑。
-- 🗣️ **文本交互**：SDK新增获取ASR和LLM文本的能力，并提供了新的示例（参考 `Text_Event_Client_API.md`）。
-- 🛠️ **架构升级**：采用全新的 GPIO Hub 架构，增强了系统的稳定性和可扩展性。
-- 🏗️ **结构优化**：优化了眼镜的3D模型设计，结构更加稳定。
-- 🗑️ **精简优化**：移除了旧的显示应用，引入 cJSON 第三方库以增强JSON处理能力。
+- 适配固件版本：v0.6.3。兼容 2026年1月1日之后生产的新硬件。
+- **蓝牙功能**：蓝牙功能现已可用！（注意：根据测试，小米手机无法正常使用）
+- **蓝牙名称**：`OSAIG`（BLE使用相同名称）
+- **使用说明**：刷入固件后，断开电源，重新上电，等待语音提示后即可进行蓝牙配对。
+
+> [!WARNING]
+> 如果带显示屏的眼镜刷入此版本固件（急于测试蓝牙功能的用户），您需要自行处理显示相关问题。下一个固件版本将在几天内解决此问题。
 
 <details>
 <summary>📜 版本历史概要</summary>
+
+### v0.6.3
+- 适配固件版本：v0.6.3
+- 新增蓝牙功能（蓝牙名称：OSAIG）
+- 注意：小米手机存在兼容性问题
+- 显示屏版本用户需自行处理显示问题
 
 ### v0.6.2
 - 适配固件版本：v0.6.2

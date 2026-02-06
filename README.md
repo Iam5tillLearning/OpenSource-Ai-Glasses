@@ -10,7 +10,7 @@
 
 [![Build Status](https://img.shields.io/badge/build-passing-brightgreen.svg)](https://github.com/ezxrdev/OpenSource-Ai-Glasses/actions)
 [![License](https://img.shields.io/badge/license-Apache%202.0-blue.svg)](LICENSE)
-[![Version](https://img.shields.io/badge/version-0.6.2-green.svg)](https://github.com/Iam5tilllearning/OpenSource-Ai-Glasses/releases)
+[![Version](https://img.shields.io/badge/version-0.6.3-green.svg)](https://github.com/Iam5tilllearning/OpenSource-Ai-Glasses/releases)
 
 
 ---
@@ -35,20 +35,27 @@ This is a Linux-based open-source smart glasses project in early development sta
 [**Get Dev Kit Here**](https://www.ebay.com/itm/136920980546) — *Pre-installed firmware, ready to use*
 
 > [!CAUTION]
-> **Firmware Compatibility Notice**: v0.6.2 firmware is **only compatible with hardware produced after January 1, 2026**. If your device was purchased/produced before this date, please use v0.6.0 or earlier firmware versions.
+> **Firmware Compatibility Notice**: v0.6.3 firmware is **only compatible with hardware produced after January 1, 2026**. If your device was purchased/produced before this date, please use v0.6.0 or earlier firmware versions.
 
-## ✅ Current Version Features (v0.6.2)
+## ✅ Current Version Features (v0.6.3)
 
-- **Firmware Version: v0.6.2**
+- **Firmware Version: v0.6.3**
   - Compatible with new hardware produced after January 1, 2026.
-- **📱 Display Enhancements**: SDK now includes a display module supporting UI and images, configurable power-save timeout, and optimized 30-second auto-off logic.
-- **🗣️ Text Interaction**: SDK can now retrieve ASR and LLM text, with new examples (see `Text_Event_Client_API.md`).
-- **🛠️ Architecture Upgrade**: Adopted new GPIO Hub architecture for better system stability and scalability.
-- **🏗️ Structural Optimization**: Optimized 3D model of the glasses for improved stability.
-- **🗑️ Streamlining**: Removed old display application and introduced cJSON library for enhanced JSON handling.
+- **Bluetooth Support**: Bluetooth is now available! (Note: Based on our testing, Xiaomi phones cannot be used properly)
+- **Bluetooth Name**: `OSAIG` (BLE uses the same name)
+- **Instructions**: Flash the firmware, unplug from power after update completes, power on again, wait for voice prompt, then proceed with Bluetooth pairing.
+
+> [!WARNING]
+> If glasses with a display are flashed with this firmware version (for those eager to test Bluetooth functionality), you will need to handle display-related issues on your own. The next firmware release will address this within the next few days.
 
 <details>
 <summary>📜 Version History summary</summary>
+
+### v0.6.3
+- Firmware Version: v0.6.3
+- Bluetooth support added (Bluetooth Name: OSAIG)
+- Note: Xiaomi phones have compatibility issues
+- Display version users need to handle display issues manually
 
 ### v0.6.2
 - Firmware Version: v0.6.2
