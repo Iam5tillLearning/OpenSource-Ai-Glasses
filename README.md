@@ -173,6 +173,12 @@ See [Docker Deployment Guide](docs/DOCKER_DEPLOYMENT.en.md) for details.
 ### 2. AI Conversation
 - **Operation**: After configuration, long press the left temple button to speak, release to send, and wait for the AI response.
 
+> [!WARNING]
+> **Privacy and License Notice**
+> - **License**: The internal components `ai-core` and `guard` are under a commercial license and are **not open-source**.
+> - **Privacy**: During AI conversations, `ai-core` will capture photos and upload them to cloud servers to assist with AI voice recognition logic. These images are used for real-time processing only and **will not be persistently stored**.
+> - **Developer Advice**: Privacy-conscious developers should avoid using `ai-core` for development. We recommend using the **Rockchip SDK** instead.
+
 
 ## 📦 SDK Development
 
