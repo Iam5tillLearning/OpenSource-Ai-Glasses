@@ -178,6 +178,7 @@ See [Docker Deployment Guide](docs/DOCKER_DEPLOYMENT.en.md) for details.
 > - **License**: The internal components `ai-core` and `guard` are under a commercial license and are **not open-source**.
 > - **Privacy**: During AI conversations, `ai-core` will capture photos and upload them to cloud servers to assist with AI voice recognition logic. These images are used for real-time processing only and **will not be persistently stored**.
 > - **Developer Advice**: Privacy-conscious developers should avoid using `ai-core` for development. We recommend using the **Rockchip SDK** instead.
+> - **Using Rockchip SDK**: To develop or test using the Rockchip SDK, you must remove or rename the startup script `/etc/init.d/S53_guard`. After doing so, power off and restart the device. Upon booting, use the `top` command to verify that `ai-core` and `guard` processes are no longer running.
 
 
 ## 📦 SDK Development

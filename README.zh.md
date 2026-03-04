@@ -179,6 +179,7 @@ docker cp rk1106_dev:/opt/aiglass_dev_env/output/image/update.img ./update.img
 > - **商业协议**：内部核心组件 `ai-core` 和 `guard` 为商业协议项目，**不予开源**。
 > - **隐私提示**：在AI对话时，`ai-core` 内部会调用摄像头拍照并上传到云端服务器，目的是用于配合语音进行AI识别类的逻辑。该图像仅作即时分析，**并不会持久化保存**。
 > - **开发者建议**：在意隐私的开发者请避免使用 `ai-core` 进行开发，建议使用 **rockchip sdk** 自行进行开发。
+> - **使用 Rockchip SDK 开发**：对于希望通过 Rockchip SDK 进行测试或开发的开发者，您需要移除或重命名 `/etc/init.d/S53_guard` 启动脚本。随后请断电并重新上电设备，开机后使用 `top` 命令确认 `ai-core` 和 `guard` 进程已不再运行。
 
 
 ## 📦 SDK开发
