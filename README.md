@@ -32,7 +32,10 @@ This is a Linux-based open-source smart glasses project in early development sta
 
 ## 🛒 Get Dev Kit
 
-[**Get Dev Kit Here**](https://www.ebay.com/itm/136920980546) — *Pre-installed firmware, ready to use*
+[**Get Dev Kit Here**](https://item.taobao.com/item.htm?id=1007109700786) — *Pre-installed firmware, ready to use*
+
+> [!NOTE]
+> **For international buyers**: Please find your own purchasing agent or package forwarding company for now. A global shipping platform is being set up and is expected to go live in about one week. We apologize for the inconvenience.
 
 > [!CAUTION]
 > **Firmware Compatibility Notice**: v0.6.3 firmware is **only compatible with hardware produced after January 1, 2026**. If your device was purchased/produced before this date, please use v0.6.0 or earlier firmware versions.
@@ -174,11 +177,13 @@ See [Docker Deployment Guide](docs/DOCKER_DEPLOYMENT.en.md) for details.
 - **Operation**: After configuration, long press the left temple button to speak, release to send, and wait for the AI response.
 
 > [!WARNING]
-> **Privacy and License Notice**
-> - **License**: The internal components `ai-core` and `guard` are under a commercial license and are **not open-source**.
-> - **Privacy**: During AI conversations, `ai-core` will capture photos and upload them to cloud servers to assist with AI voice recognition logic. These images are used for real-time processing only and **will not be persistently stored**.
-> - **Developer Advice**: Privacy-conscious developers should avoid using `ai-core` for development. We recommend using the **Rockchip SDK** instead.
-> - **Using Rockchip SDK**: To develop or test using the Rockchip SDK, you must remove or rename the startup script `/etc/init.d/S53_guard`. After doing so, power off and restart the device. Upon booting, use the `top` command to verify that `ai-core` and `guard` processes are no longer running.
+> **Bundled AI Service Notice**
+> - **Optional Bundled Components**: `ai-core` and `guard` are pre-installed helper binaries for out-of-box AI experience. They are optional and are **not required** for open-source smart glasses development.
+> - **Development Independence**: Developers can build their own solution entirely with the public SDK (camera/GPIO/audio/IPC) without depending on `ai-core` or `guard`.
+> - **Ease of Development**: `ai-core` runs as a system service and centrally manages camera/microphone/speaker/display/GPIO hardware. If your requirements match the built-in workflow, developing on top of `ai-core` is usually simpler, more developer-friendly, and faster than building everything directly with the Rockchip SDK.
+> - **Positioning**: This is not about pushing `ai-core`. We include our commercially deployed service in this open-source project as an optional convenience to help developers get started faster, and you can choose not to use it.
+> - **Privacy**: If `ai-core` is enabled, AI conversations may capture photos and upload them to cloud services for real-time recognition. These images are used for real-time processing only and **will not be persistently stored**.
+> - **Disable Bundled Services (Rockchip SDK mode)**: Remove or rename `/etc/init.d/S53_guard`, then power off and restart the device. After boot, use `top` to verify `ai-core` and `guard` are no longer running.
 
 
 ## 📦 SDK Development
