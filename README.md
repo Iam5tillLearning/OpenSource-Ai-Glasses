@@ -125,7 +125,7 @@ This is a Linux-based open-source smart glasses project in early development sta
 - ⚡ **Performance**: Single Cortex-A7 core, 8GB storage
 - 🔋 **Battery**: 180mAh, 2hr music, 3hr display, 45min recording
 - ⚖️ **Lightweight**: Only 43g
-- 🧠 **Sensors**: Optional geomagnetic sensor, IMU
+- 🧠 **Sensors**: Optional IMU only (geomagnetic sensor is no longer supported)
 - 🐧 **OS**: Embedded Linux-based system
 
 ## 🚀 Quick Start
