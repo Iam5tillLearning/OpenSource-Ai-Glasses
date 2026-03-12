@@ -39,7 +39,10 @@ You can develop this project in two ways:
 - Use your own RV1106B-based development board to work on the open-source system and software stack.
 - Use our deeply integrated AI glasses kit if you want a faster bring-up path with pre-wired peripherals, preloaded firmware, and less hardware integration work.
 
-[**Optional: Get the Official AI Glasses Kit**](https://www.ebay.com/itm/136920980546) — *Recommended for faster bring-up, not required for development*
+[**Optional: Get the Official AI Glasses Kit**](https://item.taobao.com/item.htm?id=1007109700786) — *Recommended for faster bring-up, not required for development*
+
+> [!NOTE]
+> **For international buyers**: Please find your own purchasing agent or package forwarding company for now. A global shipping platform is being set up and is expected to go live in about one week. We apologize for the inconvenience.
 
 > [!CAUTION]
 > **Official Hardware Compatibility Notice**: The v0.6.3 reference firmware is **only compatible with integrated hardware produced after January 1, 2026**. If your official kit or same-reference hardware was purchased/produced before this date, please use v0.6.0 or earlier firmware versions.
@@ -129,7 +132,7 @@ You can develop this project in two ways:
 - ⚡ **Performance**: Single Cortex-A7 core, 8GB storage
 - 🔋 **Battery**: 180mAh, 2hr music, 3hr display, 45min recording
 - ⚖️ **Lightweight**: Only 43g
-- 🧠 **Sensors**: Optional geomagnetic sensor, IMU
+- 🧠 **Sensors**: Optional IMU only (geomagnetic sensor is no longer supported)
 - 🐧 **OS**: Embedded Linux-based system
 
 ## 🚀 Quick Start
@@ -179,6 +182,15 @@ See [Docker Deployment Guide](docs/DOCKER_DEPLOYMENT.en.md) for details.
 
 ### 2. AI Conversation
 - **Operation**: After configuration, long press the left temple button to speak, release to send, and wait for the AI response.
+
+> [!WARNING]
+> **Bundled AI Service Notice**
+> - **Optional Bundled Components**: `ai-core` and `guard` are pre-installed helper binaries for out-of-box AI experience. They are optional and are **not required** for open-source smart glasses development.
+> - **Development Independence**: Developers can build their own solution entirely with the public SDK (camera/GPIO/audio/IPC) without depending on `ai-core` or `guard`.
+> - **Ease of Development**: `ai-core` runs as a system service and centrally manages camera/microphone/speaker/display/GPIO hardware. If your requirements match the built-in workflow, developing on top of `ai-core` is usually simpler, more developer-friendly, and faster than building everything directly with the Rockchip SDK.
+> - **Positioning**: This is not about pushing `ai-core`. We include our commercially deployed service in this open-source project as an optional convenience to help developers get started faster, and you can choose not to use it.
+> - **Privacy**: If `ai-core` is enabled, AI conversations may capture photos and upload them to cloud services for real-time recognition. These images are used for real-time processing only and **will not be persistently stored**.
+> - **Disable Bundled Services (Rockchip SDK mode)**: Remove or rename `/etc/init.d/S53_guard`, then power off and restart the device. After boot, use `top` to verify `ai-core` and `guard` are no longer running.
 
 
 ## 📦 SDK Development
