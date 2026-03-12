@@ -20,6 +20,8 @@
 
 This is a Linux-based open-source smart glasses project in early development stage (45% documentation completeness).
 
+The open-source scope is primarily the system software and application stack. Development is not limited to our integrated hardware kit: any RV1106B-based development board can be used as a starting point, with peripheral adaptation based on your own hardware design.
+
 **Developer Community** | **Contact**: iam5tilllearning@foxmail.com
 
 | WeChat Group | Discord Community |
@@ -30,12 +32,17 @@ This is a Linux-based open-source smart glasses project in early development sta
 
 
 
-## 🛒 Get Dev Kit
+## 🧩 Hardware Options
 
-[**Get Dev Kit Here**](https://www.ebay.com/itm/136920980546) — *Pre-installed firmware, ready to use*
+You can develop this project in two ways:
+
+- Use your own RV1106B-based development board to work on the open-source system and software stack.
+- Use our deeply integrated AI glasses kit if you want a faster bring-up path with pre-wired peripherals, preloaded firmware, and less hardware integration work.
+
+[**Optional: Get the Official AI Glasses Kit**](https://www.ebay.com/itm/136920980546) — *Recommended for faster bring-up, not required for development*
 
 > [!CAUTION]
-> **Firmware Compatibility Notice**: v0.6.3 firmware is **only compatible with hardware produced after January 1, 2026**. If your device was purchased/produced before this date, please use v0.6.0 or earlier firmware versions.
+> **Official Hardware Compatibility Notice**: The v0.6.3 reference firmware is **only compatible with integrated hardware produced after January 1, 2026**. If your official kit or same-reference hardware was purchased/produced before this date, please use v0.6.0 or earlier firmware versions.
 
 ## ✅ Current Version Features (v0.6.3)
 
@@ -127,7 +134,7 @@ This is a Linux-based open-source smart glasses project in early development sta
 
 ## 🚀 Quick Start
 
-> **💡 Note**: Your device comes with pre-installed firmware and is ready to use. You only need to rebuild and flash firmware when modifying the system or upgrading.
+> **💡 Note**: If you purchased the official AI glasses kit, it comes with pre-installed firmware and is ready to use. If you are developing on your own RV1106B board, start from the Docker environment and flashing guide below.
 
 ### Using Docker Development Environment (Recommended)
 
