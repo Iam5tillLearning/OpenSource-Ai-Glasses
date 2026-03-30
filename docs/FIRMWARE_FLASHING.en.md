@@ -160,7 +160,17 @@ uname -a
 1. Check if device display is normal
 2. Check if camera function is normal
 3. Check if audio function is normal
-4. Check if network connection is normal
+4. Complete connectivity validation by following "First-time Wi-Fi Provisioning Check" below
+
+### First-time Wi-Fi Provisioning Check (Important)
+
+1. Make sure your router has 2.4GHz Wi-Fi enabled, and your phone is connected to the target 2.4GHz network.
+2. On an Android phone, open Wi-Fi settings and tap "Share" on the current network to generate a Wi-Fi QR code.
+3. Put the glasses into provisioning mode (auto when booted without network, or manually by short-pressing the button 10 times).
+4. Show the QR code on your phone to the glasses for scanning, then wait for a successful provisioning prompt.
+5. If the QR code is from a 5GHz/5G network, the device cannot connect. Switch to 2.4GHz and share again.
+
+> The mobile app is coming soon and will provide an easier provisioning entry.
 
 ## 🔄 Complete Flashing Process Flow
 

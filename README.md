@@ -190,6 +190,9 @@ See [Development Environment Setup Guide](docs/ENV_SETUP.en.md) for details.
 ### 1. Network Configuration
 - **Automatic**: The device automatically enters network configuration mode on boot.
 - **Manual**: At any time, continuously short press the button 10 times to manually enter network configuration mode.
+- **Current method**: Use an Android phone to share a Wi-Fi QR code, then let the glasses scan the QR code to connect.
+- **Band limitation**: Only 2.4GHz Wi-Fi is supported. 5GHz/5G Wi-Fi is not supported.
+- **App status**: The mobile app is coming soon and will provide an easier provisioning flow.
 
 ### 2. AI Conversation
 - **Operation**: After configuration, long press the left temple button to speak, release to send, and wait for the AI response.
