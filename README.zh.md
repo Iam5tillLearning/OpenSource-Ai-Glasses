@@ -10,7 +10,7 @@
 
 [![Build Status](https://img.shields.io/badge/build-passing-brightgreen.svg)](https://github.com/ezxrdev/OpenSource-Ai-Glasses/actions)
 [![License](https://img.shields.io/badge/license-Apache%202.0-blue.svg)](LICENSE)
-[![Version](https://img.shields.io/badge/version-0.6.3-green.svg)](https://github.com/Iam5tilllearning/OpenSource-Ai-Glasses/releases)
+[![Version](https://img.shields.io/badge/version-0.6.5-green.svg)](https://github.com/Iam5tilllearning/OpenSource-Ai-Glasses/releases)
 
 
 ---
@@ -42,20 +42,31 @@
 [**可选：购买官方 AI 眼镜套件**](https://item.taobao.com/item.htm?id=1007109700786) — *适合快速上手，但不是开发前提*
 
 > [!CAUTION]
-> **官方硬件兼容性提示**：v0.6.3 参考固件**仅适配 2026年1月1日之后生产的一体化硬件**。如果您的官方套件或同参考设计硬件是在此日期之前购买/生产的，请使用 v0.6.0 及更早版本的固件。
+> **官方硬件兼容性提示**：v0.6.x 参考固件**仅适配 2026年1月1日之后生产的一体化硬件**。如果您的官方套件或同参考设计硬件是在此日期之前购买/生产的，请使用 v0.6.0 及更早版本的固件。
 
-## ✅ 当前版本概要 (v0.6.3)
+## ✅ 当前版本概要 (v0.6.5)
 
-- 适配固件版本：v0.6.3。兼容 2026年1月1日之后生产的新硬件。
-- **蓝牙功能**：蓝牙功能现已可用！（注意：根据测试，小米手机无法正常使用）
-- **蓝牙名称**：`OSAIG`（BLE使用相同名称）
-- **使用说明**：刷入固件后，断开电源，重新上电，等待语音提示后即可进行蓝牙配对。
-
-> [!WARNING]
-> 如果带显示屏的眼镜刷入此版本固件（急于测试蓝牙功能的用户），您需要自行处理显示相关问题。下一个固件版本将在几天内解决此问题。
+- 适配固件版本：v0.6.5。兼容 2026年1月1日之后生产的新硬件。
+- 重点改进：整体稳定性提升，重点增强 AI Core 服务稳定性与可靠性。
+- 质量优化：增强边界异常处理，并进行通用内部优化与清理。
+- 发布形态：从该版本起提供两类固件，请按设备型号选择下载：
+  - 音频版：`Firmware_RV1106B_RK962_IMX219.AudioVersion.img`
+  - 显示版：`Firmware_RV1106B_RK962_IMX219.DisplayVersion.img`
+- Release 详情：<https://github.com/Iam5tillLearning/OpenSource-Ai-Glasses/releases/tag/v0.6.5>
 
 <details>
 <summary>📜 版本历史概要</summary>
+
+### v0.6.5（2026-03-16）
+- 重点修复项目稳定性问题，特别是 AI Core 服务稳定性与可靠性。
+- 增强异常与边界场景处理，进行内部优化与清理。
+- 新增双固件发布形态：AudioVersion 与 DisplayVersion（按设备选择下载）。
+
+### v0.6.4（2026-02-10）
+- 显示能力版本功能升级，新增系统级 `display-service`。
+- 与应用开发 SDK 集成，支持第三方应用图形渲染与显示。
+- 新增实验性 `launcher-app`（图形启动与交互示例）。
+- `display-service` 与 `launcher-app` 均开源，可用于学习、验证与二次开发。
 
 ### v0.6.3
 - 适配固件版本：v0.6.3
@@ -133,41 +144,41 @@
 
 ## 🚀 快速开始
 
-> **💡 提示**: 如果您购买的是官方 AI 眼镜套件，设备已预装固件，可直接使用；如果您使用自己的 RV1106B 开发板，请从下方 Docker 开发环境和固件烧录流程开始。
+> **💡 提示**: 如果您购买的是官方 AI 眼镜套件，设备已预装固件，可直接使用；如果您使用自己的 RV1106B 开发板，请从下方主机开发环境和固件烧录流程开始。
 
-### 使用Docker开发环境（推荐）
+### 使用主机开发环境（推荐）
 
-推荐使用Docker作为开发环境，支持固件开发和应用程序开发。从v0.6.1开始，项目仅提供Bare镜像。
+推荐直接在 Ubuntu/Debian 主机，或 Windows 的 WSL2 Ubuntu/Debian 环境中完成固件开发和应用开发。
 
-> **说明**: Bare镜像不包含系统SDK，需要将宿主机的系统SDK目录挂载到容器中。这种方式适合使用VS Code、Claude Code、Cursor等IDE进行开发，可以享受代码智能提示、AI辅助编程等功能。
+> **开发环境唯一获取方式**: `https://github.com/makevary/AIGLASS_DEV_ENV`
 
 ```bash
-# 拉取镜像
-docker pull aiglasses/rk-rv1106b-bare:v0.6.1
+# 获取开发环境
+git clone https://github.com/makevary/AIGLASS_DEV_ENV.git
+cd AIGLASS_DEV_ENV
 
-# 下载并解压系统SDK（下载地址：[国内用户](https://pan.quark.cn/s/efe46ae65bfd) | [海外用户](https://drive.google.com/drive/folders/1mZnHhKv-sV4owZLXMEmUNvj3Vq2AGbXa?usp=drive_link)）
-# 将SDK解压到本地目录，例如：~/DockerMountPoint/aiglass_dev_env
+# 修复/安装编译依赖（支持 Debian/Ubuntu 与 WSL2 的 Ubuntu/Debian）
+./setup_build_env.sh
 
-# 运行容器并挂载系统SDK目录
-docker run -it \
-  -v /path/to/aiglass_dev_env:/opt/aiglass_dev_env \
-  --name rk1106_dev \
-  aiglasses/rk-rv1106b-bare:v0.6.1 bash -l
-
-# 编译固件（仅在需要修改系统时）
+# 编译固件（以下两条命令二选一）
 ./build.sh
+./build.sh --without-display
 
-# 拷贝固件到本机（仅在需要烧录时）
-docker cp rk1106_dev:/opt/aiglass_dev_env/output/image/update.img ./update.img
+# 固件输出
+ls -lh output/image/update.img
 ```
 
-> **提示**: 如果您需要重新进入已退出的容器，请运行 `docker start rk1106_dev` 启动容器，然后使用 `docker exec -it rk1106_dev bash -l` 进入。
+编译参数选择：
+- 设备带显示能力：`./build.sh`
+- 设备不带显示能力：`./build.sh --without-display`
 
-详细说明请查看 [Docker部署指南](docs/DOCKER_DEPLOYMENT.md)
+> **说明**: `setup_build_env.sh` 使用 `apt-get` 安装依赖，仅支持 Debian/Ubuntu 系统（含 WSL2 中的 Ubuntu/Debian）。
+
+详细说明请查看 [开发环境搭建指南](docs/ENV_SETUP.md)
 
 **固件烧录**: 固件编译完成后，请参考 [固件烧录指南](docs/FIRMWARE_FLASHING.md) 将固件烧录到设备。
 
-**应用开发**: Docker环境提供了完整的开发工具链，可用于开发用户级应用程序。详细说明请查看 [应用开发指南](docs/APPLICATION_DEVELOPMENT.md)。
+**应用开发**: 主机环境提供完整开发链路，可用于开发用户级应用程序。详细说明请查看 [应用开发指南](docs/APPLICATION_DEVELOPMENT.md)。
 
 
 
@@ -220,7 +231,7 @@ docker cp rk1106_dev:/opt/aiglass_dev_env/output/image/update.img ./update.img
 ## 📚 文档
 
 - [📖 用户使用手册](docs/USER_GUIDE.md) - 眼镜组装完毕之后读这个
-- [🐳 Docker部署指南](docs/DOCKER_DEPLOYMENT.md) | [English](docs/DOCKER_DEPLOYMENT.en.md)
+- [🧰 开发环境搭建指南](docs/ENV_SETUP.md) | [English](docs/ENV_SETUP.en.md)
 - [💻 应用开发指南](docs/APPLICATION_DEVELOPMENT.md) | [English](docs/APPLICATION_DEVELOPMENT.en.md)
 - [⚡ 固件烧录指南](docs/FIRMWARE_FLASHING.md) | [English](docs/FIRMWARE_FLASHING.en.md)
 
@@ -229,8 +240,18 @@ docker cp rk1106_dev:/opt/aiglass_dev_env/output/image/update.img ./update.img
 ### 从源码构建
 
 ```bash
-# 安装依赖
-待完善
+# 获取完整开发环境
+git clone https://github.com/makevary/AIGLASS_DEV_ENV.git
+cd AIGLASS_DEV_ENV
+
+# 安装/修复编译依赖
+./setup_build_env.sh
+
+# 编译固件
+./build.sh
+
+# 固件产物
+ls -lh output/image/update.img
 ```
 
 ### 开发工具
@@ -335,20 +356,22 @@ docker cp rk1106_dev:/opt/aiglass_dev_env/output/image/update.img ./update.img
 ### 如何贡献
 
 > [!IMPORTANT]
-> **克隆目录要求**：如果您需要编译 `src` 或 `samples` 目录下的代码，**必须将本项目克隆到 `aiglass_dev_env` 目录下**。这是因为编译系统依赖于与系统 SDK 的相对路径关系。
+> **开发环境唯一获取方式**：请从 `https://github.com/makevary/AIGLASS_DEV_ENV` 获取开发环境。
+>
+> **克隆目录要求**：如果您需要编译 `src` 或 `samples` 目录下的代码，请在 `AIGLASS_DEV_ENV` 开发环境根目录中克隆本项目，以满足编译系统相对路径依赖。
 >
 > 正确的目录结构示例：
 > ```
-> ~/DockerMountPoint/aiglass_dev_env/
+> /path/to/AIGLASS_DEV_ENV/
 > ├── OpenSource-Ai-Glasses/    # 本项目
 > ├── luckfox-pico/             # 系统SDK
 > └── ...
 > ```
 
 1. 🍴 Fork 本仓库
-2. 📥 克隆您的 Fork 到本地（注意：需要克隆到 `aiglass_dev_env` 目录下），并初始化 submodule
+2. 📥 克隆您的 Fork 到本地（在 `AIGLASS_DEV_ENV` 根目录中执行），并初始化 submodule
    ```bash
-   cd /path/to/aiglass_dev_env  # 进入系统SDK所在的目录
+   cd /path/to/AIGLASS_DEV_ENV  # 进入开发环境根目录
    git clone https://github.com/YOUR_USERNAME/OpenSource-Ai-Glasses.git
    cd OpenSource-Ai-Glasses
    git submodule update --init --recursive
@@ -399,4 +422,4 @@ docker cp rk1106_dev:/opt/aiglass_dev_env/output/image/update.img ./update.img
 
 ---
 
-**最后更新**: 2026-01-19 | **版本**: v0.6.2
+**最后更新**: 2026-03-30 | **版本**: v0.6.5

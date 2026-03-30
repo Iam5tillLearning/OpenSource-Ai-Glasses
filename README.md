@@ -10,7 +10,7 @@
 
 [![Build Status](https://img.shields.io/badge/build-passing-brightgreen.svg)](https://github.com/ezxrdev/OpenSource-Ai-Glasses/actions)
 [![License](https://img.shields.io/badge/license-Apache%202.0-blue.svg)](LICENSE)
-[![Version](https://img.shields.io/badge/version-0.6.3-green.svg)](https://github.com/Iam5tilllearning/OpenSource-Ai-Glasses/releases)
+[![Version](https://img.shields.io/badge/version-0.6.5-green.svg)](https://github.com/Iam5tilllearning/OpenSource-Ai-Glasses/releases)
 
 
 ---
@@ -45,21 +45,32 @@ You can develop this project in two ways:
 > **For international buyers**: Please find your own purchasing agent or package forwarding company for now. A global shipping platform is being set up and is expected to go live in about one week. We apologize for the inconvenience.
 
 > [!CAUTION]
-> **Official Hardware Compatibility Notice**: The v0.6.3 reference firmware is **only compatible with integrated hardware produced after January 1, 2026**. If your official kit or same-reference hardware was purchased/produced before this date, please use v0.6.0 or earlier firmware versions.
+> **Official Hardware Compatibility Notice**: The v0.6.x reference firmware is **only compatible with integrated hardware produced after January 1, 2026**. If your official kit or same-reference hardware was purchased/produced before this date, please use v0.6.0 or earlier firmware versions.
 
-## ✅ Current Version Features (v0.6.3)
+## ✅ Current Version Features (v0.6.5)
 
-- **Firmware Version: v0.6.3**
+- **Firmware Version: v0.6.5**
   - Compatible with new hardware produced after January 1, 2026.
-- **Bluetooth Support**: Bluetooth is now available! (Note: Based on our testing, Xiaomi phones cannot be used properly)
-- **Bluetooth Name**: `OSAIG` (BLE uses the same name)
-- **Instructions**: Flash the firmware, unplug from power after update completes, power on again, wait for voice prompt, then proceed with Bluetooth pairing.
-
-> [!WARNING]
-> If glasses with a display are flashed with this firmware version (for those eager to test Bluetooth functionality), you will need to handle display-related issues on your own. The next firmware release will address this within the next few days.
+- **Stability Improvements**: Improved overall project stability, with focused hardening for AI Core service reliability.
+- **Quality Improvements**: Better edge-case handling and general internal optimization/cleanup.
+- **Release Variants**: Starting from v0.6.5, firmware is released in two variants:
+  - `Firmware_RV1106B_RK962_IMX219.AudioVersion.img`
+  - `Firmware_RV1106B_RK962_IMX219.DisplayVersion.img`
+- **Release Details**: <https://github.com/Iam5tillLearning/OpenSource-Ai-Glasses/releases/tag/v0.6.5>
 
 <details>
 <summary>📜 Version History summary</summary>
+
+### v0.6.5 (2026-03-16)
+- Fixed multiple stability issues across the project, with emphasis on AI Core service reliability.
+- Enhanced edge-case and unexpected failure handling.
+- Added two release variants: AudioVersion and DisplayVersion (choose by hardware type).
+
+### v0.6.4 (2026-02-10)
+- Display-enabled version feature upgrade with new system-level `display-service`.
+- Integrated with Application Development SDK for third-party graphical rendering and display.
+- Added experimental `launcher-app` demo for graphical interaction workflows.
+- Both `display-service` and `launcher-app` are fully open-sourced for learning and customization.
 
 ### v0.6.3
 - Firmware Version: v0.6.3
@@ -137,41 +148,41 @@ You can develop this project in two ways:
 
 ## 🚀 Quick Start
 
-> **💡 Note**: If you purchased the official AI glasses kit, it comes with pre-installed firmware and is ready to use. If you are developing on your own RV1106B board, start from the Docker environment and flashing guide below.
+> **💡 Note**: If you purchased the official AI glasses kit, it comes with pre-installed firmware and is ready to use. If you are developing on your own RV1106B board, start from the host setup and flashing guide below.
 
-### Using Docker Development Environment (Recommended)
+### Using Native Host Environment (Recommended)
 
-We recommend using Docker as the development environment for both firmware and application development. Starting from v0.6.1, only Bare image is provided.
+We recommend developing directly on Ubuntu/Debian hosts, or Ubuntu/Debian running in WSL2 on Windows.
 
-> **Note**: Bare image does not include the system SDK. You need to mount the host's system SDK directory to the container. This approach is ideal for development using VS Code, Claude Code, Cursor, etc., enabling intelligent code completion and AI-assisted programming.
+> **Single source for development environment**: `https://github.com/makevary/AIGLASS_DEV_ENV`
 
 ```bash
-# Pull image
-docker pull aiglasses/rk-rv1106b-bare:v0.6.1
+# Get development environment
+git clone https://github.com/makevary/AIGLASS_DEV_ENV.git
+cd AIGLASS_DEV_ENV
 
-# Download and extract system SDK (Download: [International](https://drive.google.com/drive/folders/1mZnHhKv-sV4owZLXMEmUNvj3Vq2AGbXa?usp=drive_link) | [Mainland China](https://pan.quark.cn/s/efe46ae65bfd))
-# Extract SDK to a local directory, e.g., ~/DockerMountPoint/aiglass_dev_env
+# Fix/install build dependencies (Debian/Ubuntu and WSL2 Debian/Ubuntu)
+./setup_build_env.sh
 
-# Run container with system SDK directory mounted
-docker run -it \
-  -v /path/to/aiglass_dev_env:/opt/aiglass_dev_env \
-  --name rk1106_dev \
-  aiglasses/rk-rv1106b-bare:v0.6.1 bash -l
-
-# Build firmware (only when modifying system)
+# Build firmware (choose one command only)
 ./build.sh
+./build.sh --without-display
 
-# Copy firmware to host (only when flashing needed)
-docker cp rk1106_dev:/opt/aiglass_dev_env/output/image/update.img ./update.img
+# Firmware output
+ls -lh output/image/update.img
 ```
 
-> **Note**: If you need to re-enter an exited container, run `docker start rk1106_dev` to start it, then use `docker exec -it rk1106_dev bash -l` to enter.
+Build option selection:
+- Device with display capability: `./build.sh`
+- Device without display capability: `./build.sh --without-display`
 
-See [Docker Deployment Guide](docs/DOCKER_DEPLOYMENT.en.md) for details.
+> **Note**: `setup_build_env.sh` relies on `apt-get`, so it supports Debian/Ubuntu systems (including Ubuntu/Debian in WSL2).
+
+See [Development Environment Setup Guide](docs/ENV_SETUP.en.md) for details.
 
 **Firmware Flashing**: After compilation, please refer to [Firmware Flashing Guide](docs/FIRMWARE_FLASHING.en.md) to flash the firmware to your device.
 
-**Application Development**: The Docker environment provides a complete development toolchain for building user-level applications. See [Application Development Guide](docs/APPLICATION_DEVELOPMENT.en.md) for details.
+**Application Development**: The host environment provides a complete development workflow for user-level applications. See [Application Development Guide](docs/APPLICATION_DEVELOPMENT.en.md) for details.
 
 
 ## 📖 Usage Guide
@@ -222,7 +233,7 @@ Please refer to the "Integration" section in the [SDK README](SDK/ai_glass_sdk/R
 ## 📚 Documentation
 
 - [📖 User Manual](docs/USER_GUIDE.en.md) - Read this after glasses assembly
-- [🐳 Docker Deployment Guide](docs/DOCKER_DEPLOYMENT.en.md) | [中文](docs/DOCKER_DEPLOYMENT.md)
+- [🧰 Development Environment Setup Guide](docs/ENV_SETUP.en.md) | [中文](docs/ENV_SETUP.md)
 - [💻 Application Development Guide](docs/APPLICATION_DEVELOPMENT.en.md) | [中文](docs/APPLICATION_DEVELOPMENT.md)
 - [⚡ Firmware Flashing Guide](docs/FIRMWARE_FLASHING.en.md) | [中文](docs/FIRMWARE_FLASHING.md)
 
@@ -231,20 +242,18 @@ Please refer to the "Integration" section in the [SDK README](SDK/ai_glass_sdk/R
 ### Build from Source
 
 ```bash
-# Install dependencies
-sudo apt-get update
-sudo apt-get install build-essential git cmake
+# Get the full development workspace
+git clone https://github.com/makevary/AIGLASS_DEV_ENV.git
+cd AIGLASS_DEV_ENV
 
-# Clone and build
-git clone https://github.com/Iam5tillLearning/OpenSource-Ai-Glasses.git
-cd OpenSource-Ai-Glasses
-git submodule update --init --recursive  # Initialize third-party dependencies
-mkdir build && cd build
-cmake ..
-make -j4
+# Install/fix build dependencies
+./setup_build_env.sh
 
-# Flash to device
-sudo make flash
+# Build firmware
+./build.sh
+
+# Output image
+ls -lh output/image/update.img
 ```
 
 ### Development Tools
@@ -367,20 +376,22 @@ We welcome contributions!
 ### How to Contribute
 
 > [!IMPORTANT]
-> **Clone Directory Requirement**: If you need to compile the code in the `src` or `samples` directories, **you MUST clone this project into the `aiglass_dev_env` directory**. This is because the build system relies on relative path relationships with the system SDK.
+> **Development environment single source**: obtain it from `https://github.com/makevary/AIGLASS_DEV_ENV`.
+>
+> **Clone Directory Requirement**: If you need to compile code in `src` or `samples`, clone this project under the `AIGLASS_DEV_ENV` workspace root to satisfy build-time relative path dependencies.
 >
 > Correct directory structure example:
 > ```
-> ~/DockerMountPoint/aiglass_dev_env/
+> /path/to/AIGLASS_DEV_ENV/
 > ├── OpenSource-Ai-Glasses/    # This project
 > ├── luckfox-pico/             # System SDK
 > └── ...
 > ```
 
 1. 🍴 Fork the repository
-2. 📥 Clone your fork locally (Note: must clone into the `aiglass_dev_env` directory), and initialize submodules
+2. 📥 Clone your fork locally (run under the `AIGLASS_DEV_ENV` workspace root), and initialize submodules
    ```bash
-   cd /path/to/aiglass_dev_env  # Navigate to the directory containing the system SDK
+   cd /path/to/AIGLASS_DEV_ENV  # Navigate to the development workspace root
    git clone https://github.com/YOUR_USERNAME/OpenSource-Ai-Glasses.git
    cd OpenSource-Ai-Glasses
    git submodule update --init --recursive
@@ -431,4 +442,4 @@ Made with ❤️ by the open-source community
 
 ---
 
-**Last Updated**: 2026-01-19 | **Version**: v0.6.2
+**Last Updated**: 2026-03-30 | **Version**: v0.6.5

@@ -39,11 +39,21 @@
    https://github.com/Iam5tillLearning/OpenSource-Ai-Glasses/releases
    ```
 
-- #### 自行编译，从 Docker 容器拷贝
+- #### 自行编译（主机环境）
 
    ```bash
-   # 从容器中拷贝固件到本机
-   docker cp rk1106_dev:/opt/aiglass_dev_env/output/image/update.img ./update.img
+   # 在 AIGLASS_DEV_ENV 根目录编译
+   ./setup_build_env.sh
+
+   # 二选一
+   # 设备带显示能力（默认）
+   ./build.sh
+
+   # 设备不带显示能力
+   ./build.sh --without-display
+
+   # 固件产物路径
+   ls -lh output/image/update.img
    ```
 
 ### 2. 准备烧录工具
@@ -312,7 +322,7 @@ adb devices
 
 ## 📚 相关文档
 
-- [Docker 部署指南](DOCKER_DEPLOYMENT.md) - 开发环境搭建
+- [开发环境搭建指南](ENV_SETUP.md) - 开发环境搭建
 - [应用开发指南](APPLICATION_DEVELOPMENT.md) - 应用程序开发入门
 - [固件开发指南](firmware/getting-started.md) - 固件开发入门
 - [故障排除](troubleshooting/common-issues.md) - 常见问题解决
