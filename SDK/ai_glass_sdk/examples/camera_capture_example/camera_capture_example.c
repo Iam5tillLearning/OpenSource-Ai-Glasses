@@ -1,113 +1,70 @@
-/**
- * AI Media Client Usage Example
- *
- * 演示如何使用AI媒体共享内存客户端API
- *
- * 编译命令:
- * gcc -o example_media_client example_media_client.c ai_camera.c -lrt
- *
- * 使用方法:
- * ./example_media_client [save_path]
- */
-
 #include "ai_camera.h"
+
 #include <errno.h>
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
-#include <signal.h>
-#include <unistd.h>
 
-static volatile int g_running = 1;
+#define TARGET_CAPTURE_PATH "/tmp/test_capture"
 
-static void signal_handler(int sig) {
-    printf("\n🛑 [EXAMPLE] Received signal %d, exiting...\n", sig);
-    g_running = 0;
-}
-
-int main(int argc, char *argv[]) {
+int main(void) {
     ai_core_client_t *client = NULL;
     ai_core_data_t data;
-    int result;
-    int capture_count = 0;
-    const char *save_path = (argc > 1) ? argv[1] : "/tmp";
+    int rc = 0;
 
-    printf("🚀 [EXAMPLE] AI Media Client Example Starting...\n");
-    printf("📁 [EXAMPLE] Media data will be saved to: %s\n", save_path);
-    printf("💡 [EXAMPLE] Press Ctrl+C to exit\n\n");
+    memset(&data, 0, sizeof(data));
 
-    // 设置信号处理
-    signal(SIGINT, signal_handler);
-    signal(SIGTERM, signal_handler);
+    printf("[SAMPLE] camera_capture_example started.\n");
+    printf("[SAMPLE] Target output path: %s\n", TARGET_CAPTURE_PATH);
+    printf("[SAMPLE] Step 1/3: init camera client...\n");
 
-    // 初始化AI媒体客户端
     client = ai_core_init();
     if (!client) {
-        printf("❌ [EXAMPLE] Failed to initialize media client\n");
-        return -1;
+        printf("[SAMPLE][ERROR] ai_core_init failed.\n");
+        printf("[SAMPLE][HINT] Ensure ai-core camera service is running.\n");
+        return 1;
     }
 
-    // 主循环 - 每3秒捕获一次媒体数据
-    while (g_running) {
-        printf("📸 [EXAMPLE] Capturing media data #%d...\n", capture_count + 1);
-
-        // 捕获媒体数据 (5秒超时)
-        result = ai_core_capture(client, &data, 5000);
-
-        if (result == AI_MEDIA_SUCCESS) {
-            printf("✅ [EXAMPLE] Capture successful:\n");
-            printf("   Size: %zu bytes\n", data.size);
-            printf("   Resolution: %dx%d\n", data.width, data.height);
-            printf("   Format: %s\n", (data.format == AI_MEDIA_FORMAT_JPEG) ? "JPEG" : "NV12");
-            printf("   Sequence: %d\n", data.sequence);
-
-            // 保存媒体数据到文件
-            char filename[512];
-            const char *ext = (data.format == AI_MEDIA_FORMAT_JPEG) ? "jpg" : "nv12";
-            snprintf(filename, sizeof(filename), "%s/capture_%03d.%s", save_path, capture_count + 1, ext);
-
-            FILE *fp = fopen(filename, "wb");
-            if (fp) {
-                size_t written = fwrite(data.data, 1, data.size, fp);
-                fclose(fp);
-
-                if (written == data.size) {
-                    printf("💾 [EXAMPLE] Media data saved to: %s\n", filename);
-                } else {
-                    printf("⚠️ [EXAMPLE] Warning: Only wrote %zu/%zu bytes to %s\n",
-                           written, data.size, filename);
-                }
-            } else {
-                printf("❌ [EXAMPLE] Failed to save data to %s: %s\n", filename, strerror(errno));
-            }
-
-            // 释放媒体数据内存
-            ai_core_free_data(&data);
-            capture_count++;
-
-        } else {
-            printf("❌ [EXAMPLE] Capture failed: %s\n", ai_core_get_error_string(result));
-
-            // 如果是初始化错误（通常表示服务端不可用），退出程序
-            if (result == AI_MEDIA_ERROR_INIT) {
-                printf("🛑 [EXAMPLE] Service unavailable, exiting...\n");
-                break;
-            }
-        }
-
-        printf("\n");
-
-        // 等待3秒后进行下次捕获
-        for (int i = 0; i < 5 && g_running; i++) {
-            usleep(100000); // 100ms
-        }
+    printf("[SAMPLE] Step 2/3: capture one frame (timeout: 5000ms)...\n");
+    rc = ai_core_capture(client, &data, 5000);
+    if (rc != AI_MEDIA_SUCCESS) {
+        printf("[SAMPLE][ERROR] capture failed: %s (%d)\n", ai_core_get_error_string(rc), rc);
+        ai_core_cleanup(client);
+        return 1;
     }
 
-    // 清理资源
+    printf("[SAMPLE] Capture metadata: size=%zu, resolution=%dx%d, format=%s, seq=%d\n",
+           data.size,
+           data.width,
+           data.height,
+           data.format == AI_MEDIA_FORMAT_JPEG ? "JPEG" : "NV12",
+           data.sequence);
+
+    printf("[SAMPLE] Step 3/3: save bytes to %s ...\n", TARGET_CAPTURE_PATH);
+    FILE *fp = fopen(TARGET_CAPTURE_PATH, "wb");
+    if (!fp) {
+        printf("[SAMPLE][ERROR] open output file failed: %s\n", strerror(errno));
+        ai_core_free_data(&data);
+        ai_core_cleanup(client);
+        return 1;
+    }
+
+    size_t written = fwrite(data.data, 1, data.size, fp);
+    fclose(fp);
+
+    if (written != data.size) {
+        printf("[SAMPLE][ERROR] short write: %zu/%zu bytes\n", written, data.size);
+        ai_core_free_data(&data);
+        ai_core_cleanup(client);
+        return 1;
+    }
+
+    printf("[SAMPLE][OK] Capture file is ready.\n");
+    printf("[SAMPLE][OK] Read your file from: %s\n", TARGET_CAPTURE_PATH);
+    printf("[SAMPLE][INFO] File payload format is: %s\n",
+           data.format == AI_MEDIA_FORMAT_JPEG ? "JPEG bytes" : "NV12 raw bytes");
+
+    ai_core_free_data(&data);
     ai_core_cleanup(client);
-
-    printf("📊 [EXAMPLE] Total captures: %d\n", capture_count);
-    printf("✅ [EXAMPLE] AI Media Client Example Finished\n");
-
     return 0;
 }

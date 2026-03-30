@@ -20,9 +20,11 @@ ai_glass_sdk/
 │   ├── libai_glass_sdk.a           # 静态库
 │   └── libai_glass_sdk.so          # 动态库
 ├── examples/             # 示例程序
-│   ├── gpio_client/               # GPIO事件客户端示例
-│   ├── audio_play_client/         # 音频播放客户端示例
-│   └── example_media_client/      # 媒体客户端示例
+│   ├── gpio_example/                       # GPIO事件客户端示例
+│   ├── audio_play_example/                 # 音频播放客户端示例
+│   ├── camera_capture_example/             # 摄像头抓拍示例
+│   ├── disable_physical_interaction_example/ # 禁用物理交互动作示例
+│   └── record_audio_example/              # 录音到 /tmp/test_record_audio 示例
 ├── docs/                 # 客户端接入文档
 │   ├── GPIO_Event_Service.md           # GPIO事件服务完整文档
 │   ├── Camera_Client_API.md            # 摄像头客户端API文档
@@ -59,9 +61,11 @@ cd ai_glass_sdk
 make
 
 # 编译所有示例程序
-cd examples/gpio_client && make
-cd ../audio_play_client && make
-cd ../example_media_client && make
+cd examples/gpio_example && make
+cd ../audio_play_example && make
+cd ../camera_capture_example && make
+cd ../disable_physical_interaction_example && make
+cd ../record_audio_example && make
 ```
 
 ### 2. 运行示例程序
@@ -72,18 +76,20 @@ cd ../example_media_client && make
 ./ai-core --enable-gpio --gpio-number 1
 
 # 运行GPIO客户端示例
-cd examples/gpio_client
-./gpio_event_client_example
+cd examples/gpio_example
+make
+../build/gpio_example
 ```
 
 #### 摄像头客户端
 ```bash
 # 确保服务端启用摄像头
-./ai-core --enable-camera --enable-jpeg
+./ai-core --camera-mode --enable-jpeg
 
 # 运行摄像头客户端示例
-cd examples/example_media_client
-./example_media_client /tmp
+cd examples/camera_capture_example
+make
+../build/camera_capture_example
 ```
 
 #### 音频播放客户端
@@ -92,9 +98,31 @@ cd examples/example_media_client
 ./ai-core
 
 # 播放音频文件
-cd examples/audio_play_client
-./audio_play_client -f /path/to/audio.pcm -v 80 -r 48000
+cd examples/audio_play_example
+make
+../build/audio_play_example -f /path/to/audio.pcm -v 80 -r 48000
 ```
+
+#### 新增：禁用 AI-Core 物理交互动作
+```bash
+# 运行示例
+cd examples/disable_physical_interaction_example
+make
+../build/disable_physical_interaction_example
+```
+
+#### 新增：录音到 /tmp/test_record_audio
+```bash
+# 建议服务端启用GPIO录音流程
+./ai-core --enable-gpio
+
+# 运行示例
+cd examples/record_audio_example
+make
+../build/record_audio_example
+```
+
+说明：`--disable-aicore-physical-interaction` 不是录音必要条件，仅在你希望避免物理按键自动动作时可选开启。
 
 ### 3. 集成到自己的项目
 
@@ -199,9 +227,11 @@ int main() {
 ### 示例程序文档
 | 文档 | 说明 |
 |------|------|
-| [GPIO事件客户端示例](examples/gpio_client/) | GPIO事件订阅完整示例 |
-| [摄像头客户端示例](examples/example_media_client/) | 图像捕获完整示例 |
-| [音频播放客户端示例](examples/audio_play_client/) | PCM播放和TTS功能详细示例 |
+| [GPIO事件客户端示例](examples/gpio_example/README.md) | GPIO事件订阅完整示例 |
+| [摄像头客户端示例](examples/camera_capture_example/README.md) | 单帧抓拍并保存到 `/tmp/test_capture`（NV12/JPEG） |
+| [音频播放客户端示例](examples/audio_play_example/README.md) | PCM播放和TTS功能详细示例 |
+| [禁用 AI-Core 物理交互动作示例](examples/disable_physical_interaction_example/README.md) | 通过 SDK 禁用 AI-Core 自动物理按键动作 |
+| [录音到 /tmp/test_record_audio 示例](examples/record_audio_example/README.md) | SDK 控制开始/停止录音并复制到固定路径 |
 
 ## ⚙️ 前置条件
 
@@ -211,10 +241,10 @@ int main() {
    ./ai-core --enable-gpio --gpio-number 1
 
    # 摄像头模式
-   ./ai-core --enable-camera --enable-jpeg
+   ./ai-core --camera-mode --enable-jpeg
 
    # 组合模式
-   ./ai-core --enable-gpio --enable-camera
+   ./ai-core --enable-gpio --camera-mode
    ```
 
 2. **系统库依赖**

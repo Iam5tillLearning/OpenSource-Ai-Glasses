@@ -1,4 +1,4 @@
-# Makefile for camera capture sample
+# Makefile for record-audio sample
 
 ifeq ($(CROSS_COMPILE),)
 CROSS_COMPILE = arm-rockchip831-linux-uclibcgnueabihf-
@@ -13,8 +13,8 @@ SDK_STATIC_LIB = $(SDK_DIR)/lib/libai_glass_sdk.a
 LIBS = $(SDK_STATIC_LIB) -lpthread -lrt -lm
 
 BUILD_DIR = ../build
-TARGET = $(BUILD_DIR)/camera_capture_example
-SRC = camera_capture_example.c
+TARGET = $(BUILD_DIR)/record_audio_example
+SRC = record_audio_example.c
 
 all: $(BUILD_DIR) $(TARGET)
 
@@ -22,7 +22,7 @@ $(BUILD_DIR):
 	mkdir -p $@
 
 $(TARGET): $(SRC) | $(BUILD_DIR)
-	@echo "Building camera_capture_example..."
+	@echo "Building record_audio_example..."
 	$(CC) $(CFLAGS) $(INCLUDES) -o $@ $(SRC) $(LIBS)
 	@echo "OK: $(TARGET)"
 

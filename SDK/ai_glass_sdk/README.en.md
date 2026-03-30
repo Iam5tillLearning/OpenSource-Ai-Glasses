@@ -20,9 +20,11 @@ ai_glass_sdk/
 │   ├── libai_glass_sdk.a          # Static library
 │   └── libai_glass_sdk.so         # Dynamic library
 ├── examples/             # Example programs
-│   ├── gpio_client/               # GPIO event client example
-│   ├── audio_play_client/         # Audio play client example
-│   └── example_media_client/      # Media client example
+│   ├── gpio_example/                        # GPIO event client example
+│   ├── audio_play_example/                  # Audio play client example
+│   ├── camera_capture_example/              # Camera capture example
+│   ├── disable_physical_interaction_example/ # Disable physical interaction sample
+│   └── record_audio_example/               # Record to /tmp/test_record_audio sample
 ├── docs/                 # Client integration documentation
 │   ├── GPIO_Event_Service.md      # GPIO event service full documentation
 │   ├── Camera_Client_API.md       # Camera client API documentation
@@ -59,9 +61,11 @@ cd ai_glass_sdk
 make
 
 # Build all example programs
-cd examples/gpio_client && make
-cd ../audio_play_client && make
-cd ../example_media_client && make
+cd examples/gpio_example && make
+cd ../audio_play_example && make
+cd ../camera_capture_example && make
+cd ../disable_physical_interaction_example && make
+cd ../record_audio_example && make
 ```
 
 ### 2. Run Example Programs
@@ -72,18 +76,20 @@ cd ../example_media_client && make
 ./ai-core --enable-gpio --gpio-number 1
 
 # Run GPIO client example
-cd examples/gpio_client
-./gpio_event_client_example
+cd examples/gpio_example
+make
+../build/gpio_example
 ```
 
 #### Camera Client
 ```bash
 # Ensure server enables camera
-./ai-core --enable-camera --enable-jpeg
+./ai-core --camera-mode --enable-jpeg
 
 # Run camera client example
-cd examples/example_media_client
-./example_media_client /tmp
+cd examples/camera_capture_example
+make
+../build/camera_capture_example
 ```
 
 #### Audio Playback Client
@@ -92,9 +98,29 @@ cd examples/example_media_client
 ./ai-core
 
 # Play audio file
-cd examples/audio_play_client
-./audio_play_client -f /path/to/audio.pcm -v 80 -r 48000
+cd examples/audio_play_example
+make
+../build/audio_play_example -f /path/to/audio.pcm -v 80 -r 48000
 ```
+
+#### New: Disable AI-Core Physical Interaction Actions
+```bash
+cd examples/disable_physical_interaction_example
+make
+../build/disable_physical_interaction_example
+```
+
+#### New: Record to /tmp/test_record_audio
+```bash
+# Recommended server startup
+./ai-core --enable-gpio
+
+cd examples/record_audio_example
+make
+../build/record_audio_example
+```
+
+Note: `--disable-aicore-physical-interaction` is optional and not required for recording.
 
 ### 3. Integrate into Your Project
 
@@ -199,9 +225,11 @@ int main() {
 ### Example Program Documentation
 | Document | Description |
 |------|------|
-| [GPIO Event Client Example](examples/gpio_client/) | GPIO Event Subscription Full Example |
-| [Camera Client Example](examples/example_media_client/) | Image Capture Full Example |
-| [Audio Playback Client Example](examples/audio_play_client/) | PCM Playback and TTS Function Detailed Example |
+| [GPIO Event Client Example](examples/gpio_example/README.en.md) | GPIO event subscription full example |
+| [Camera Client Example](examples/camera_capture_example/README.en.md) | One-shot capture and save to `/tmp/test_capture` (NV12/JPEG) |
+| [Audio Playback Client Example](examples/audio_play_example/README.en.md) | PCM playback and TTS function detailed example |
+| [Disable AI-Core Physical Interaction Example](examples/disable_physical_interaction_example/README.en.md) | Disable AI-Core auto physical button actions via SDK |
+| [Record to /tmp/test_record_audio Example](examples/record_audio_example/README.en.md) | Start/stop recording via SDK and copy to fixed path |
 
 ## ⚙️ Prerequisites
 
@@ -211,10 +239,10 @@ int main() {
    ./ai-core --enable-gpio --gpio-number 1
 
    # Camera mode
-   ./ai-core --enable-camera --enable-jpeg
+   ./ai-core --camera-mode --enable-jpeg
 
    # Combined mode
-   ./ai-core --enable-gpio --enable-camera
+   ./ai-core --enable-gpio --camera-mode
    ```
 
 2. **System Library Dependencies**

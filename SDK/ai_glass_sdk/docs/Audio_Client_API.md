@@ -115,6 +115,8 @@ int main() {
 - ✅ 音量控制 (0-100)
 - ✅ 停止当前播放
 - ✅ MD5智能缓存（TTS功能）
+- ✅ SDK控制录音（开始/停止/状态）
+- ✅ SDK控制 ai-core 是否响应物理按键业务动作
 
 ---
 
@@ -173,6 +175,7 @@ typedef struct {
 #define AI_AUDIO_ERROR_SEND       -3    // 发送失败
 #define AI_AUDIO_ERROR_PARAM      -4    // 参数错误
 #define AI_AUDIO_ERROR_RESPONSE   -5    // 服务端响应错误
+#define AI_AUDIO_ERROR_STATE      -6    // 状态错误（例如重复开始录音）
 ```
 
 ### 核心API
@@ -242,6 +245,148 @@ int ai_audio_stop(ai_audio_t *client);
 **说明**：
 - 立即停止当前正在播放的音频
 - 清空播放队列
+
+---
+
+#### ai_audio_set_button_response()
+
+设置 ai-core 是否响应物理交互动作（录音/拍照/抢话）。
+
+```c
+int ai_audio_set_button_response(ai_audio_t *client, int enabled);
+```
+
+**参数**：
+- `client` - 客户端句柄
+- `enabled` - 1=启用，0=禁用
+
+**返回值**：
+- `AI_AUDIO_SUCCESS` (0) - 成功
+- 负数 - 错误码
+
+**说明**：
+- 该接口是 `ai_audio_set_sdk_control_mode()` 的兼容语义接口
+- 内部会映射为 `SDK_CONTROL_MODE` 配置
+
+---
+
+#### ai_audio_get_button_response()
+
+查询 ai-core 物理交互动作响应状态。
+
+```c
+int ai_audio_get_button_response(ai_audio_t *client, int *enabled);
+```
+
+**参数**：
+- `client` - 客户端句柄
+- `enabled` - 输出参数，1=启用，0=禁用
+
+**返回值**：
+- `AI_AUDIO_SUCCESS` (0) - 成功
+- 负数 - 错误码
+
+---
+
+#### ai_audio_set_sdk_control_mode()
+
+设置 SDK 控制模式（命名沿用历史，语义与启动参数 `--disable-aicore-physical-interaction` 一致）。
+
+```c
+int ai_audio_set_sdk_control_mode(ai_audio_t *client, int enabled);
+```
+
+**参数**：
+- `client` - 客户端句柄
+- `enabled` - 1=启用（禁用ai-core物理交互动作，保留GPIO事件），0=禁用
+
+**返回值**：
+- `AI_AUDIO_SUCCESS` (0) - 成功
+- 负数 - 错误码
+
+**说明**：
+- 启用后，ai-core 不再自动执行物理按键触发的录音/拍照/抢话动作
+- GPIO 事件广播仍保留，可由 SDK 或其他模块继续消费（可并存）
+
+---
+
+#### ai_audio_get_sdk_control_mode()
+
+查询 SDK 控制模式状态（命名沿用历史，语义与 `--disable-aicore-physical-interaction` 一致）。
+
+```c
+int ai_audio_get_sdk_control_mode(ai_audio_t *client, int *enabled);
+```
+
+**参数**：
+- `client` - 客户端句柄
+- `enabled` - 输出参数，1=启用，0=禁用
+
+**返回值**：
+- `AI_AUDIO_SUCCESS` (0) - 成功
+- 负数 - 错误码
+
+---
+
+#### ai_audio_record_start()
+
+通过 SDK 命令启动录音（不依赖物理按键）。
+
+```c
+int ai_audio_record_start(ai_audio_t *client);
+```
+
+**参数**：
+- `client` - 客户端句柄
+
+**返回值**：
+- `AI_AUDIO_SUCCESS` (0) - 成功
+- `AI_AUDIO_ERROR_STATE` (-6) - 已在录音中
+- 其他负数 - 错误码
+
+**前提**：
+- ai-core 需以 `--enable-gpio` 启动（录音控制线程使用 GPIO 触发模式）
+- 建议同时启用 `--disable-aicore-physical-interaction`，禁用 ai-core 默认物理交互动作
+
+---
+
+#### ai_audio_record_stop()
+
+通过 SDK 命令停止录音，并返回录音文件路径。
+
+```c
+int ai_audio_record_stop(ai_audio_t *client, char *output_path, int output_path_size);
+```
+
+**参数**：
+- `client` - 客户端句柄
+- `output_path` - 输出路径缓冲区（可为NULL）
+- `output_path_size` - 缓冲区大小
+
+**返回值**：
+- `AI_AUDIO_SUCCESS` (0) - 成功
+- 负数 - 错误码
+
+**说明**：
+- 默认返回路径通常为 `/tmp/my_recording.pcm`
+
+---
+
+#### ai_audio_record_get_status()
+
+查询当前录音状态。
+
+```c
+int ai_audio_record_get_status(ai_audio_t *client, int *recording);
+```
+
+**参数**：
+- `client` - 客户端句柄
+- `recording` - 输出参数，1=录音中，0=未录音
+
+**返回值**：
+- `AI_AUDIO_SUCCESS` (0) - 成功
+- 负数 - 错误码
 
 ---
 
