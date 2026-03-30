@@ -32,13 +32,23 @@ This document describes how to flash compiled firmware to AI Smart Glasses devic
 
 ### 1. Get Firmware File
 
-After firmware compilation completes, copy firmware from Docker container or local compilation environment to local machine:
+After firmware compilation completes, use the local output image directly:
 
-#### Copy from Docker Container
+#### Build in Host Environment
 
 ```bash
-# Copy firmware from container to host
-docker cp rk1106_dev:/opt/aiglass_dev_env/output/image/update.img ./update.img
+# Build in AIGLASS_DEV_ENV workspace root
+./setup_build_env.sh
+
+# Choose one
+# Device with display capability (default)
+./build.sh
+
+# Device without display capability
+./build.sh --without-display
+
+# Firmware output path
+ls -lh output/image/update.img
 ```
 
 ### 2. Prepare Flashing Tool
@@ -307,7 +317,7 @@ After firmware flashing completes, you can:
 
 ## 📚 Related Documentation
 
-- [Docker Deployment Guide](DOCKER_DEPLOYMENT.en.md) - Development environment setup
+- [Development Environment Setup Guide](ENV_SETUP.en.md) - Development environment setup
 - [Application Development Guide](APPLICATION_DEVELOPMENT.en.md) - Application development getting started
 - [Firmware Development Guide](firmware/getting-started.md) - Firmware development introduction
 - [Troubleshooting](troubleshooting/common-issues.md) - Common problem resolution

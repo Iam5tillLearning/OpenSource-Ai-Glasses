@@ -37,8 +37,8 @@ OpenSource-Ai-Glasses/
 ```
 docs/
 ├── README.md                          # 文档索引
-├── DOCKER_DEPLOYMENT.md              # Docker部署指南（中文）
-├── DOCKER_DEPLOYMENT.en.md           # Docker部署指南（英文）
+├── ENV_SETUP.md              # 开发环境搭建指南（中文）
+├── ENV_SETUP.en.md           # 开发环境搭建指南（英文）
 ├── APPLICATION_DEVELOPMENT.md         # 应用开发指南（中文）
 ├── APPLICATION_DEVELOPMENT.en.md      # 应用开发指南（英文）
 ├── FIRMWARE_FLASHING.md              # 固件烧录指南（中文）
@@ -50,7 +50,7 @@ docs/
 ```
 
 **主要文档**：
-- **Docker部署指南**: 如何使用Docker搭建开发环境
+- **开发环境搭建指南**: 如何在 Ubuntu/Debian 主机或 WSL2 中配置开发环境（统一入口：`https://github.com/makevary/AIGLASS_DEV_ENV`）
 - **应用开发指南**: 如何开发用户级应用程序
 - **固件烧录指南**: 如何编译和烧录固件
 
@@ -227,7 +227,7 @@ third_party/
 **说明**:
 - 这些库已针对RV1106B平台进行定制修改
 - 详细信息请查看 [third_party/README.md](../third_party/README.md)
-- 如果只进行应用开发，使用Docker镜像即可，无需编译这些库
+- 如果只进行应用开发，通常无需编译这些第三方库
 
 **许可证**:
 - BlueZ: GPL v2
@@ -239,14 +239,14 @@ third_party/
 
 ### 固件开发流程
 
-1. **搭建环境**: 按照[Docker部署指南](docs/DOCKER_DEPLOYMENT.md)搭建开发环境
+1. **搭建环境**: 先从 `https://github.com/makevary/AIGLASS_DEV_ENV` 获取开发环境，然后在根目录执行 `./setup_build_env.sh`
 2. **修改代码**: 在`firmware/`目录下修改源码
-3. **编译固件**: 在Docker环境中编译
+3. **编译固件**: 在主机环境直接执行 `./build.sh`
 4. **烧录测试**: 参考[固件烧录指南](docs/FIRMWARE_FLASHING.md)烧录到设备
 
 ### 应用开发流程
 
-1. **搭建环境**: 使用Docker环境或交叉编译工具链
+1. **搭建环境**: 先从 `https://github.com/makevary/AIGLASS_DEV_ENV` 获取开发环境，并执行 `./setup_build_env.sh`
 2. **编写代码**: 参考`examples/`中的示例
 3. **交叉编译**: 使用ARM交叉编译工具链
 4. **部署运行**: 通过ADB推送到设备并运行
@@ -264,7 +264,7 @@ third_party/
 
 - [项目README](README.md) / [中文版](README.zh.md)
 - [贡献指南](CONTRIBUTING.md)
-- [Docker部署指南](docs/DOCKER_DEPLOYMENT.md)
+- [开发环境搭建指南](docs/ENV_SETUP.md)
 - [应用开发指南](docs/APPLICATION_DEVELOPMENT.md)
 - [固件烧录指南](docs/FIRMWARE_FLASHING.md)
 
@@ -340,14 +340,14 @@ Pre-compiled executables (optional, can compile from source).
 
 ### Firmware Development
 
-1. **Setup**: Follow [Docker Deployment Guide](docs/DOCKER_DEPLOYMENT.en.md)
+1. **Setup**: Get environment from `https://github.com/makevary/AIGLASS_DEV_ENV`, then run `./setup_build_env.sh` in the workspace root
 2. **Modify**: Edit source code in `firmware/src/` directory
-3. **Compile**: Build in Docker environment
+3. **Compile**: Build directly on host with `./build.sh`
 4. **Flash**: Refer to [Firmware Flashing Guide](docs/FIRMWARE_FLASHING.en.md)
 
 ### Application Development
 
-1. **Setup**: Use Docker environment or cross-compilation toolchain
+1. **Setup**: Use host environment from `AIGLASS_DEV_ENV` and run `./setup_build_env.sh`
 2. **Code**: Reference examples in `examples/` directory
 3. **Compile**: Use ARM cross-compilation toolchain
 4. **Deploy**: Push to device via ADB and run
@@ -358,6 +358,6 @@ Pre-compiled executables (optional, can compile from source).
 
 - [Project README](README.md) / [Chinese Version](README.zh.md)
 - [Contributing Guide](CONTRIBUTING.md)
-- [Docker Deployment Guide](docs/DOCKER_DEPLOYMENT.en.md)
+- [Development Environment Setup Guide](docs/ENV_SETUP.en.md)
 - [Application Development Guide](docs/APPLICATION_DEVELOPMENT.en.md)
 - [Firmware Flashing Guide](docs/FIRMWARE_FLASHING.en.md)
