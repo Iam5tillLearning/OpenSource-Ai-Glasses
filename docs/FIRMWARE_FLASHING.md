@@ -39,11 +39,21 @@
    https://github.com/Iam5tillLearning/OpenSource-Ai-Glasses/releases
    ```
 
-- #### 自行编译，从 Docker 容器拷贝
+- #### 自行编译（主机环境）
 
    ```bash
-   # 从容器中拷贝固件到本机
-   docker cp rk1106_dev:/opt/aiglass_dev_env/output/image/update.img ./update.img
+   # 在 AIGLASS_DEV_ENV 根目录编译
+   ./setup_build_env.sh
+
+   # 二选一
+   # 设备带显示能力（默认）
+   ./build.sh
+
+   # 设备不带显示能力
+   ./build.sh --without-display
+
+   # 固件产物路径
+   ls -lh output/image/update.img
    ```
 
 ### 2. 准备烧录工具
@@ -155,7 +165,17 @@ uname -a
 1. 检查设备显示是否正常
 2. 检查摄像头功能是否正常
 3. 检查音频功能是否正常
-4. 检查网络连接是否正常
+4. 按下方“首次配网检查”完成联网验证
+
+### 首次配网检查（重要）
+
+1. 确认路由器已开启 2.4GHz Wi-Fi，手机已连接到目标 2.4GHz 网络。
+2. 在 Android 手机的 Wi-Fi 设置里，对当前网络点击“分享”，生成 Wi-Fi 二维码。
+3. 让眼镜进入配网模式（开机未联网自动进入，或连续短按按键 10 次手动进入）。
+4. 将手机上的二维码展示给眼镜扫描，等待设备提示配网成功。
+5. 如果二维码来自 5GHz/5G 网络，设备无法连接，请切换到 2.4GHz 后重新分享二维码。
+
+> 手机端 App 即将上线，后续会提供更便捷的配网入口。
 
 ## 🔄 完整烧录流程图
 
@@ -312,7 +332,7 @@ adb devices
 
 ## 📚 相关文档
 
-- [Docker 部署指南](DOCKER_DEPLOYMENT.md) - 开发环境搭建
+- [开发环境搭建指南](ENV_SETUP.md) - 开发环境搭建
 - [应用开发指南](APPLICATION_DEVELOPMENT.md) - 应用程序开发入门
 - [固件开发指南](firmware/getting-started.md) - 固件开发入门
 - [故障排除](troubleshooting/common-issues.md) - 常见问题解决

@@ -32,13 +32,23 @@ This document describes how to flash compiled firmware to AI Smart Glasses devic
 
 ### 1. Get Firmware File
 
-After firmware compilation completes, copy firmware from Docker container or local compilation environment to local machine:
+After firmware compilation completes, use the local output image directly:
 
-#### Copy from Docker Container
+#### Build in Host Environment
 
 ```bash
-# Copy firmware from container to host
-docker cp rk1106_dev:/opt/aiglass_dev_env/output/image/update.img ./update.img
+# Build in AIGLASS_DEV_ENV workspace root
+./setup_build_env.sh
+
+# Choose one
+# Device with display capability (default)
+./build.sh
+
+# Device without display capability
+./build.sh --without-display
+
+# Firmware output path
+ls -lh output/image/update.img
 ```
 
 ### 2. Prepare Flashing Tool
@@ -150,7 +160,17 @@ uname -a
 1. Check if device display is normal
 2. Check if camera function is normal
 3. Check if audio function is normal
-4. Check if network connection is normal
+4. Complete connectivity validation by following "First-time Wi-Fi Provisioning Check" below
+
+### First-time Wi-Fi Provisioning Check (Important)
+
+1. Make sure your router has 2.4GHz Wi-Fi enabled, and your phone is connected to the target 2.4GHz network.
+2. On an Android phone, open Wi-Fi settings and tap "Share" on the current network to generate a Wi-Fi QR code.
+3. Put the glasses into provisioning mode (auto when booted without network, or manually by short-pressing the button 10 times).
+4. Show the QR code on your phone to the glasses for scanning, then wait for a successful provisioning prompt.
+5. If the QR code is from a 5GHz/5G network, the device cannot connect. Switch to 2.4GHz and share again.
+
+> The mobile app is coming soon and will provide an easier provisioning entry.
 
 ## 🔄 Complete Flashing Process Flow
 
@@ -307,7 +327,7 @@ After firmware flashing completes, you can:
 
 ## 📚 Related Documentation
 
-- [Docker Deployment Guide](DOCKER_DEPLOYMENT.en.md) - Development environment setup
+- [Development Environment Setup Guide](ENV_SETUP.en.md) - Development environment setup
 - [Application Development Guide](APPLICATION_DEVELOPMENT.en.md) - Application development getting started
 - [Firmware Development Guide](firmware/getting-started.md) - Firmware development introduction
 - [Troubleshooting](troubleshooting/common-issues.md) - Common problem resolution

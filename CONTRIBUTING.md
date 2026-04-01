@@ -34,9 +34,12 @@
 
 ### 🛠️ 开发环境
 
+开发环境唯一获取方式：
+- https://github.com/makevary/AIGLASS_DEV_ENV
+
 #### 固件开发
 需要瑞芯微RV1106B SDK环境，详见：
-- [Docker部署指南](docs/DOCKER_DEPLOYMENT.md)
+- [开发环境搭建指南](docs/ENV_SETUP.md)
 - [固件烧录指南](docs/FIRMWARE_FLASHING.md)
 
 #### 应用开发
@@ -173,9 +176,12 @@ Documentation improvements are valuable! You can:
 
 ### 🛠️ Development Environment
 
+Single source for development environment:
+- https://github.com/makevary/AIGLASS_DEV_ENV
+
 #### Firmware Development
 Requires Rockchip RV1106B SDK environment. See:
-- [Docker Deployment Guide](docs/DOCKER_DEPLOYMENT.en.md)
+- [Development Environment Setup Guide](docs/ENV_SETUP.en.md)
 - [Firmware Flashing Guide](docs/FIRMWARE_FLASHING.en.md)
 
 #### Application Development
