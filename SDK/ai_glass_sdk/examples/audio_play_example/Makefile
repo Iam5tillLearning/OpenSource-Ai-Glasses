@@ -18,8 +18,8 @@ SDK_DIR = ../..
 # 头文件路径（使用SDK）
 INCLUDES = -I$(SDK_DIR)/include
 
-# SDK源文件
-SDK_SOURCES = $(SDK_DIR)/src/ai_audio.c
+# SDK静态库
+SDK_STATIC_LIB = $(SDK_DIR)/lib/libai_glass_sdk.a
 
 # 示例程序源文件
 EXAMPLE_SOURCE = audio_play_example.c
@@ -34,10 +34,10 @@ all: $(BUILD_DIR) $(TARGET)
 $(BUILD_DIR):
 	mkdir -p $@
 
-# 编译程序（链接SDK源文件）
-$(TARGET): $(EXAMPLE_SOURCE) $(SDK_SOURCES) | $(BUILD_DIR)
+# 编译程序（链接SDK静态库）
+$(TARGET): $(EXAMPLE_SOURCE) | $(BUILD_DIR)
 	@echo "🔨 编译音频播放示例程序..."
-	$(CC) $(CFLAGS) $(INCLUDES) -o $@ $(EXAMPLE_SOURCE) $(SDK_SOURCES) -lpthread -lrt
+	$(CC) $(CFLAGS) $(INCLUDES) -o $@ $(EXAMPLE_SOURCE) $(SDK_STATIC_LIB) -lpthread -lrt -lm
 	@echo "✅ 编译完成: $(TARGET)"
 
 # 清理

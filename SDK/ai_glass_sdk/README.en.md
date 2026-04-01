@@ -6,6 +6,8 @@
 
 This SDK provides a complete client development kit for AI Core Service, supporting GPIO event subscription and camera access functions.
 
+Note: the current release package contains headers, prebuilt libraries, and examples only. It does not ship a `src/` directory, so examples should link against `lib/libai_glass_sdk.a` or `lib/libai_glass_sdk.so`.
+
 ## 📦 SDK Contents
 
 ```
@@ -20,15 +22,15 @@ ai_glass_sdk/
 │   ├── libai_glass_sdk.a          # Static library
 │   └── libai_glass_sdk.so         # Dynamic library
 ├── examples/             # Example programs
-│   ├── gpio_client/               # GPIO event client example
-│   ├── audio_play_client/         # Audio play client example
-│   └── example_media_client/      # Media client example
+│   ├── gpio_example/              # GPIO event client example
+│   ├── audio_play_example/        # Audio play client example
+│   ├── camera_capture_example/    # Camera client example
+│   └── text_event_example/        # ASR/LLM text event example
 ├── docs/                 # Client integration documentation
 │   ├── GPIO_Event_Service.md      # GPIO event service full documentation
 │   ├── Camera_Client_API.md       # Camera client API documentation
 │   └── Audio_Client_API.md        # Audio client API documentation
 ├── README.md             # This file
-├── Makefile              # SDK build script
 └── VERSION               # Version information
 ```
 
@@ -51,17 +53,14 @@ ai_glass_sdk/
 
 ## 🚀 Quick Start
 
-### 1. Build SDK
+### 1. Build Example Programs
 
 ```bash
-# Build SDK library files
-cd ai_glass_sdk
-make
-
-# Build all example programs
-cd examples/gpio_client && make
-cd ../audio_play_client && make
-cd ../example_media_client && make
+# The SDK package already ships prebuilt libraries.
+cd ai_glass_sdk/examples/gpio_example && make
+cd ../audio_play_example && make
+cd ../camera_capture_example && make
+cd ../text_event_example && make
 ```
 
 ### 2. Run Example Programs
@@ -72,8 +71,8 @@ cd ../example_media_client && make
 ./ai-core --enable-gpio --gpio-number 1
 
 # Run GPIO client example
-cd examples/gpio_client
-./gpio_event_client_example
+cd examples/gpio_example
+./../build/gpio_example
 ```
 
 #### Camera Client
@@ -82,8 +81,8 @@ cd examples/gpio_client
 ./ai-core --enable-camera --enable-jpeg
 
 # Run camera client example
-cd examples/example_media_client
-./example_media_client /tmp
+cd examples/camera_capture_example
+./../build/camera_capture_example /tmp
 ```
 
 #### Audio Playback Client
@@ -92,8 +91,8 @@ cd examples/example_media_client
 ./ai-core
 
 # Play audio file
-cd examples/audio_play_client
-./audio_play_client -f /path/to/audio.pcm -v 80 -r 48000
+cd examples/audio_play_example
+./../build/audio_play_example -f /path/to/audio.pcm -v 80 -r 48000
 ```
 
 ### 3. Integrate into Your Project
@@ -199,9 +198,10 @@ int main() {
 ### Example Program Documentation
 | Document | Description |
 |------|------|
-| [GPIO Event Client Example](examples/gpio_client/) | GPIO Event Subscription Full Example |
-| [Camera Client Example](examples/example_media_client/) | Image Capture Full Example |
-| [Audio Playback Client Example](examples/audio_play_client/) | PCM Playback and TTS Function Detailed Example |
+| [GPIO Event Client Example](examples/gpio_example/) | GPIO Event Subscription Full Example |
+| [Camera Client Example](examples/camera_capture_example/) | Image Capture Full Example |
+| [Audio Playback Client Example](examples/audio_play_example/) | PCM Playback and TTS Function Detailed Example |
+| [Text Event Client Example](examples/text_event_example/) | Receive and print ASR/LLM text events |
 
 ## ⚙️ Prerequisites
 

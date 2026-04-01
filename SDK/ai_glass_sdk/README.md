@@ -6,6 +6,8 @@
 
 本SDK为AI Core Service提供完整的客户端开发套件，支持GPIO事件订阅和摄像头调用功能。
 
+说明：当前发布包为“头文件 + 预编译库 + 示例程序”形态，不包含 `src/` 源码目录；示例程序应直接链接 `lib/libai_glass_sdk.a` 或 `lib/libai_glass_sdk.so`。
+
 ## 📦 SDK内容
 
 ```
@@ -20,15 +22,15 @@ ai_glass_sdk/
 │   ├── libai_glass_sdk.a           # 静态库
 │   └── libai_glass_sdk.so          # 动态库
 ├── examples/             # 示例程序
-│   ├── gpio_client/               # GPIO事件客户端示例
-│   ├── audio_play_client/         # 音频播放客户端示例
-│   └── example_media_client/      # 媒体客户端示例
+│   ├── gpio_example/              # GPIO事件客户端示例
+│   ├── audio_play_example/        # 音频播放客户端示例
+│   ├── camera_capture_example/    # 摄像头客户端示例
+│   └── text_event_example/        # ASR/LLM文本事件示例
 ├── docs/                 # 客户端接入文档
 │   ├── GPIO_Event_Service.md           # GPIO事件服务完整文档
 │   ├── Camera_Client_API.md            # 摄像头客户端API文档
 │   └── Audio_Client_API.md             # 音频客户端API文档
 ├── README.md            # 本文件
-├── Makefile             # SDK编译脚本
 └── VERSION              # 版本信息
 ```
 
@@ -51,17 +53,14 @@ ai_glass_sdk/
 
 ## 🚀 快速开始
 
-### 1. 编译SDK
+### 1. 编译示例程序
 
 ```bash
-# 编译SDK库文件
-cd ai_glass_sdk
-make
-
-# 编译所有示例程序
-cd examples/gpio_client && make
-cd ../audio_play_client && make
-cd ../example_media_client && make
+# SDK发布包已包含预编译库，直接编译示例即可
+cd ai_glass_sdk/examples/gpio_example && make
+cd ../audio_play_example && make
+cd ../camera_capture_example && make
+cd ../text_event_example && make
 ```
 
 ### 2. 运行示例程序
@@ -72,8 +71,8 @@ cd ../example_media_client && make
 ./ai-core --enable-gpio --gpio-number 1
 
 # 运行GPIO客户端示例
-cd examples/gpio_client
-./gpio_event_client_example
+cd examples/gpio_example
+./../build/gpio_example
 ```
 
 #### 摄像头客户端
@@ -82,8 +81,8 @@ cd examples/gpio_client
 ./ai-core --enable-camera --enable-jpeg
 
 # 运行摄像头客户端示例
-cd examples/example_media_client
-./example_media_client /tmp
+cd examples/camera_capture_example
+./../build/camera_capture_example /tmp
 ```
 
 #### 音频播放客户端
@@ -92,8 +91,8 @@ cd examples/example_media_client
 ./ai-core
 
 # 播放音频文件
-cd examples/audio_play_client
-./audio_play_client -f /path/to/audio.pcm -v 80 -r 48000
+cd examples/audio_play_example
+./../build/audio_play_example -f /path/to/audio.pcm -v 80 -r 48000
 ```
 
 ### 3. 集成到自己的项目
@@ -199,9 +198,10 @@ int main() {
 ### 示例程序文档
 | 文档 | 说明 |
 |------|------|
-| [GPIO事件客户端示例](examples/gpio_client/) | GPIO事件订阅完整示例 |
-| [摄像头客户端示例](examples/example_media_client/) | 图像捕获完整示例 |
-| [音频播放客户端示例](examples/audio_play_client/) | PCM播放和TTS功能详细示例 |
+| [GPIO事件客户端示例](examples/gpio_example/) | GPIO事件订阅完整示例 |
+| [摄像头客户端示例](examples/camera_capture_example/) | 图像捕获完整示例 |
+| [音频播放客户端示例](examples/audio_play_example/) | PCM播放和TTS功能详细示例 |
+| [文本事件客户端示例](examples/text_event_example/) | 接收并打印 ASR/LLM 文本事件 |
 
 ## ⚙️ 前置条件
 

@@ -1,17 +1,15 @@
 # Makefile for Text Event Example
-# 工具链路径 (使用绝对路径)
-DEV_ENV_ROOT := ../../../../..
-TOOLCHAIN_PATH := $(DEV_ENV_ROOT)/tools/linux/toolchain/arm-rockchip831-linux-uclibcgnueabihf/bin
 
-CC = $(TOOLCHAIN_PATH)/arm-rockchip831-linux-uclibcgnueabihf-gcc
+ifeq ($(CROSS_COMPILE),)
+CROSS_COMPILE = arm-rockchip831-linux-uclibcgnueabihf-
+endif
+
+CC = $(CROSS_COMPILE)gcc
 CFLAGS = -Wall -g -I../../include
 
-# 使用静态库并链接 mbedTLS
+# 使用SDK预编译静态库
 SDK_LIB = ../../lib/libai_glass_sdk.a
-MBEDTLS_LIBS = ../../third_party/mbedtls/library/libmbedtls.a \
-               ../../third_party/mbedtls/library/libmbedx509.a \
-               ../../third_party/mbedtls/library/libmbedcrypto.a
-LDFLAGS = $(SDK_LIB) $(MBEDTLS_LIBS) -lpthread -lrt
+LDFLAGS = $(SDK_LIB) -lpthread -lrt -lm
 
 BUILD_DIR = ../build
 TARGET = $(BUILD_DIR)/text_event_client

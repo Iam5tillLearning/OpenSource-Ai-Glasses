@@ -20,15 +20,13 @@ SDK_DIR = ../..
 
 # 头文件路径（使用SDK）
 INCLUDES = -I$(SDK_DIR)/include
-INCLUDES += -I../../../../rockit/out/include
 
 # 库文件
-LIBS = -lpthread -lrt
+SDK_STATIC_LIB = $(SDK_DIR)/lib/libai_glass_sdk.a
+LIBS = $(SDK_STATIC_LIB) -lpthread -lrt -lm
 
-# 源文件（使用SDK - 纯客户端实现）
+# 源文件（使用SDK预编译静态库）
 EXAMPLE_SOURCE = gpio_example.c
-SDK_SOURCES = $(SDK_DIR)/src/ai_gpio.c \
-              $(SDK_DIR)/src/ai_ipc.c
 
 # 目标文件
 BUILD_DIR = ../build
@@ -41,9 +39,9 @@ $(BUILD_DIR):
 	mkdir -p $@
 
 # 编译示例程序（使用SDK）
-$(TARGET): $(EXAMPLE_SOURCE) $(SDK_SOURCES) | $(BUILD_DIR)
+$(TARGET): $(EXAMPLE_SOURCE) | $(BUILD_DIR)
 	@echo "编译GPIO示例程序（使用SDK）..."
-	$(CC) $(CFLAGS) $(INCLUDES) -o $@ $(EXAMPLE_SOURCE) $(SDK_SOURCES) $(LIBS)
+	$(CC) $(CFLAGS) $(INCLUDES) -o $@ $(EXAMPLE_SOURCE) $(LIBS)
 	@echo "✅ 编译完成: $(TARGET)"
 	@echo ""
 	@echo "SDK路径: $(SDK_DIR)"

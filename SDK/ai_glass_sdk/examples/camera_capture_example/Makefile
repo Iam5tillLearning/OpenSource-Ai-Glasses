@@ -19,11 +19,11 @@ SDK_DIR = ../..
 INCLUDES = -I$(SDK_DIR)/include
 
 # 库文件
-LIBS = -lrt
+SDK_STATIC_LIB = $(SDK_DIR)/lib/libai_glass_sdk.a
+LIBS = $(SDK_STATIC_LIB) -lpthread -lrt -lm
 
 # 源文件
 EXAMPLE_SOURCE = camera_capture_example.c
-SDK_SOURCES = $(SDK_DIR)/src/ai_camera.c
 
 # 目标文件
 BUILD_DIR = ../build
@@ -36,9 +36,9 @@ $(BUILD_DIR):
 	mkdir -p $@
 
 # 编译程序
-$(TARGET): $(EXAMPLE_SOURCE) $(SDK_SOURCES) | $(BUILD_DIR)
+$(TARGET): $(EXAMPLE_SOURCE) | $(BUILD_DIR)
 	@echo "编译摄像头捕获示例程序..."
-	$(CC) $(CFLAGS) $(INCLUDES) -o $@ $(EXAMPLE_SOURCE) $(SDK_SOURCES) $(LIBS)
+	$(CC) $(CFLAGS) $(INCLUDES) -o $@ $(EXAMPLE_SOURCE) $(LIBS)
 	@echo "✅ 编译完成: $(TARGET)"
 	@echo ""
 	@echo "运行方法:"
