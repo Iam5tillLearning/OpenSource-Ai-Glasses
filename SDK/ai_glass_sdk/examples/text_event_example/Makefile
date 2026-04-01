@@ -1,7 +1,13 @@
 # Makefile for Text Event Example
+DEV_ENV_ROOT := ../../../../..
+TOOLCHAIN_BIN := $(DEV_ENV_ROOT)/tools/linux/toolchain/arm-rockchip831-linux-uclibcgnueabihf/bin
 
 ifeq ($(CROSS_COMPILE),)
+ifneq ($(wildcard $(TOOLCHAIN_BIN)/arm-rockchip831-linux-uclibcgnueabihf-gcc),)
+CROSS_COMPILE = $(TOOLCHAIN_BIN)/arm-rockchip831-linux-uclibcgnueabihf-
+else
 CROSS_COMPILE = arm-rockchip831-linux-uclibcgnueabihf-
+endif
 endif
 
 CC = $(CROSS_COMPILE)gcc
