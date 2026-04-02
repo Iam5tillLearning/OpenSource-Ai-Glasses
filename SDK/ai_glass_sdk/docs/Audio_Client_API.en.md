@@ -44,12 +44,12 @@ arm-rockchip831-linux-uclibcgnueabihf-gcc \
 
 ```bash
 # Compile SDK example program
-cd ai_glass_sdk/examples/audio_play_client
+cd ai_glass_sdk/examples/audio_play_example
 make
 
 # Push and run SDK example program
-adb push ./audio_play_client /path/you/like
-./audio_play_client -f /path/to/audio.pcm -v 80
+adb push ../build/audio_play_example /path/you/like
+./audio_play_example -f /path/to/audio.pcm -v 80
 ```
 
 ### Minimal Client Code
@@ -372,6 +372,38 @@ int ai_audio_play_simple(ai_audio_t *client, const char *file_path);
 
 ---
 
+#### Resource Arbitration API
+
+Used for application switching scenarios, for example when a launcher enters or exits IPC mode, to centrally control whether `ai-core` owns camera and audio resources.
+
+```c
+#define AI_AUDIO_RESOURCE_CAMERA  0x01
+#define AI_AUDIO_RESOURCE_AUDIO   0x02
+#define AI_AUDIO_RESOURCE_ALL     (AI_AUDIO_RESOURCE_CAMERA | AI_AUDIO_RESOURCE_AUDIO)
+
+typedef struct {
+    int camera_suspended;  // 1=released to external app, 0=owned by ai-core
+    int audio_suspended;   // 1=released to external app, 0=owned by ai-core
+} ai_audio_resource_status_t;
+
+int ai_audio_suspend_resources(ai_audio_t *client, int resource_mask);
+int ai_audio_resume_resources(ai_audio_t *client, int resource_mask);
+int ai_audio_get_resource_status(ai_audio_t *client, ai_audio_resource_status_t *status);
+```
+
+**Typical Sequence**:
+- Before entering IPC: `ai_audio_suspend_resources(client, AI_AUDIO_RESOURCE_ALL)`
+- After IPC exits: `ai_audio_resume_resources(client, AI_AUDIO_RESOURCE_ALL)`
+- During switching, poll with `ai_audio_get_resource_status(...)`
+
+**Example Program**: `ai_glass_sdk/examples/media_resource_control/`
+
+**Typical Use Cases**:
+- Release camera/audio to an external application before launching IPC
+- Return camera/audio back to `ai-core` after IPC exits
+
+---
+
 ## 💡 Complete Example
 
 ### Example 1: Basic Playback
@@ -603,7 +635,6 @@ ps aux | grep ai-core
 **Solution**:
 - Check network connection and TTS server configuration
 - Ensure text uses UTF-8 encoding
-- See [TTS Client API](TTS_Client_API.en.md) for detailed TTS configuration (Note: File might be missing)
 
 ---
 
@@ -667,30 +698,29 @@ Besides programming interface, SDK also provides convenient command line tools:
 
 ```bash
 # PCM file playback
-./audio_play_client -f /path/to/audio.pcm -v 80
+./audio_play_example -f /path/to/audio.pcm -v 80
 
 # TTS text playback
-./audio_play_client -t "Hello World" -v 90
+./audio_play_example -t "Hello World" -v 90
 
 # Force play (interrupt current)
-./audio_play_client -f /tmp/urgent.pcm -F
+./audio_play_example -f /tmp/urgent.pcm -F
 
 # Stop playback
-./audio_play_client -S
+./audio_play_example -S
 ```
 
 ### Detailed Description
 
 For complete command line tool usage instructions, please refer to:
-**📖 [Audio Play Client User Guide](../examples/audio_play_client/README.md)**
+**📖 [Audio Play Example User Guide](../examples/audio_play_example/README.en.md)**
 
 ---
 
 ## 🔗 Related Documentation
 
-- **Example Program**: `ai_glass_sdk/examples/audio_play_client/`
+- **Example Program**: `ai_glass_sdk/examples/audio_play_example/`
 - **Header File**: `ai_glass_sdk/include/ai_audio.h`
-- **TTS Function**: [TTS Client API](TTS_Client_API.en.md)
 - **SDK README**: `ai_glass_sdk/README.md`
 
 ---

@@ -359,6 +359,5 @@ done
 ## 🔗 相关文档
 
 - **编程接口**: [Audio Client API 开发指南](../../docs/Audio_Client_API.md)
-- **TTS功能**: [TTS客户端API](../../docs/TTS_Client_API.md)
 - **SDK文档**: `../../README.md`
 - **头文件**: `../../include/ai_audio.h`

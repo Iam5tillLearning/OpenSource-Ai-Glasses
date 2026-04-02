@@ -24,7 +24,7 @@ extern "C" {
 // 常量定义
 #define AI_MEDIA_CTRL_SOCKET_PATH "/tmp/ai-core_camera_ctrl"
 #define AI_MEDIA_SHM_NAME "/ai-core_shm"
-#define AI_MEDIA_SHM_SIZE (2 * 1024 * 1024 + 1024)  // 2MB媒体数据 + 1KB控制区域
+#define AI_MEDIA_SHM_SIZE (4 * 1024 * 1024 + 1024)  // 4MB媒体数据 + 1KB控制区域
 
 #define AI_MEDIA_FORMAT_JPEG  0
 #define AI_MEDIA_FORMAT_NV12  1

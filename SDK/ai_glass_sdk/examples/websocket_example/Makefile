@@ -2,10 +2,16 @@
 
 # 输出目录
 BUILD_DIR = ../build
+DEV_ENV_ROOT := ../../../../..
+TOOLCHAIN_BIN := $(DEV_ENV_ROOT)/tools/linux/toolchain/arm-rockchip831-linux-uclibcgnueabihf/bin
 
 # 交叉编译工具链
 ifeq ($(CROSS_COMPILE),)
+ifneq ($(wildcard $(TOOLCHAIN_BIN)/arm-rockchip831-linux-uclibcgnueabihf-gcc),)
+CROSS_COMPILE = $(TOOLCHAIN_BIN)/arm-rockchip831-linux-uclibcgnueabihf-
+else
 CROSS_COMPILE = arm-rockchip831-linux-uclibcgnueabihf-
+endif
 endif
 
 CC = $(CROSS_COMPILE)gcc
@@ -22,11 +28,7 @@ CFLAGS += -DMG_TLS=1
 CFLAGS += -DMG_LOG_LEVEL=4
 
 # 头文件路径
-INCLUDES = -I../../include -I../../third_party/mongoose -I../../third_party/mbedtls/include
-
-# 源文件
-WS_CLIENT_SRC = ../../src/ws_client.c
-MONGOOSE_SRC = ../../third_party/mongoose/mongoose.c
+INCLUDES = -I../../include
 
 # mbedTLS静态库
 MBEDTLS_LIBS = ../../third_party/mbedtls/library/libmbedtls.a \
@@ -34,7 +36,8 @@ MBEDTLS_LIBS = ../../third_party/mbedtls/library/libmbedtls.a \
                ../../third_party/mbedtls/library/libmbedcrypto.a
 
 # 链接库
-LIBS = -lpthread -lm
+SDK_STATIC_LIB = ../../lib/libai_glass_sdk.a
+LIBS = $(SDK_STATIC_LIB) $(MBEDTLS_LIBS) -lpthread -lm
 
 # 目标程序
 TARGET = $(BUILD_DIR)/ws_example
@@ -46,9 +49,9 @@ $(BUILD_DIR):
 	mkdir -p $(BUILD_DIR)
 
 # 编译WebSocket示例
-$(TARGET): ws_example.c $(WS_CLIENT_SRC) $(MONGOOSE_SRC) | $(BUILD_DIR)
+$(TARGET): ws_example.c | $(BUILD_DIR)
 	@echo "编译 WebSocket 示例 (with mbedTLS)..."
-	$(CC) $(CFLAGS) $(INCLUDES) -o $@ $< $(WS_CLIENT_SRC) $(MONGOOSE_SRC) $(MBEDTLS_LIBS) $(LIBS)
+	$(CC) $(CFLAGS) $(INCLUDES) -o $@ $< $(LIBS)
 	@echo "✅ 编译完成: $@"
 
 clean:
