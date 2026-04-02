@@ -1,3 +1,0 @@
-/home/xjy/1106b/main/TouchPadManager/build-arm/CMakeFiles/rebuild_cache.dir
-/home/xjy/1106b/main/TouchPadManager/build-arm/CMakeFiles/edit_cache.dir
-/home/xjy/1106b/main/TouchPadManager/build-arm/CMakeFiles/launch.dir
