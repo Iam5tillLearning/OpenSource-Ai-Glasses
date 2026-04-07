@@ -453,7 +453,6 @@ log_info("Progress: %.2f%%\n", progress);
   - [GPIO Client API](GPIO_Client_API.en.md)
   - [Camera Client API](Camera_Client_API.en.md)
   - [Audio Client API](Audio_Client_API.en.md)
-  - [TTS Client API](TTS_Client_API.en.md)
 
 ---
 

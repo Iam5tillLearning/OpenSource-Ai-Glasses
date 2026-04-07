@@ -453,7 +453,6 @@ log_info("进度: %.2f%%\n", progress);
   - [GPIO 客户端 API](GPIO_Client_API.md)
   - [摄像头客户端 API](Camera_Client_API.md)
   - [音频客户端 API](Audio_Client_API.md)
-  - [TTS 客户端 API](TTS_Client_API.md)
 
 ---
 

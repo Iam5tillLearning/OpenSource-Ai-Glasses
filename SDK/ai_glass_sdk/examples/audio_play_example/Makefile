@@ -1,9 +1,16 @@
 # Makefile for Audio Play Example
 # 音频播放示例程序（使用AI Audio Client SDK）
 
+DEV_ENV_ROOT := ../../../../..
+TOOLCHAIN_BIN := $(DEV_ENV_ROOT)/tools/linux/toolchain/arm-rockchip831-linux-uclibcgnueabihf/bin
+
 # 编译器和工具链
 ifeq ($(CROSS_COMPILE),)
+ifneq ($(wildcard $(TOOLCHAIN_BIN)/arm-rockchip831-linux-uclibcgnueabihf-gcc),)
+CROSS_COMPILE = $(TOOLCHAIN_BIN)/arm-rockchip831-linux-uclibcgnueabihf-
+else
 CROSS_COMPILE = arm-rockchip831-linux-uclibcgnueabihf-
+endif
 endif
 
 CC = $(CROSS_COMPILE)gcc
@@ -18,8 +25,8 @@ SDK_DIR = ../..
 # 头文件路径（使用SDK）
 INCLUDES = -I$(SDK_DIR)/include
 
-# SDK源文件
-SDK_SOURCES = $(SDK_DIR)/src/ai_audio.c
+# SDK静态库
+SDK_STATIC_LIB = $(SDK_DIR)/lib/libai_glass_sdk.a
 
 # 示例程序源文件
 EXAMPLE_SOURCE = audio_play_example.c
@@ -34,10 +41,10 @@ all: $(BUILD_DIR) $(TARGET)
 $(BUILD_DIR):
 	mkdir -p $@
 
-# 编译程序（链接SDK源文件）
-$(TARGET): $(EXAMPLE_SOURCE) $(SDK_SOURCES) | $(BUILD_DIR)
+# 编译程序（链接SDK静态库）
+$(TARGET): $(EXAMPLE_SOURCE) | $(BUILD_DIR)
 	@echo "🔨 编译音频播放示例程序..."
-	$(CC) $(CFLAGS) $(INCLUDES) -o $@ $(EXAMPLE_SOURCE) $(SDK_SOURCES) -lpthread -lrt
+	$(CC) $(CFLAGS) $(INCLUDES) -o $@ $(EXAMPLE_SOURCE) $(SDK_STATIC_LIB) -lpthread -lrt -lm
 	@echo "✅ 编译完成: $(TARGET)"
 
 # 清理

@@ -361,6 +361,5 @@ done
 ## 🔗 Related Documentation
 
 - **Programming Interface**: [Audio Client API Development Guide](../../docs/Audio_Client_API.en.md)
-- **TTS Function**: [TTS Client API](../../docs/TTS_Client_API.en.md) (Note: File might be missing)
 - **SDK Documentation**: `../../README.en.md`
 - **Header File**: `../../include/ai_audio.h`

@@ -1,10 +1,10 @@
-# Disable Physical Interaction Example 使用说明
+# Disable AI-Core Physical Actions Example 使用说明
 
 ## 简介
 
-`disable_physical_interaction_example` 用于通过 SDK 显式启用：
+`disable_aicore_physical_actions_example` 用于通过 SDK 显式启用：
 
-- `ai_audio_set_sdk_control_mode(client, 1)`
+- `ai_audio_set_disable_aicore_physical_actions(client, 1)`
 
 启用后行为：
 
@@ -16,43 +16,43 @@
 ## 编译
 
 ```bash
-cd ai_glass_sdk/examples/disable_physical_interaction_example
+cd ai_glass_sdk/examples/disable_aicore_physical_actions_example
 make
 ```
 
 编译产物：
 
-- `../build/disable_physical_interaction_example`
+- `../build/disable_aicore_physical_actions_example`
 
 ## 前置条件
 
 1. `ai-core` 已运行，且音频控制 Socket 可用（默认 `/tmp/ai-core_audio_ctrl`）
-2. `ai-core` 版本支持 `SDK_CONTROL_MODE` 音频控制命令
+2. `ai-core` 版本支持 `DISABLE_AICORE_PHYSICAL_ACTIONS` 音频控制命令
 
 ## 使用方法
 
 ### 默认 Socket 路径
 
 ```bash
-../build/disable_physical_interaction_example
+../build/disable_aicore_physical_actions_example
 ```
 
 ### 自定义 Socket 路径
 
 ```bash
-../build/disable_physical_interaction_example -s /tmp/ai-core_audio_ctrl
+../build/disable_aicore_physical_actions_example -s /tmp/ai-core_audio_ctrl
 ```
 
 ## 预期输出示例
 
 ```text
-[SAMPLE] disable_physical_interaction_example started.
+[SAMPLE] disable_aicore_physical_actions_example started.
 [SAMPLE] Step 1/4: connect audio control socket...
-[SAMPLE] Step 2/4: query current sdk control mode...
-[SAMPLE] Current mode: DISABLED
-[SAMPLE] Step 3/4: set sdk control mode to ENABLED...
-[SAMPLE] Step 4/4: re-check mode...
-[SAMPLE][OK] Physical interaction disable mode is now ENABLED.
+[SAMPLE] Step 2/4: query current disable_aicore_physical_actions state...
+[SAMPLE] Current state: DISABLED
+[SAMPLE] Step 3/4: set disable_aicore_physical_actions to ENABLED...
+[SAMPLE] Step 4/4: re-check disable_aicore_physical_actions state...
+[SAMPLE][OK] disable_aicore_physical_actions is now ENABLED.
 [SAMPLE][OK] AI-Core physical auto actions are disabled, GPIO events remain available.
 ```
 
@@ -67,8 +67,8 @@ make
 
 ### 1) 返回 `Server response error (-5)`
 
-说明服务端 `ai-core` 版本不支持该控制命令或协议不匹配。  
-请升级到支持 `SDK_CONTROL_MODE` 的 `ai-core`。
+说明服务端 `ai-core` 版本不支持该控制命令或协议不匹配。
+请升级到支持 `DISABLE_AICORE_PHYSICAL_ACTIONS` 的 `ai-core`。
 
 ### 2) 初始化失败
 
