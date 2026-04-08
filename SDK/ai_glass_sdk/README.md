@@ -4,7 +4,7 @@
 
 ## 简介
 
-本 SDK 为 AI Core Service 提供完整的客户端开发套件，支持 GPIO 事件订阅、摄像头抓拍、音频播放、录音控制、物理交互控制、媒体资源仲裁、显示提交和文本事件监听。
+本 SDK 为 AI Core Service 提供完整的客户端开发套件，支持 GPIO 事件订阅、摄像头抓拍、音频播放、录音控制、物理交互控制、媒体资源仲裁、显示提交、BLE 文本收发和文本事件监听。
 
 说明：示例程序统一通过 `lib/libai_glass_sdk.a` 或 `lib/libai_glass_sdk.so` 链接 SDK。
 
@@ -18,6 +18,7 @@ ai_glass_sdk/
 │   ├── ai_camera.h                # 摄像头客户端 API
 │   ├── ai_audio.h                 # 音频客户端 API
 │   ├── ai_display.h               # 显示客户端 API
+│   ├── ai_ble.h                   # BLE 文本客户端 API
 │   ├── ai_text_event.h            # 文本事件客户端 API
 │   └── ai_log.h                   # 日志系统 API
 ├── lib/                  # 预编译库文件
@@ -38,6 +39,7 @@ ai_glass_sdk/
 │   ├── Camera_Client_API.md         # 摄像头客户端 API 文档
 │   ├── Audio_Client_API.md          # 音频客户端 API 文档
 │   ├── Display_Client_API.md        # 显示客户端 API 文档
+│   ├── BLE_Client_API.md            # BLE 文本客户端 API 文档
 │   ├── Text_Event_Client_API.md     # 文本事件客户端 API 文档
 │   └── Log_API.md                   # 日志系统 API 文档
 ├── README.md            # 本文件
@@ -73,6 +75,11 @@ ai_glass_sdk/
 - 监听 ASR / LLM / System 文本流
 - 支持流式输出和最终结果标记
 - 独立接收线程，不阻塞主循环
+
+### 6. BLE 文本通道
+- 通过 `bt_service` 暴露的本地 Unix Socket 统一接入 BLE 文本消息
+- 支持按 `datatype` 订阅，例如 `display.text`
+- 支持从本地应用发送 UTF-8 JSON 文本到手机侧 notify
 
 ## 🚀 快速开始
 
@@ -288,6 +295,7 @@ int main(void) {
 | [Camera_Client_API.md](docs/Camera_Client_API.md) | 摄像头客户端 API 文档 |
 | [Audio_Client_API.md](docs/Audio_Client_API.md) | 音频客户端 API 文档 |
 | [Display_Client_API.md](docs/Display_Client_API.md) | 显示客户端 API 文档 |
+| [BLE_Client_API.md](docs/BLE_Client_API.md) | BLE 文本客户端 API 文档 |
 | [Text_Event_Client_API.md](docs/Text_Event_Client_API.md) | 文本事件客户端 API 文档 |
 | [Log_API.md](docs/Log_API.md) | 日志系统 API 文档 |
 
