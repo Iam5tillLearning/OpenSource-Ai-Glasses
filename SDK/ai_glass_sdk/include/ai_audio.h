@@ -85,38 +85,20 @@ int ai_audio_play(ai_audio_t *client, const ai_audio_params_t *params);
 int ai_audio_stop(ai_audio_t *client);
 
 /**
- * @brief 设置 ai-core 是否响应物理交互动作
- * @note 兼容语义接口，内部映射到 ai_audio_set_sdk_control_mode()
+ * @brief 设置是否禁用 ai-core 物理交互动作
  * @param client 客户端句柄
- * @param enabled 1=启用，0=禁用
+ * @param disabled 1=禁用 AI-Core 物理交互动作并保留 GPIO 事件，0=恢复默认动作
  * @return 0成功，负数表示错误码
  */
-int ai_audio_set_button_response(ai_audio_t *client, int enabled);
+int ai_audio_set_disable_aicore_physical_actions(ai_audio_t *client, int disabled);
 
 /**
- * @brief 查询 ai-core 物理交互动作响应状态
- * @note 兼容语义接口，内部映射到 ai_audio_get_sdk_control_mode()
+ * @brief 查询是否禁用 ai-core 物理交互动作
  * @param client 客户端句柄
- * @param enabled 输出参数，1=启用，0=禁用
+ * @param disabled 输出参数，1=已禁用，0=未禁用
  * @return 0成功，负数表示错误码
  */
-int ai_audio_get_button_response(ai_audio_t *client, int *enabled);
-
-/**
- * @brief 设置 SDK 控制模式（命名沿用历史，语义与 --disable-aicore-physical-interaction 一致）
- * @param client 客户端句柄
- * @param enabled 1=启用（禁用ai-core物理交互动作，保留GPIO事件），0=禁用
- * @return 0成功，负数表示错误码
- */
-int ai_audio_set_sdk_control_mode(ai_audio_t *client, int enabled);
-
-/**
- * @brief 查询 SDK 控制模式状态（命名沿用历史，语义与 --disable-aicore-physical-interaction 一致）
- * @param client 客户端句柄
- * @param enabled 输出参数，1=启用，0=禁用
- * @return 0成功，负数表示错误码
- */
-int ai_audio_get_sdk_control_mode(ai_audio_t *client, int *enabled);
+int ai_audio_get_disable_aicore_physical_actions(ai_audio_t *client, int *disabled);
 
 /**
  * @brief 通过SDK命令启动录音（无需物理按键）

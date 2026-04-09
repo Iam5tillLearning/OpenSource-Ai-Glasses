@@ -4,6 +4,7 @@
 #include <unistd.h>
 #include <pthread.h>
 #include "lvgl/lvgl.h"
+#include "../../SDK/ai_glass_sdk/include/ai_ble.h"
 #include "../../SDK/ai_glass_sdk/include/ai_display.h"
 #include "../../SDK/ai_glass_sdk/include/ai_gpio.h"
 #include "ui/ui.h"
@@ -20,9 +21,17 @@
 // ==================== 全局客户端句柄 ====================
 ai_display_client_t *disp_client = NULL;
 uint8_t *shm_buf = NULL;
+static ai_ble_client_t *ble_client = NULL;
 
 // GPIO 事件客户端 (v2.0 Hub 架构)
 gpio_event_hub_client_t gpio_hub_client;
+
+// BLE 文本显示层
+static lv_obj_t *ble_text_overlay = NULL;
+static lv_obj_t *ble_text_label = NULL;
+static volatile int ble_text_visible = 0;
+static volatile int ble_text_pending = 0;
+static char pending_ble_text[AI_BLE_MAX_DATA_LEN + 1] = {0};
 
 // ==================== 菜单状态管理 ====================
 // 主菜单项枚举
@@ -48,6 +57,92 @@ static volatile int current_menu_index = 0;
 static pthread_mutex_t ui_mutex = PTHREAD_MUTEX_INITIALIZER;
 static volatile int ui_update_pending = 0;
 static volatile int pending_gpio_event = -1;
+
+static void hide_ble_text_overlay(void) {
+    if (!ble_text_overlay) {
+        return;
+    }
+
+    lv_obj_add_flag(ble_text_overlay, LV_OBJ_FLAG_HIDDEN);
+    ble_text_visible = 0;
+}
+
+static void show_ble_text_overlay(const char *text) {
+    if (!ble_text_overlay || !ble_text_label) {
+        return;
+    }
+
+    lv_label_set_text(ble_text_label, text ? text : "");
+    lv_obj_clear_flag(ble_text_overlay, LV_OBJ_FLAG_HIDDEN);
+    lv_obj_move_foreground(ble_text_overlay);
+    ble_text_visible = 1;
+    printf("[Launcher][BLE] UI updated: %s\n", text ? text : "");
+}
+
+static void init_ble_text_overlay(void) {
+    if (!ui_Screen1 || ble_text_overlay) {
+        return;
+    }
+
+    ble_text_overlay = lv_obj_create(ui_Screen1);
+    lv_obj_set_size(ble_text_overlay, SCREEN_WIDTH, SCREEN_HEIGHT);
+    lv_obj_set_pos(ble_text_overlay, 0, 0);
+    lv_obj_set_style_bg_color(ble_text_overlay, lv_color_black(), LV_PART_MAIN | LV_STATE_DEFAULT);
+    lv_obj_set_style_bg_opa(ble_text_overlay, LV_OPA_COVER, LV_PART_MAIN | LV_STATE_DEFAULT);
+    lv_obj_set_style_border_width(ble_text_overlay, 0, LV_PART_MAIN | LV_STATE_DEFAULT);
+    lv_obj_set_style_outline_width(ble_text_overlay, 0, LV_PART_MAIN | LV_STATE_DEFAULT);
+    lv_obj_set_style_shadow_width(ble_text_overlay, 0, LV_PART_MAIN | LV_STATE_DEFAULT);
+    lv_obj_set_style_pad_all(ble_text_overlay, 0, LV_PART_MAIN | LV_STATE_DEFAULT);
+    lv_obj_clear_flag(ble_text_overlay, LV_OBJ_FLAG_SCROLLABLE);
+    lv_obj_add_flag(ble_text_overlay, LV_OBJ_FLAG_HIDDEN);
+
+    ble_text_label = lv_label_create(ble_text_overlay);
+    lv_obj_set_width(ble_text_label, SCREEN_WIDTH - 80);
+    lv_obj_center(ble_text_label);
+    lv_label_set_long_mode(ble_text_label, LV_LABEL_LONG_WRAP);
+    lv_label_set_text(ble_text_label, "");
+    lv_obj_set_style_text_font(ble_text_label, &ui_font_alibaba_30, LV_PART_MAIN | LV_STATE_DEFAULT);
+    lv_obj_set_style_text_color(ble_text_label, lv_color_white(), LV_PART_MAIN | LV_STATE_DEFAULT);
+    lv_obj_set_style_text_align(ble_text_label, LV_TEXT_ALIGN_CENTER, LV_PART_MAIN | LV_STATE_DEFAULT);
+    lv_obj_set_style_text_line_space(ble_text_label, 12, LV_PART_MAIN | LV_STATE_DEFAULT);
+}
+
+static void on_ble_display_text(const char *datatype, const char *data, void *user_data) {
+    (void)user_data;
+
+    pthread_mutex_lock(&ui_mutex);
+    strncpy(pending_ble_text, data ? data : "", AI_BLE_MAX_DATA_LEN);
+    pending_ble_text[AI_BLE_MAX_DATA_LEN] = '\0';
+    ble_text_pending = 1;
+    pthread_mutex_unlock(&ui_mutex);
+
+    printf("[Launcher][BLE] recv %s => %s\n", datatype, pending_ble_text);
+}
+
+static int init_ble_client(void) {
+    ble_client = ai_ble_client_create();
+    if (!ble_client) {
+        printf("[Launcher][BLE] ERROR: Failed to create client\n");
+        return -1;
+    }
+
+    if (ai_ble_client_start(ble_client) != 0) {
+        printf("[Launcher][BLE] ERROR: Failed to start client\n");
+        ai_ble_client_destroy(ble_client);
+        ble_client = NULL;
+        return -1;
+    }
+
+    if (ai_ble_register_datatype(ble_client, "display.text", on_ble_display_text, NULL) != 0) {
+        printf("[Launcher][BLE] ERROR: Failed to register datatype display.text\n");
+        ai_ble_client_destroy(ble_client);
+        ble_client = NULL;
+        return -1;
+    }
+
+    printf("[Launcher][BLE] Registered datatype: display.text\n");
+    return 0;
+}
 
 // ==================== UI 更新函数 ====================
 // 切换首页菜单高亮显示
@@ -123,6 +218,13 @@ void switch_to_state(ui_state_t new_state) {
 // 处理翻页键 (GPIO 0)
 void handle_page_key(void) {
     pthread_mutex_lock(&ui_mutex);
+
+    if (ble_text_visible) {
+        hide_ble_text_overlay();
+        pthread_mutex_unlock(&ui_mutex);
+        printf("[Launcher] Page key dismissed BLE text overlay\n");
+        return;
+    }
     
     switch (current_state) {
         case STATE_HOME:
@@ -141,6 +243,13 @@ void handle_page_key(void) {
 // 处理确认键 (GPIO 75)
 void handle_confirm_key(void) {
     pthread_mutex_lock(&ui_mutex);
+
+    if (ble_text_visible) {
+        hide_ble_text_overlay();
+        pthread_mutex_unlock(&ui_mutex);
+        printf("[Launcher] Confirm key dismissed BLE text overlay\n");
+        return;
+    }
     
     switch (current_state) {
         case STATE_HOME:
@@ -277,6 +386,10 @@ int init_lvgl(void) {
 // ==================== 清理函数 ====================
 void cleanup(void) {
     ai_gpio_hub_client_destroy(&gpio_hub_client);
+    if (ble_client) {
+        ai_ble_client_destroy(ble_client);
+        ble_client = NULL;
+    }
     
     ai_display_disconnect(disp_client);
     pthread_mutex_destroy(&ui_mutex);
@@ -325,11 +438,26 @@ int main(int argc, char **argv) {
     if (init_lvgl() != 0) return -1;
 
     ui_init();
+    init_ble_text_overlay();
     switch_to_state(STATE_HOME);
+    if (init_ble_client() != 0) {
+        printf("[Launcher][BLE] WARNING: BLE text subscription disabled\n");
+    }
 
     printf("[Launcher] Entering main loop\n");
     
     while(1) {
+        if (ble_text_pending) {
+            char text[AI_BLE_MAX_DATA_LEN + 1];
+
+            pthread_mutex_lock(&ui_mutex);
+            strncpy(text, pending_ble_text, AI_BLE_MAX_DATA_LEN + 1);
+            ble_text_pending = 0;
+            pthread_mutex_unlock(&ui_mutex);
+
+            show_ble_text_overlay(text);
+        }
+
         if (ui_update_pending) {
             pthread_mutex_lock(&ui_mutex);
             int gpio = pending_gpio_event;

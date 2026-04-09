@@ -22,7 +22,7 @@ Welcome to the AI Glass SDK Documentation Center. This contains all the document
 - [GPIO Event Client](../examples/gpio_example/) - GPIO event subscription example
 - [Camera Client](../examples/camera_capture_example/) - Image capture example
 - [Audio Playback Client](../examples/audio_play_example/) - Audio playback example
-- [Disable Physical Interaction Example](../examples/disable_physical_interaction_example/) - Disable AI-Core auto physical button actions
+- [Disable AI-Core Physical Actions Example](../examples/disable_aicore_physical_actions_example/) - Disable AI-Core auto physical button actions
 - [Record Audio Example](../examples/record_audio_example/) - Start/stop recording and copy to a fixed path
 - [Media Resource Control](../examples/media_resource_control/) - Camera/audio resource release and resume example
 
@@ -43,7 +43,7 @@ Welcome to the AI Glass SDK Documentation Center. This contains all the document
 ### 3. Audio Development
 1. Read [Audio Client API](Audio_Client_API.en.md)
 2. View [Audio Playback Client Example](../examples/audio_play_example/)
-3. To disable AI-Core physical actions, view [Disable Physical Interaction Example](../examples/disable_physical_interaction_example/)
+3. To disable AI-Core physical actions, view [Disable AI-Core Physical Actions Example](../examples/disable_aicore_physical_actions_example/)
 4. To trigger recording from the SDK, view [Record Audio Example](../examples/record_audio_example/)
 5. For app switching, view [Media Resource Control](../examples/media_resource_control/)
 ---
@@ -80,7 +80,7 @@ Hardware Resources (GPIO, Camera, Audio)
 - GPIO Example: `../examples/gpio_example/`
 - Audio Example: `../examples/audio_play_example/`
 - Camera Example: `../examples/camera_capture_example/`
-- Disable Physical Interaction Example: `../examples/disable_physical_interaction_example/`
+- Disable AI-Core Physical Actions Example: `../examples/disable_aicore_physical_actions_example/`
 - Record Audio Example: `../examples/record_audio_example/`
 - Media Resource Example: `../examples/media_resource_control/`
 

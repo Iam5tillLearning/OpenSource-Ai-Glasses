@@ -4,9 +4,9 @@
 
 ## 简介
 
-本 SDK 为 AI Core Service 提供完整的客户端开发套件，支持 GPIO 事件订阅、摄像头抓拍、音频播放、录音控制、物理交互控制、媒体资源仲裁、显示提交和文本事件监听。
+本 SDK 为 AI Core Service 提供完整的客户端开发套件，支持 GPIO 事件订阅、摄像头抓拍、音频播放、录音控制、物理交互控制、媒体资源仲裁、显示提交、BLE 文本收发和文本事件监听。
 
-说明：示例程序统一通过 `lib/libai_glass_sdk.a` 或 `lib/libai_glass_sdk.so` 链接 SDK，不再直接引用 `src/` 下源码文件。
+说明：示例程序统一通过 `lib/libai_glass_sdk.a` 或 `lib/libai_glass_sdk.so` 链接 SDK。
 
 ## 📦 SDK内容
 
@@ -18,6 +18,7 @@ ai_glass_sdk/
 │   ├── ai_camera.h                # 摄像头客户端 API
 │   ├── ai_audio.h                 # 音频客户端 API
 │   ├── ai_display.h               # 显示客户端 API
+│   ├── ai_ble.h                   # BLE 文本客户端 API
 │   ├── ai_text_event.h            # 文本事件客户端 API
 │   └── ai_log.h                   # 日志系统 API
 ├── lib/                  # 预编译库文件
@@ -27,7 +28,7 @@ ai_glass_sdk/
 │   ├── gpio_example/                         # GPIO 事件订阅示例
 │   ├── audio_play_example/                   # 音频播放示例
 │   ├── camera_capture_example/               # 摄像头抓拍示例
-│   ├── disable_physical_interaction_example/ # 禁用 AI-Core 物理交互动作示例
+│   ├── disable_aicore_physical_actions_example/ # 禁用 AI-Core 物理动作示例
 │   ├── record_audio_example/                 # SDK 控制录音示例
 │   ├── media_resource_control/               # 相机/音频资源切换控制台示例
 │   ├── text_event_example/                   # ASR/LLM/System 文本流监听示例
@@ -38,6 +39,7 @@ ai_glass_sdk/
 │   ├── Camera_Client_API.md         # 摄像头客户端 API 文档
 │   ├── Audio_Client_API.md          # 音频客户端 API 文档
 │   ├── Display_Client_API.md        # 显示客户端 API 文档
+│   ├── BLE_Client_API.md            # BLE 文本客户端 API 文档
 │   ├── Text_Event_Client_API.md     # 文本事件客户端 API 文档
 │   └── Log_API.md                   # 日志系统 API 文档
 ├── README.md            # 本文件
@@ -74,6 +76,11 @@ ai_glass_sdk/
 - 支持流式输出和最终结果标记
 - 独立接收线程，不阻塞主循环
 
+### 6. BLE 文本通道
+- 通过 `bt_service` 暴露的本地 Unix Socket 统一接入 BLE 文本消息
+- 支持按 `datatype` 订阅，例如 `display.text`
+- 支持从本地应用发送 UTF-8 JSON 文本到手机侧 notify
+
 ## 🚀 快速开始
 
 ### 1. 编译 SDK
@@ -89,7 +96,7 @@ make
 ```bash
 cd examples/audio_play_example && make
 cd ../camera_capture_example && make
-cd ../disable_physical_interaction_example && make
+cd ../disable_aicore_physical_actions_example && make
 cd ../record_audio_example && make
 cd ../media_resource_control && make
 ```
@@ -123,10 +130,10 @@ cd examples/audio_play_example
 ./../build/audio_play_example -f /path/to/audio.pcm -v 80 -r 48000
 ```
 
-#### 禁用 AI-Core 物理交互动作
+#### 禁用 AI-Core 物理动作
 ```bash
-cd examples/disable_physical_interaction_example
-./../build/disable_physical_interaction_example
+cd examples/disable_aicore_physical_actions_example
+./../build/disable_aicore_physical_actions_example
 ```
 
 #### SDK 控制录音
@@ -234,10 +241,8 @@ int main(void) {
 | `ai_audio_init()` | 初始化音频客户端 |
 | `ai_audio_play()` | 播放音频文件 |
 | `ai_audio_stop()` | 停止当前播放 |
-| `ai_audio_set_button_response()` | 设置 AI-Core 是否响应物理交互动作 |
-| `ai_audio_get_button_response()` | 查询物理交互动作响应状态 |
-| `ai_audio_set_sdk_control_mode()` | 设置 SDK 控制模式 |
-| `ai_audio_get_sdk_control_mode()` | 查询 SDK 控制模式 |
+| `ai_audio_set_disable_aicore_physical_actions()` | 设置是否禁用 AI-Core 物理动作 |
+| `ai_audio_get_disable_aicore_physical_actions()` | 查询是否禁用 AI-Core 物理动作 |
 | `ai_audio_record_start()` | 启动录音 |
 | `ai_audio_record_stop()` | 停止录音并获取录音文件路径 |
 | `ai_audio_record_get_status()` | 查询当前录音状态 |
@@ -290,6 +295,7 @@ int main(void) {
 | [Camera_Client_API.md](docs/Camera_Client_API.md) | 摄像头客户端 API 文档 |
 | [Audio_Client_API.md](docs/Audio_Client_API.md) | 音频客户端 API 文档 |
 | [Display_Client_API.md](docs/Display_Client_API.md) | 显示客户端 API 文档 |
+| [BLE_Client_API.md](docs/BLE_Client_API.md) | BLE 文本客户端 API 文档 |
 | [Text_Event_Client_API.md](docs/Text_Event_Client_API.md) | 文本事件客户端 API 文档 |
 | [Log_API.md](docs/Log_API.md) | 日志系统 API 文档 |
 
@@ -299,7 +305,7 @@ int main(void) {
 | [GPIO事件客户端示例](examples/gpio_example/README.md) | GPIO 事件订阅完整示例 |
 | [摄像头客户端示例](examples/camera_capture_example/README.md) | 单帧抓拍并保存图像 |
 | [音频播放客户端示例](examples/audio_play_example/README.md) | 音频播放示例 |
-| [禁用 AI-Core 物理交互动作示例](examples/disable_physical_interaction_example/README.md) | 通过 SDK 禁用 AI-Core 自动物理按键动作 |
+| [禁用 AI-Core 物理动作示例](examples/disable_aicore_physical_actions_example/README.md) | 通过 SDK 禁用 AI-Core 自动物理按键动作 |
 | [SDK 控制录音示例](examples/record_audio_example/README.md) | SDK 控制开始/停止录音并复制到固定路径 |
 | [媒体资源切换控制台示例](examples/media_resource_control/README.md) | 相机/音频资源释放与回收示例 |
 | [文本事件客户端示例](examples/text_event_example/README.md) | 文本流监听完整示例 |

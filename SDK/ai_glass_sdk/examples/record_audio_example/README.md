@@ -32,7 +32,7 @@ make
 ```
 
 说明：当前录音控制链路依赖 GPIO 录音线程，因此需启用 `--enable-gpio`。
-`--disable-aicore-physical-interaction` 不是录音必要条件，仅在你希望避免物理按键自动动作时可选开启。
+`--disable-aicore-physical-actions` 不是录音必要条件，仅在你希望避免物理按键自动动作时可选开启。
 
 ## 使用方法
 

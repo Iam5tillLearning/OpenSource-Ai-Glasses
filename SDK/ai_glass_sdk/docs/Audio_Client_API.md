@@ -249,57 +249,17 @@ int ai_audio_stop(ai_audio_t *client);
 
 ---
 
-#### ai_audio_set_button_response()
+#### ai_audio_set_disable_aicore_physical_actions()
 
-设置 ai-core 是否响应物理交互动作（录音/拍照/抢话）。
+设置是否禁用 ai-core 物理动作（录音/拍照/抢话）。
 
 ```c
-int ai_audio_set_button_response(ai_audio_t *client, int enabled);
+int ai_audio_set_disable_aicore_physical_actions(ai_audio_t *client, int disabled);
 ```
 
 **参数**：
 - `client` - 客户端句柄
-- `enabled` - 1=启用，0=禁用
-
-**返回值**：
-- `AI_AUDIO_SUCCESS` (0) - 成功
-- 负数 - 错误码
-
-**说明**：
-- 该接口是 `ai_audio_set_sdk_control_mode()` 的兼容语义接口
-- 内部会映射为 `SDK_CONTROL_MODE` 配置
-
----
-
-#### ai_audio_get_button_response()
-
-查询 ai-core 物理交互动作响应状态。
-
-```c
-int ai_audio_get_button_response(ai_audio_t *client, int *enabled);
-```
-
-**参数**：
-- `client` - 客户端句柄
-- `enabled` - 输出参数，1=启用，0=禁用
-
-**返回值**：
-- `AI_AUDIO_SUCCESS` (0) - 成功
-- 负数 - 错误码
-
----
-
-#### ai_audio_set_sdk_control_mode()
-
-设置 SDK 控制模式（命名沿用历史，语义与启动参数 `--disable-aicore-physical-interaction` 一致）。
-
-```c
-int ai_audio_set_sdk_control_mode(ai_audio_t *client, int enabled);
-```
-
-**参数**：
-- `client` - 客户端句柄
-- `enabled` - 1=启用（禁用ai-core物理交互动作，保留GPIO事件），0=禁用
+- `disabled` - 1=禁用 ai-core 物理动作并保留 GPIO 事件，0=恢复默认动作
 
 **返回值**：
 - `AI_AUDIO_SUCCESS` (0) - 成功
@@ -311,17 +271,17 @@ int ai_audio_set_sdk_control_mode(ai_audio_t *client, int enabled);
 
 ---
 
-#### ai_audio_get_sdk_control_mode()
+#### ai_audio_get_disable_aicore_physical_actions()
 
-查询 SDK 控制模式状态（命名沿用历史，语义与 `--disable-aicore-physical-interaction` 一致）。
+查询是否禁用 ai-core 物理动作。
 
 ```c
-int ai_audio_get_sdk_control_mode(ai_audio_t *client, int *enabled);
+int ai_audio_get_disable_aicore_physical_actions(ai_audio_t *client, int *disabled);
 ```
 
 **参数**：
 - `client` - 客户端句柄
-- `enabled` - 输出参数，1=启用，0=禁用
+- `disabled` - 输出参数，1=已禁用，0=未禁用
 
 **返回值**：
 - `AI_AUDIO_SUCCESS` (0) - 成功
@@ -347,7 +307,7 @@ int ai_audio_record_start(ai_audio_t *client);
 
 **前提**：
 - ai-core 需以 `--enable-gpio` 启动（录音控制线程使用 GPIO 触发模式）
-- 建议同时启用 `--disable-aicore-physical-interaction`，禁用 ai-core 默认物理交互动作
+- 建议同时启用 `--disable-aicore-physical-actions`，禁用 ai-core 默认物理交互动作
 
 ---
 

@@ -34,7 +34,7 @@ Output binary:
 ```
 
 Note: current recording control loop depends on GPIO recording thread, so `--enable-gpio` is required.
-`--disable-aicore-physical-interaction` is optional and only needed when you want to prevent AI-Core auto physical-button actions.
+`--disable-aicore-physical-actions` is optional and only needed when you want to prevent AI-Core auto physical-button actions.
 
 ## Usage
 

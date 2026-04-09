@@ -245,6 +245,46 @@ int ai_audio_stop(ai_audio_t *client);
 
 ---
 
+#### ai_audio_set_disable_aicore_physical_actions()
+
+Set whether AI-Core physical actions are disabled.
+
+```c
+int ai_audio_set_disable_aicore_physical_actions(ai_audio_t *client, int disabled);
+```
+
+**Parameters**:
+- `client` - Client handle
+- `disabled` - `1` disables AI-Core physical actions while keeping GPIO events, `0` restores default actions
+
+**Return Value**:
+- `AI_AUDIO_SUCCESS` (0) - Success
+- Negative number - Error code
+
+**Description**:
+- When enabled, ai-core will no longer auto-trigger record/capture/barge-in from physical buttons
+- GPIO event broadcast remains available for SDK consumers
+
+---
+
+#### ai_audio_get_disable_aicore_physical_actions()
+
+Query whether AI-Core physical actions are disabled.
+
+```c
+int ai_audio_get_disable_aicore_physical_actions(ai_audio_t *client, int *disabled);
+```
+
+**Parameters**:
+- `client` - Client handle
+- `disabled` - Output parameter, `1` means disabled, `0` means not disabled
+
+**Return Value**:
+- `AI_AUDIO_SUCCESS` (0) - Success
+- Negative number - Error code
+
+---
+
 #### ai_audio_cleanup()
 
 Cleanup client resources.

@@ -17,13 +17,14 @@
 - [摄像头客户端API](Camera_Client_API.md) - 图像捕获和零拷贝传输
 - [音频客户端API](Audio_Client_API.md) - 音频播放与资源控制
 - [显示客户端API](Display_Client_API.md) - 帧缓冲提交和焦点管理
+- [BLE 文本客户端 API](BLE_Client_API.md) - 订阅/发送 `datatype` 文本消息
 - [日志系统API](Log_API.md) - 统一日志输出和毫秒级时间戳
 
 ### 🔧 示例程序文档
 - [GPIO事件客户端](../examples/gpio_example/) - GPIO事件订阅示例
 - [摄像头客户端](../examples/camera_capture_example/) - 图像捕获示例
 - [音频播放客户端](../examples/audio_play_example/) - 音频播放示例
-- [禁用物理交互动作示例](../examples/disable_physical_interaction_example/) - 禁用 AI-Core 自动物理按键动作
+- [禁用 AI-Core 物理动作示例](../examples/disable_aicore_physical_actions_example/) - 禁用 AI-Core 自动物理按键动作
 - [SDK 控制录音示例](../examples/record_audio_example/) - 开始/停止录音并保存到固定路径
 - [媒体资源切换控制台](../examples/media_resource_control/) - 相机/音频资源释放与回收示例
 
@@ -44,7 +45,7 @@
 ### 3. 音频开发
 1. 阅读 [音频客户端API](Audio_Client_API.md)
 2. 查看 [音频播放客户端示例](../examples/audio_play_example/)
-3. 如需禁用 AI-Core 物理交互动作，查看 [禁用物理交互动作示例](../examples/disable_physical_interaction_example/)
+3. 如需禁用 AI-Core 物理动作，查看 [禁用 AI-Core 物理动作示例](../examples/disable_aicore_physical_actions_example/)
 4. 如需脚本触发录音，查看 [SDK 控制录音示例](../examples/record_audio_example/)
 5. 如需应用切换，查看 [媒体资源切换控制台](../examples/media_resource_control/)
 ---
@@ -66,6 +67,7 @@ AI Media Service (服务端)
 - **摄像头调用** - 零拷贝图像传输
 - **音频播放控制** - PCM播放与资源控制
 - **显示服务** - 帧缓冲传输和多客户端焦点管理
+- **BLE 文本通道** - 按 `datatype` 路由 BLE 文本消息
 
 ---
 
@@ -84,7 +86,7 @@ AI Media Service (服务端)
 - GPIO示例：`../examples/gpio_example/`
 - 音频示例：`../examples/audio_play_example/`
 - 摄像头示例：`../examples/camera_capture_example/`
-- 禁用物理交互示例：`../examples/disable_physical_interaction_example/`
+- 禁用 AI-Core 物理动作示例：`../examples/disable_aicore_physical_actions_example/`
 - 录音示例：`../examples/record_audio_example/`
 - 媒体资源切换示例：`../examples/media_resource_control/`
 
@@ -93,6 +95,7 @@ AI Media Service (服务端)
 - 摄像头API：`../include/ai_camera.h`
 - 音频API：`../include/ai_audio.h`
 - 显示API：`../include/ai_display.h`
+- BLE API：`../include/ai_ble.h`
 - IPC基础：`../include/ai_ipc.h`
 - 日志API：`../include/ai_log.h`
 

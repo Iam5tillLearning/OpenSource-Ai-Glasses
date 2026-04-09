@@ -27,7 +27,7 @@ ai_glass_sdk/
 │   ├── gpio_example/                         # GPIO event subscription example
 │   ├── audio_play_example/                   # Audio playback example
 │   ├── camera_capture_example/               # Camera capture example
-│   ├── disable_physical_interaction_example/ # Disable AI-Core physical actions example
+│   ├── disable_aicore_physical_actions_example/ # Disable AI-Core physical actions example
 │   ├── record_audio_example/                 # SDK-controlled recording example
 │   ├── media_resource_control/               # Camera/audio resource switch console
 │   ├── text_event_example/                   # ASR / LLM / System text stream example
@@ -89,7 +89,7 @@ To build only selected examples:
 ```bash
 cd examples/audio_play_example && make
 cd ../camera_capture_example && make
-cd ../disable_physical_interaction_example && make
+cd ../disable_aicore_physical_actions_example && make
 cd ../record_audio_example && make
 cd ../media_resource_control && make
 ```
@@ -122,10 +122,10 @@ cd examples/audio_play_example
 ./../build/audio_play_example -f /path/to/audio.pcm -v 80 -r 48000
 ```
 
-#### Disable AI-Core Physical Interaction Actions
+#### Disable AI-Core Physical Actions
 ```bash
-cd examples/disable_physical_interaction_example
-./../build/disable_physical_interaction_example
+cd examples/disable_aicore_physical_actions_example
+./../build/disable_aicore_physical_actions_example
 ```
 
 #### SDK-Controlled Recording
@@ -232,10 +232,8 @@ int main(void) {
 | `ai_audio_init()` | Initialize the audio client |
 | `ai_audio_play()` | Play an audio file |
 | `ai_audio_stop()` | Stop the current playback |
-| `ai_audio_set_button_response()` | Control whether AI-Core reacts to physical actions |
-| `ai_audio_get_button_response()` | Query physical action response state |
-| `ai_audio_set_sdk_control_mode()` | Set SDK control mode |
-| `ai_audio_get_sdk_control_mode()` | Query SDK control mode |
+| `ai_audio_set_disable_aicore_physical_actions()` | Set whether AI-Core physical actions are disabled |
+| `ai_audio_get_disable_aicore_physical_actions()` | Query whether AI-Core physical actions are disabled |
 | `ai_audio_record_start()` | Start recording |
 | `ai_audio_record_stop()` | Stop recording and get the file path |
 | `ai_audio_record_get_status()` | Query recording state |
@@ -297,7 +295,7 @@ For the full document list, see [docs/README.en.md](docs/README.en.md).
 | [GPIO Event Client Example](examples/gpio_example/README.en.md) | Full GPIO event subscription example |
 | [Camera Client Example](examples/camera_capture_example/README.en.md) | One-shot image capture example |
 | [Audio Playback Example](examples/audio_play_example/README.en.md) | Audio playback example |
-| [Disable Physical Interaction Example](examples/disable_physical_interaction_example/README.en.md) | Disable AI-Core auto physical-button actions through the SDK |
+| [Disable AI-Core Physical Actions Example](examples/disable_aicore_physical_actions_example/README.en.md) | Disable AI-Core auto physical-button actions through the SDK |
 | [Record Audio Example](examples/record_audio_example/README.en.md) | Start/stop recording and copy the recorded file |
 | [Media Resource Control Example](examples/media_resource_control/README.en.md) | Release and resume camera/audio resources |
 | [Text Event Client Example](examples/text_event_example/README.en.md) | Listen to text streams |
