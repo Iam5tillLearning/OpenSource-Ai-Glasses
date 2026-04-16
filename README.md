@@ -39,7 +39,7 @@ You can develop this project in two ways:
 - Use your own RV1106B-based development board to work on the open-source system and software stack.
 - Use our deeply integrated AI glasses kit if you want a faster bring-up path with pre-wired peripherals, preloaded firmware, and less hardware integration work.
 
-[**Optional: Get the Official AI Glasses Kit**](https://item.taobao.com/item.htm?id=1007109700786) — *Recommended for faster bring-up, not required for development*
+[**Optional: Get the Official AI Glasses Kit**](https://item.taobao.com/item.htm?ft=t&id=1044923880613) — *Recommended for faster bring-up, not required for development*
 
 > [!NOTE]
 > **For international buyers**: Please find your own purchasing agent or package forwarding company for now. A global shipping platform is being set up and is expected to go live in about one week. We apologize for the inconvenience.
@@ -151,7 +151,7 @@ You can develop this project in two ways:
 
 ## 🚀 Quick Start
 
-> **💡 Note**: If you purchased the official AI glasses kit, it comes with pre-installed firmware and is ready to use. If you are developing on your own RV1106B board, start from the host setup and flashing guide below.
+> **💡 Note**: If you purchased the [official AI glasses kit](https://item.taobao.com/item.htm?ft=t&id=1044923880613) linked above, it comes with pre-installed firmware and is ready to use. If you are developing on your own RV1106B board, start from the host setup and flashing guide below.
 
 ### Using Native Host Environment (Recommended)
 

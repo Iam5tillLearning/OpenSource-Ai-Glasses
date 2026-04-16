@@ -45,6 +45,7 @@ EXAMPLE_DIRS = examples/audio_play_example \
                examples/gpio_example \
                examples/camera_capture_example \
                examples/disable_aicore_physical_actions_example \
+               examples/query_aicore_physical_actions_example \
                examples/record_audio_example \
                examples/http_example \
                examples/websocket_example \

@@ -31,6 +31,7 @@ ai_glass_sdk/
 │   ├── audio_play_example/                   # 音频播放示例
 │   ├── camera_capture_example/               # 摄像头抓拍示例
 │   ├── disable_aicore_physical_actions_example/ # 禁用 AI-Core 物理动作示例
+│   ├── query_aicore_physical_actions_example/   # 只读查询 AI-Core 物理动作状态示例
 │   ├── record_audio_example/                 # SDK 控制录音示例
 │   ├── media_resource_control/               # 相机/音频资源切换控制台示例
 │   ├── text_event_example/                   # ASR/LLM/System 文本流监听示例
@@ -100,6 +101,7 @@ cd examples/gpio_example && make
 cd ../audio_play_example && make
 cd ../camera_capture_example && make
 cd ../disable_aicore_physical_actions_example && make
+cd ../query_aicore_physical_actions_example && make
 cd ../record_audio_example && make
 cd ../media_resource_control && make
 cd ../text_event_example && make
@@ -141,6 +143,14 @@ cd examples/audio_play_example
 cd examples/disable_aicore_physical_actions_example
 ./../build/disable_aicore_physical_actions_example
 ```
+
+#### 只读查询 AI-Core 物理动作状态
+```bash
+cd examples/query_aicore_physical_actions_example
+./../build/query_aicore_physical_actions_example
+```
+
+说明：该示例只查询 `disable_aicore_physical_actions` 当前状态，不会像 `disable_aicore_physical_actions_example` 一样修改服务端状态，适合现场排查使用。
 
 #### SDK 控制录音
 ```bash
@@ -312,6 +322,7 @@ int main(void) {
 | [摄像头客户端示例](examples/camera_capture_example/README.md) | 单帧抓拍并保存图像 |
 | [音频播放客户端示例](examples/audio_play_example/README.md) | 音频播放示例 |
 | [禁用 AI-Core 物理动作示例](examples/disable_aicore_physical_actions_example/README.md) | 通过 SDK 禁用 AI-Core 自动物理按键动作 |
+| [只读查询 AI-Core 物理动作状态示例](examples/query_aicore_physical_actions_example/README.md) | 只查询 `disable_aicore_physical_actions` 当前状态，不修改服务端运行态 |
 | [SDK 控制录音示例](examples/record_audio_example/README.md) | SDK 控制开始/停止录音并复制到固定路径 |
 | [媒体资源切换控制台示例](examples/media_resource_control/README.md) | 相机/音频资源释放与回收示例 |
 | [文本事件客户端示例](examples/text_event_example/README.md) | 文本流监听完整示例 |
