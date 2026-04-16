@@ -8,6 +8,8 @@
 
 说明：示例程序统一通过 `lib/libai_glass_sdk.a` 或 `lib/libai_glass_sdk.so` 链接 SDK。
 
+说明：当前发布包为“头文件 + 预编译库 + 示例程序”形态，不包含 `src/` 源码目录；示例程序应直接链接 `lib/libai_glass_sdk.a` 或 `lib/libai_glass_sdk.so`。
+
 ## 📦 SDK内容
 
 ```text
@@ -83,22 +85,26 @@ ai_glass_sdk/
 
 ## 🚀 快速开始
 
-### 1. 编译 SDK
+### 1. 编译 SDK 或示例程序
 
 ```bash
-# 编译 SDK 库和默认示例集合
+# SDK 发布包已包含预编译库；如需一次性构建默认示例集合，可直接执行
 cd ai_glass_sdk
 make
 ```
 
-如果只想单独编译某个示例：
+如果只想单独编译某个示例，也可以直接进入对应目录：
 
 ```bash
-cd examples/audio_play_example && make
+cd examples/gpio_example && make
+cd ../audio_play_example && make
 cd ../camera_capture_example && make
 cd ../disable_aicore_physical_actions_example && make
 cd ../record_audio_example && make
 cd ../media_resource_control && make
+cd ../text_event_example && make
+cd ../http_example && make
+cd ../websocket_example && make
 ```
 
 ### 2. 运行示例程序

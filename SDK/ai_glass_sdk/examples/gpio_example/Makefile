@@ -32,7 +32,7 @@ INCLUDES = -I$(SDK_DIR)/include
 SDK_STATIC_LIB = $(SDK_DIR)/lib/libai_glass_sdk.a
 LIBS = $(SDK_STATIC_LIB) -lpthread -lrt -lm
 
-# 源文件（使用SDK静态库）
+# 源文件（使用SDK预编译静态库）
 EXAMPLE_SOURCE = gpio_example.c
 
 # 目标文件

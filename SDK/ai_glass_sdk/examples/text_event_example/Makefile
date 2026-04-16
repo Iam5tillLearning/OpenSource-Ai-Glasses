@@ -13,7 +13,7 @@ endif
 CC = $(CROSS_COMPILE)gcc
 CFLAGS = -Wall -g -I../../include
 
-# 使用SDK静态库
+# 使用SDK预编译静态库
 SDK_LIB = ../../lib/libai_glass_sdk.a
 LDFLAGS = $(SDK_LIB) -lpthread -lrt -lm
 

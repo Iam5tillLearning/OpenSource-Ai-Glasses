@@ -8,6 +8,8 @@ This SDK provides a complete client development kit for AI Core Service, includi
 
 Note: example programs are linked against `lib/libai_glass_sdk.a` or `lib/libai_glass_sdk.so`. They no longer compile by directly referencing sources under `src/`.
 
+Note: the current release package contains headers, prebuilt libraries, and examples only. It does not ship a `src/` directory, so examples should link against `lib/libai_glass_sdk.a` or `lib/libai_glass_sdk.so`.
+
 ## 📦 SDK Contents
 
 ```text
@@ -76,22 +78,27 @@ ai_glass_sdk/
 
 ## 🚀 Quick Start
 
-### 1. Build the SDK
+### 1. Build the SDK or Example Programs
 
 ```bash
-# Build SDK libraries and the default example set
+# The SDK package already ships prebuilt libraries.
+# To build the default example set in one shot:
 cd ai_glass_sdk
 make
 ```
 
-To build only selected examples:
+To build only selected examples, enter the corresponding directory directly:
 
 ```bash
-cd examples/audio_play_example && make
+cd examples/gpio_example && make
+cd ../audio_play_example && make
 cd ../camera_capture_example && make
 cd ../disable_aicore_physical_actions_example && make
 cd ../record_audio_example && make
 cd ../media_resource_control && make
+cd ../text_event_example && make
+cd ../http_example && make
+cd ../websocket_example && make
 ```
 
 ### 2. Run Example Programs
