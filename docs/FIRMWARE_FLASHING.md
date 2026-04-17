@@ -114,7 +114,21 @@ tools/Linux/SocToolKit/SocToolKit
    reboot loader
    ```
 
-5. 等待几秒钟，设备将重启进入 loader 模式
+5. 等待几秒钟，设备通常会重启进入 loader 模式；如果长时间没有反应，请先参考下面的排障提示。
+
+> **排障提示**: 如果执行 `reboot loader` 后设备没有立即重启，甚至一直无法进入刷机模式，请回到主机侧执行以下命令检查当前进程：
+>
+> ```bash
+> adb shell top
+> ```
+>
+> 如果看到有应用名或进程名以 `{` 开头，记下对应 PID 后执行：
+>
+> ```bash
+> adb shell kill -9 <PID>
+> ```
+>
+> 然后重新执行 `reboot loader`。这通常意味着某个开机脚本没有正常运行完毕，系统被卡死，导致无法顺利切入刷机模式。
 
 ### 第五步：确认设备连接
 
@@ -218,9 +232,19 @@ adb devices
 
 ### 2. 设备未进入 loader 模式
 
-**问题**: 执行 `reboot loader` 后，SocToolKit 中没有显示设备
+**问题**: 执行 `reboot loader` 后，设备没有立即重启，或长时间无法进入 loader 模式，SocToolKit 中没有显示设备
 
 **解决方案**:
+- 先在主机侧执行以下命令，检查当前是否有以 `{` 开头的异常应用名或进程名：
+  ```bash
+  adb shell top
+  ```
+- 如果存在此类进程，记下 PID 后执行：
+  ```bash
+  adb shell kill -9 <PID>
+  ```
+- 杀掉异常进程后，再次执行 `reboot loader`
+- 该现象通常说明某个开机脚本没有正常运行完毕，系统处于卡死状态
 - 检查 USB 连接是否稳定
 - 尝试更换 USB 端口
 - 尝试更换 USB 数据线

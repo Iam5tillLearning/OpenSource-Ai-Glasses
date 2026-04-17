@@ -109,7 +109,21 @@ In the SocToolKit interface:
    reboot loader
    ```
 
-5. Wait a few seconds, device will restart into loader mode
+5. Wait a few seconds. The device should normally restart into loader mode. If it does not respond for a long time, follow the troubleshooting note below first.
+
+> **Troubleshooting Note**: If `reboot loader` does not restart the device immediately, or the device never enters flashing mode, go back to the host and check the current process list with:
+>
+> ```bash
+> adb shell top
+> ```
+>
+> If you find an app or process name starting with `{`, note its PID and kill it with:
+>
+> ```bash
+> adb shell kill -9 <PID>
+> ```
+>
+> Then retry `reboot loader`. This usually means a boot script did not finish normally, leaving the system stuck and unable to switch into flashing mode.
 
 ### Step 5: Confirm Device Connection
 
@@ -213,9 +227,19 @@ adb devices
 
 ### 2. Device Not Entering Loader Mode
 
-**Problem**: After executing `reboot loader`, device not shown in SocToolKit
+**Problem**: After executing `reboot loader`, the device does not restart immediately or does not enter loader mode for a long time, and SocToolKit does not show the device
 
 **Solutions**:
+- First run the following command on the host to check whether there is an abnormal app or process name starting with `{`:
+  ```bash
+  adb shell top
+  ```
+- If such a process exists, note its PID and run:
+  ```bash
+  adb shell kill -9 <PID>
+  ```
+- After killing the abnormal process, retry `reboot loader`
+- This usually means a boot script did not finish normally and the system is stuck
 - Check if USB connection is stable
 - Try changing USB port
 - Try changing USB data cable
