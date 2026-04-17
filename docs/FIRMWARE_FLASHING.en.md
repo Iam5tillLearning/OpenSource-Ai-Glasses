@@ -95,6 +95,10 @@ In the SocToolKit interface:
 
 ### Step 4: Enter Flashing Mode
 
+You can use either of the following methods to enter flashing mode.
+
+#### Method 1: Enter via Command
+
 1. Open terminal/command prompt window
 
 2. Enter the following command to enter device interactive command line:
@@ -109,7 +113,40 @@ In the SocToolKit interface:
    reboot loader
    ```
 
-5. Wait a few seconds, device will restart into loader mode
+5. Wait a few seconds. The device should normally restart into loader mode. If it does not respond for a long time, follow the troubleshooting note below first.
+
+> **Troubleshooting Note**: If `reboot loader` does not restart the device immediately, or the device never enters flashing mode, go back to the host and check the current process list with:
+>
+> ```bash
+> adb shell top
+> ```
+>
+> If you find an app or process name starting with `{`, note its PID and kill it with:
+>
+> ```bash
+> adb shell kill -9 <PID>
+> ```
+>
+> Then retry `reboot loader`. This usually means a boot script did not finish normally, leaving the system stuck and unable to switch into flashing mode.
+
+#### Method 2: Enter via the Hardware Flash Button
+
+Recommended when:
+- The device cannot boot normally
+- `adb` is unavailable
+- `reboot loader` keeps failing
+
+1. First make sure the device is fully powered off:
+   - Set the power switch to off
+   - Disconnect the USB cable between the device and the computer
+2. Locate the flash button inside the small round hole on the temple:
+
+   ![Flash button location](Images/刷机键.jpg)
+
+3. Use a non-metal pointed tool such as a toothpick to press and hold the flash button
+4. While still holding the button, connect the device to the computer with the USB cable
+5. Wait until SocToolKit detects the device, then release the flash button
+6. Once the device appears in the flashing tool, continue with the remaining flashing steps
 
 ### Step 5: Confirm Device Connection
 
@@ -213,9 +250,20 @@ adb devices
 
 ### 2. Device Not Entering Loader Mode
 
-**Problem**: After executing `reboot loader`, device not shown in SocToolKit
+**Problem**: After executing `reboot loader`, the device does not restart immediately or does not enter loader mode for a long time, and SocToolKit does not show the device
 
 **Solutions**:
+- First run the following command on the host to check whether there is an abnormal app or process name starting with `{`:
+  ```bash
+  adb shell top
+  ```
+- If such a process exists, note its PID and run:
+  ```bash
+  adb shell kill -9 <PID>
+  ```
+- After killing the abnormal process, retry `reboot loader`
+- This usually means a boot script did not finish normally and the system is stuck
+- If the device cannot boot, `adb` is unavailable, or the software method keeps failing, switch directly to "Method 2: Enter via the Hardware Flash Button" above
 - Check if USB connection is stable
 - Try changing USB port
 - Try changing USB data cable
