@@ -41,6 +41,8 @@ You can develop this project in two ways:
 
 [**Optional: Get the Official AI Glasses Kit**](https://item.taobao.com/item.htm?ft=t&id=1044923880613) — *Recommended for faster bring-up, not required for development*
 
+[**Backup purchase link**](https://item.taobao.com/item.htm?id=1007109700786) — *Use this if the primary purchase page is unavailable*
+
 > [!CAUTION]
 > **Official Hardware Compatibility Notice**: The v0.6.x reference firmware is **only compatible with integrated hardware produced after January 1, 2026**. If your official kit or same-reference hardware was purchased/produced before this date, please use v0.6.0 or earlier firmware versions.
 
