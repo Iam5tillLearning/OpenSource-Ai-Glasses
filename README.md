@@ -10,7 +10,7 @@
 
 [![Build Status](https://img.shields.io/badge/build-passing-brightgreen.svg)](https://github.com/ezxrdev/OpenSource-Ai-Glasses/actions)
 [![License](https://img.shields.io/badge/license-Apache%202.0-blue.svg)](LICENSE)
-[![Version](https://img.shields.io/badge/version-0.6.5-green.svg)](https://github.com/Iam5tilllearning/OpenSource-Ai-Glasses/releases)
+[![Version](https://img.shields.io/badge/version-0.7.0-green.svg)](https://github.com/Iam5tilllearning/OpenSource-Ai-Glasses/releases)
 
 
 ---
@@ -44,21 +44,34 @@ You can develop this project in two ways:
 [**Backup purchase link**](https://item.taobao.com/item.htm?id=1007109700786) — *Use this if the primary purchase page is unavailable*
 
 > [!CAUTION]
-> **Official Hardware Compatibility Notice**: The v0.6.x reference firmware is **only compatible with integrated hardware produced after January 1, 2026**. If your official kit or same-reference hardware was purchased/produced before this date, please use v0.6.0 or earlier firmware versions.
+> **Official Hardware Compatibility Notice**: The v0.6.x and v0.7.x reference firmware builds are **only compatible with integrated hardware produced after January 1, 2026**. If your official kit or same-reference hardware was purchased/produced before this date, please use v0.6.0 or earlier firmware versions.
 
-## ✅ Current Version Features (v0.6.5)
+## ✅ Current Version Features (v0.7.0)
 
-- **Firmware Version: v0.6.5**
+- **Firmware Version: v0.7.0**
   - Compatible with new hardware produced after January 1, 2026.
-- **Stability Improvements**: Improved overall project stability, with focused hardening for AI Core service reliability.
-- **Quality Improvements**: Better edge-case handling and general internal optimization/cleanup.
-- **Release Variants**: Starting from v0.6.5, firmware is released in two variants:
+- **OSAIG Mobile Client**: First standalone Android mobile client release for connecting, managing, and debugging OSAIG glasses.
+- **Device Management**: Device binding, device list management, online/local connection status, device detail page, status trends, and basic device information including battery, storage, memory, and system version.
+- **Real-Time Video Streaming**: The mobile client can view the glasses camera feed, show end-to-end/network/playback latency, use low-latency playback, and automatically catch up frames for a more real-time viewing experience.
+- **BLE Text Interaction**: Adds a BLE text channel and mobile BLE debug entry for sending preset commands and text content to the glasses.
+- **Audio Device Handling Refactor**: Improves audio input/output coordination and supports simultaneous recording and playback.
+- **SDK Updates**: The SDK documentation now covers recording control, AI-Core physical action control/query, media resource arbitration, display submission, text event listening, BLE text send/receive, and updated example build entries.
+- **Release Assets**:
   - `Firmware_RV1106B_RK962_IMX219.AudioVersion.img`
   - `Firmware_RV1106B_RK962_IMX219.DisplayVersion.img`
-- **Release Details**: <https://github.com/Iam5tillLearning/OpenSource-Ai-Glasses/releases/tag/v0.6.5>
+  - `osaig-0.3.0+7-release.apk`
+- **Release Details**: <https://github.com/Iam5tillLearning/OpenSource-Ai-Glasses/releases/tag/v0.7.0>
 
 <details>
 <summary>📜 Version History summary</summary>
+
+### v0.7.0 (2026-05-08)
+- Added the first standalone OSAIG mobile client for device binding, management, debugging, update guidance, device information, and status trends.
+- Added mobile real-time video viewing for the glasses camera feed, including end-to-end latency, network latency, playback latency, low-latency playback, and automatic frame catching.
+- Added BLE text interaction from the mobile client, including preset debug commands and a reserved command structure for future photo, video, device-control, and debugging extensions.
+- Refactored audio device handling to improve recording/playback coexistence and provide a stronger base for voice interaction and audio/video debugging.
+- Added SDK documentation coverage for BLE text send/receive, recording control, physical action control/query, media resource arbitration, display submission, and text event listening.
+- Release assets include both AudioVersion/DisplayVersion firmware images and the OSAIG Android APK `osaig-0.3.0+7-release.apk`.
 
 ### v0.6.5 (2026-03-16)
 - Fixed multiple stability issues across the project, with emphasis on AI Core service reliability.
@@ -194,7 +207,7 @@ See [Development Environment Setup Guide](docs/ENV_SETUP.en.md) for details.
 - **Manual**: At any time, continuously short press the button 10 times to manually enter network configuration mode.
 - **Current method**: Use an Android phone to share a Wi-Fi QR code, then let the glasses scan the QR code to connect.
 - **Band limitation**: Only 2.4GHz Wi-Fi is supported. 5GHz/5G Wi-Fi is not supported.
-- **App status**: The mobile app is coming soon and will provide an easier provisioning flow.
+- **App status**: The standalone OSAIG Android mobile client is available in the v0.7.0 release assets. It currently focuses on device binding, management, debugging, update guidance, BLE debugging, and real-time video viewing.
 
 ### 2. AI Conversation
 - **Operation**: After configuration, long press the left temple button to speak, release to send, and wait for the AI response.
@@ -207,8 +220,21 @@ This project provides a complete C/C++ SDK, allowing developers to easily access
 **SDK Core Features:**
 *   **GPIO Event Subscription**: Low-latency access to button presses and other GPIO events
 *   **Camera Access**: Zero-copy image data retrieval via shared memory
-*   **Audio Playback Control**: control audio playback, supports TTS
+*   **Audio Control**: audio playback, TTS, recording start/stop/status, and improved recording/playback coexistence
+*   **Physical Action Control**: enable, disable, and query AI-Core physical-button business actions while keeping GPIO event delivery available
+*   **Media Resource Arbitration**: request AI-Core to release or reclaim camera/audio resources for external applications
+*   **Display Submission**: shared-memory framebuffer submission and display focus management
+*   **Text Event Listening**: subscribe to ASR, LLM, and system text events
+*   **BLE Text Channel**: send and receive UTF-8 JSON text messages through the glasses BLE gateway
 *   **Inter-Process Communication**: Reliable communication based on Unix Domain Sockets
+
+**v0.7.0 SDK Documentation Updates:**
+*   Added BLE text client API documentation and the `ai_ble.h` header entry.
+*   Added recording control APIs: `ai_audio_record_start()`, `ai_audio_record_stop()`, and `ai_audio_record_get_status()`.
+*   Added physical action control/query APIs: `ai_audio_set_disable_aicore_physical_actions()` and `ai_audio_get_disable_aicore_physical_actions()`.
+*   Added media resource arbitration APIs for camera/audio release, resume, and status query.
+*   Added query-only physical action example to avoid changing runtime state during field checks.
+*   Updated examples to link against the prebuilt SDK libraries and use the unified build output directory.
 
 **SDK Location**: [`SDK/ai_glass_sdk`](SDK/ai_glass_sdk)
 
@@ -438,4 +464,4 @@ Made with ❤️ by the open-source community
 
 ---
 
-**Last Updated**: 2026-03-30 | **Version**: v0.6.5
+**Last Updated**: 2026-05-14 | **Version**: v0.7.0

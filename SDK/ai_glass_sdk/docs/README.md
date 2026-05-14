@@ -18,6 +18,7 @@
 - [音频客户端API](Audio_Client_API.md) - 音频播放与资源控制
 - [显示客户端API](Display_Client_API.md) - 帧缓冲提交和焦点管理
 - [BLE 文本客户端 API](BLE_Client_API.md) - 订阅/发送 `datatype` 文本消息
+- [文本事件客户端 API](Text_Event_Client_API.md) - ASR / LLM / System 文本流监听
 - [日志系统API](Log_API.md) - 统一日志输出和毫秒级时间戳
 
 ### 🔧 示例程序文档
@@ -25,8 +26,10 @@
 - [摄像头客户端](../examples/camera_capture_example/) - 图像捕获示例
 - [音频播放客户端](../examples/audio_play_example/) - 音频播放示例
 - [禁用 AI-Core 物理动作示例](../examples/disable_aicore_physical_actions_example/) - 禁用 AI-Core 自动物理按键动作
+- [只读查询 AI-Core 物理动作状态示例](../examples/query_aicore_physical_actions_example/) - 不修改运行态，仅查询物理动作禁用状态
 - [SDK 控制录音示例](../examples/record_audio_example/) - 开始/停止录音并保存到固定路径
 - [媒体资源切换控制台](../examples/media_resource_control/) - 相机/音频资源释放与回收示例
+- [文本事件客户端](../examples/text_event_example/) - 文本流监听示例
 
 ---
 
@@ -48,6 +51,12 @@
 3. 如需禁用 AI-Core 物理动作，查看 [禁用 AI-Core 物理动作示例](../examples/disable_aicore_physical_actions_example/)
 4. 如需脚本触发录音，查看 [SDK 控制录音示例](../examples/record_audio_example/)
 5. 如需应用切换，查看 [媒体资源切换控制台](../examples/media_resource_control/)
+
+### 4. BLE 文本开发
+1. 阅读 [BLE 文本客户端 API](BLE_Client_API.md)
+2. 确认 `bt_service` 已提供 `/var/run/ai_ble.sock`
+3. 按 `datatype` 订阅消息，例如 `display.text`
+
 ---
 
 ## 🏗️ SDK架构概览
@@ -79,6 +88,8 @@ AI Media Service (服务端)
 - `ai_audio_init()` - 初始化音频客户端
 - `ai_display_init()` - 初始化显示客户端
 - `ai_display_commit_frame()` - 提交帧更新
+- `ai_ble_client_create()` - 创建 BLE 文本客户端
+- `ai_ble_send()` - 发送 BLE 文本消息
 - `log_info()` - 输出信息日志（带时间戳）
 - `log_error()` - 输出错误日志（带时间戳）
 
@@ -87,6 +98,7 @@ AI Media Service (服务端)
 - 音频示例：`../examples/audio_play_example/`
 - 摄像头示例：`../examples/camera_capture_example/`
 - 禁用 AI-Core 物理动作示例：`../examples/disable_aicore_physical_actions_example/`
+- 只读查询 AI-Core 物理动作状态示例：`../examples/query_aicore_physical_actions_example/`
 - 录音示例：`../examples/record_audio_example/`
 - 媒体资源切换示例：`../examples/media_resource_control/`
 
@@ -96,6 +108,7 @@ AI Media Service (服务端)
 - 音频API：`../include/ai_audio.h`
 - 显示API：`../include/ai_display.h`
 - BLE API：`../include/ai_ble.h`
+- 文本事件 API：`../include/ai_text_event.h`
 - IPC基础：`../include/ai_ipc.h`
 - 日志API：`../include/ai_log.h`
 
@@ -115,4 +128,4 @@ AI Media Service (服务端)
 
 ---
 
-*最后更新：2025-10-27*
+*最后更新：2026-05-14*
