@@ -72,11 +72,11 @@ Typical frame extraction command for an AI pipeline:
 ```bash
 ffmpeg -rtsp_transport tcp \
   -i rtsp://<device_lan_ip>:554/live/0 \
-  -an -vf "fps=5,transpose=1" \
+  -an -vf "fps=5" \
   frames/%06d.jpg
 ```
 
-Use `transpose=1` only when your hardware mounting produces the reference 90-degree camera rotation. Adjust or remove the transform for your own hardware.
+If your own hardware has a different camera mounting direction, add the required orientation transform in this step before inference.
 
 If your backend cannot decode H.265, transcode at the gateway:
 
@@ -112,9 +112,9 @@ adb shell "netstat -lnt | grep ':554'"
 
 Confirm the device LAN IP, Wi-Fi network, client routing, and firewall rules. The client must be able to reach `rtsp://<device_lan_ip>:554/live/0`.
 
-### AI results are rotated
+### AI results use the wrong direction
 
-The current reference glasses hardware mounts the camera in a way that the captured image is rotated by 90 degrees. Add orientation preprocessing in your cloud pipeline before detection or recognition.
+The reference stream is expected to use the normal camera direction. If you use custom hardware and the AI result is visually misaligned, adjust the input image direction in your cloud pipeline according to your actual camera mounting.
 
 ### Latency is too high
 

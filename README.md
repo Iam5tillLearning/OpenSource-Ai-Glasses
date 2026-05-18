@@ -146,9 +146,6 @@ You can develop this project in two ways:
 
 <img width="800" alt="Hardware Layout" src="docs/Images/layout.png" />
 
-> [!WARNING]
-> **Camera Orientation Note**: In the current glasses hardware structure, the camera is mounted in a way that the captured image is rotated by 90 degrees. If you use the current glasses reference hardware design, please add your own image orientation preprocessing in the cloud-side program before downstream vision processing.
-
 ## ✨ Key Features
 
 - 🖥️ **Display**: 30°FOV 640×480 monocular display (optional)
