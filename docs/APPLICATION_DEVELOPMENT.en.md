@@ -87,6 +87,26 @@ Hello from AI Smart Glasses!
 4. Run and inspect logs on device
 5. Iterate
 
+## 📡 Cloud Video AI Through RTSP
+
+For cloud-side video AI recognition, use the glasses RTSP stream instead of repeatedly pulling single camera snapshots.
+
+Reference stream URLs:
+
+```text
+rtsp://<device_lan_ip>:554/live/0
+rtsp://<device_lan_ip>:554/live/1
+```
+
+During USB development, you can forward the RTSP port to the host:
+
+```bash
+adb forward tcp:8554 tcp:554
+ffprobe -v error -rtsp_transport tcp rtsp://127.0.0.1:8554/live/0
+```
+
+For LAN or cloud integration details, see [RTSP Video Streaming Guide](RTSP_VIDEO_STREAMING.en.md).
+
 ## 💡 Build Tips
 
 ```bash
@@ -122,3 +142,4 @@ adb devices
 
 - [Development Environment Setup Guide](ENV_SETUP.en.md)
 - [Firmware Flashing Guide](FIRMWARE_FLASHING.en.md)
+- [RTSP Video Streaming Guide](RTSP_VIDEO_STREAMING.en.md)

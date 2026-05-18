@@ -52,7 +52,7 @@ You can develop this project in two ways:
   - Compatible with new hardware produced after January 1, 2026.
 - **OSAIG Mobile Client**: First standalone Android mobile client release for connecting, managing, and debugging OSAIG glasses.
 - **Device Management**: Device binding, device list management, online/local connection status, device detail page, status trends, and basic device information including battery, storage, memory, and system version.
-- **Real-Time Video Streaming**: The mobile client can view the glasses camera feed, show end-to-end/network/playback latency, use low-latency playback, and automatically catch up frames for a more real-time viewing experience.
+- **RTSP Real-Time Video Streaming**: The glasses can expose the camera feed through RTSP for the mobile client and for cloud-side video AI recognition pipelines. The reference main stream is `rtsp://<device_lan_ip>:554/live/0`.
 - **BLE Text Interaction**: Adds a BLE text channel and mobile BLE debug entry for sending preset commands and text content to the glasses.
 - **Audio Device Handling Refactor**: Improves audio input/output coordination and supports simultaneous recording and playback.
 - **SDK Updates**: The SDK documentation now covers recording control, AI-Core physical action control/query, media resource arbitration, display submission, text event listening, BLE text send/receive, and updated example build entries.
@@ -67,7 +67,7 @@ You can develop this project in two ways:
 
 ### v0.7.0 (2026-05-08)
 - Added the first standalone OSAIG mobile client for device binding, management, debugging, update guidance, device information, and status trends.
-- Added mobile real-time video viewing for the glasses camera feed, including end-to-end latency, network latency, playback latency, low-latency playback, and automatic frame catching.
+- Added RTSP real-time video streaming for the glasses camera feed. The mobile client can view the stream with end-to-end/network/playback latency metrics, and developers can also consume the RTSP feed from cloud-side video AI recognition pipelines.
 - Added BLE text interaction from the mobile client, including preset debug commands and a reserved command structure for future photo, video, device-control, and debugging extensions.
 - Refactored audio device handling to improve recording/playback coexistence and provide a stronger base for voice interaction and audio/video debugging.
 - Added SDK documentation coverage for BLE text send/receive, recording control, physical action control/query, media resource arbitration, display submission, and text event listening.
@@ -152,7 +152,7 @@ You can develop this project in two ways:
 ## ✨ Key Features
 
 - 🖥️ **Display**: 30°FOV 640×480 monocular display (optional)
-- 📸 **Camera**: 1080P video recording
+- 📸 **Camera**: 1080P video recording and RTSP real-time video streaming
 - 🔊 **Audio**: microphone + speaker system
 - 📡 **Connectivity**: WiFi 802.11b/g/n, Bluetooth 5.3, USB 2.0
 - ⚡ **Performance**: Single Cortex-A7 core, 8GB storage
@@ -209,7 +209,14 @@ See [Development Environment Setup Guide](docs/ENV_SETUP.en.md) for details.
 - **Band limitation**: Only 2.4GHz Wi-Fi is supported. 5GHz/5G Wi-Fi is not supported.
 - **App status**: The standalone OSAIG Android mobile client is available in the v0.7.0 release assets. It currently focuses on device binding, management, debugging, update guidance, BLE debugging, and real-time video viewing.
 
-### 2. AI Conversation
+### 2. RTSP Video Streaming for Cloud AI
+
+- **Main stream**: `rtsp://<device_lan_ip>:554/live/0`
+- **Sub stream**: `rtsp://<device_lan_ip>:554/live/1`
+- **Typical use**: cloud-side video AI recognition, remote inspection, visual debugging, and mobile live preview.
+- **Guide**: [RTSP Video Streaming Guide](docs/RTSP_VIDEO_STREAMING.en.md)
+
+### 3. AI Conversation
 - **Operation**: After configuration, long press the left temple button to speak, release to send, and wait for the AI response.
 
 
@@ -257,6 +264,7 @@ Please refer to the "Integration" section in the [SDK README](SDK/ai_glass_sdk/R
 - [📖 User Manual](docs/USER_GUIDE.en.md) - Read this after glasses assembly
 - [🧰 Development Environment Setup Guide](docs/ENV_SETUP.en.md) | [中文](docs/ENV_SETUP.md)
 - [💻 Application Development Guide](docs/APPLICATION_DEVELOPMENT.en.md) | [中文](docs/APPLICATION_DEVELOPMENT.md)
+- [📡 RTSP Video Streaming Guide](docs/RTSP_VIDEO_STREAMING.en.md) | [中文](docs/RTSP_VIDEO_STREAMING.md)
 - [⚡ Firmware Flashing Guide](docs/FIRMWARE_FLASHING.en.md) | [中文](docs/FIRMWARE_FLASHING.md)
 
 ## 🛠️ Development
@@ -464,4 +472,4 @@ Made with ❤️ by the open-source community
 
 ---
 
-**Last Updated**: 2026-05-14 | **Version**: v0.7.0
+**Last Updated**: 2026-05-18 | **Version**: v0.7.0
