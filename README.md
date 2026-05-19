@@ -36,7 +36,7 @@ The open-source scope is primarily the system software and application stack. De
 
 You can develop this project in two ways:
 
-- Use your own RV1106B-based development board to work on the open-source system and software stack.
+- Use your own RV1106B-based development board to work on the open-source system and software stack. This option is cheaper, but bring-up can involve many issues, and you may spend considerable time on system compatibility, drivers, and related problems. If your goal is to quickly develop AI glasses interaction applications, we recommend buying our carefully tuned AI glasses device.
 - Use our deeply integrated AI glasses kit if you want a faster bring-up path with pre-wired peripherals, preloaded firmware, and less hardware integration work.
 
 [**Optional: Get the Official AI Glasses Kit**](https://item.taobao.com/item.htm?ft=t&id=1044923880613) — *Recommended for faster bring-up, not required for development*
