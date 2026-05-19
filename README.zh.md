@@ -10,7 +10,7 @@
 
 [![Build Status](https://img.shields.io/badge/build-passing-brightgreen.svg)](https://github.com/ezxrdev/OpenSource-Ai-Glasses/actions)
 [![License](https://img.shields.io/badge/license-Apache%202.0-blue.svg)](LICENSE)
-[![Version](https://img.shields.io/badge/version-0.6.5-green.svg)](https://github.com/Iam5tilllearning/OpenSource-Ai-Glasses/releases)
+[![Version](https://img.shields.io/badge/version-0.7.0-green.svg)](https://github.com/Iam5tilllearning/OpenSource-Ai-Glasses/releases)
 
 
 ---
@@ -44,20 +44,33 @@
 [**备用购买链接**](https://item.taobao.com/item.htm?id=1007109700786) — *主购买页面不可用时可使用*
 
 > [!CAUTION]
-> **官方硬件兼容性提示**：v0.6.x 参考固件**仅适配 2026年1月1日之后生产的一体化硬件**。如果您的官方套件或同参考设计硬件是在此日期之前购买/生产的，请使用 v0.6.0 及更早版本的固件。
+> **官方硬件兼容性提示**：v0.6.x 与 v0.7.x 参考固件**仅适配 2026年1月1日之后生产的一体化硬件**。如果您的官方套件或同参考设计硬件是在此日期之前购买/生产的，请使用 v0.6.0 或更早版本的固件。
 
-## ✅ 当前版本概要 (v0.6.5)
+## ✅ 当前版本概要 (v0.7.0)
 
-- 适配固件版本：v0.6.5。兼容 2026年1月1日之后生产的新硬件。
-- 重点改进：整体稳定性提升，重点增强 AI Core 服务稳定性与可靠性。
-- 质量优化：增强边界异常处理，并进行通用内部优化与清理。
-- 发布形态：从该版本起提供两类固件，请按设备型号选择下载：
+- 适配固件版本：v0.7.0。兼容 2026年1月1日之后生产的新硬件。
+- OSAIG 手机端：首次发布独立 Android 手机客户端，用于连接、管理和调试 OSAIG 眼镜。
+- 设备管理：支持设备绑定、设备列表、在线状态、本地连接状态、设备详情页、状态趋势，以及电量、存储、内存、系统版本等基础信息展示。
+- RTSP 实时视频流：眼镜可通过 RTSP 暴露摄像头实时画面，既可供手机端查看，也可供云端视频 AI 识别链路接入。参考主码流地址为 `rtsp://<device_lan_ip>:554/live/0`。
+- BLE 文本交互：新增 BLE 文本通道和手机端 BLE 调试入口，可向眼镜发送预设命令和文本内容。
+- 音频设备处理重构：优化录音与播放的底层资源协调，支持录音和声音播放同时工作。
+- SDK 更新：SDK 文档已覆盖录音控制、AI-Core 物理动作控制/查询、媒体资源仲裁、显示提交、文本事件监听、BLE 文本收发和示例构建入口。
+- 发布资产：
   - 音频版：`Firmware_RV1106B_RK962_IMX219.AudioVersion.img`
   - 显示版：`Firmware_RV1106B_RK962_IMX219.DisplayVersion.img`
-- Release 详情：<https://github.com/Iam5tillLearning/OpenSource-Ai-Glasses/releases/tag/v0.6.5>
+  - 手机端 APK：`osaig-0.3.0+7-release.apk`
+- Release 详情：<https://github.com/Iam5tillLearning/OpenSource-Ai-Glasses/releases/tag/v0.7.0>
 
 <details>
 <summary>📜 版本历史概要</summary>
+
+### v0.7.0（2026-05-08）
+- 新增首个独立 OSAIG 手机端，支持设备绑定、设备管理、调试、更新引导、设备信息展示和状态趋势查看。
+- 新增眼镜摄像头 RTSP 实时视频流能力；手机端可查看实时画面并显示端到端延迟、网络延迟、播放延迟，开发者也可以将 RTSP 流接入云端视频 AI 识别链路。
+- 新增手机端 BLE 文本交互能力，支持预设调试命令，并预留拍照、录像、设备控制和更多调试命令结构。
+- 重构音频设备处理逻辑，改善录音与播放共存能力，为语音交互、实时音频提示和音视频调试打基础。
+- 补齐 SDK 文档中的 BLE 文本收发、录音控制、物理动作控制/查询、媒体资源仲裁、显示提交和文本事件监听说明。
+- 发布资产包含 AudioVersion/DisplayVersion 两类固件镜像，以及 OSAIG Android APK `osaig-0.3.0+7-release.apk`。
 
 ### v0.6.5（2026-03-16）
 - 重点修复项目稳定性问题，特别是 AI Core 服务稳定性与可靠性。
@@ -132,13 +145,10 @@
 
 <img width="800" alt="硬件布局图" src="docs/Images/布局图.png" />
 
-> [!WARNING]
-> **摄像头方向提示**：在当前眼镜硬件结构设计中，摄像头的安装方式会导致采集到的图像天然旋转 90 度。如果您使用的是当前眼镜参考硬件设计，请在云端程序中自行增加图像方向预处理，再进行后续视觉处理。
-
 ## ✨ 核心特性
 
 - 🖥️ **显示**: 30°FOV 640×480单色单目显示（选配）
-- 📸 **摄像头**: 1080P录像
+- 📸 **摄像头**: 1080P录像和 RTSP 实时视频流
 - 🔊 **音频**: 麦克风 + 扬声器
 - 📡 **连接**: WiFi 802.11b/g/n、蓝牙5.3、USB 2.0
 - ⚡ **性能**: 单Cortex-A7核，8GB存储
@@ -195,9 +205,16 @@ ls -lh output/image/update.img
 - **手动进入**：任何时刻连续短按按键10次，可主动进入配网模式。
 - **当前配网方式**：使用 Android 手机分享 Wi-Fi 二维码，眼镜扫描二维码后完成联网。
 - **频段限制**：仅支持 2.4GHz Wi-Fi，不支持 5GHz/5G Wi-Fi。
-- **App 状态**：手机端 App 即将上线，后续会提供更便捷的配网入口。
+- **App 状态**：独立 OSAIG Android 手机端已随 v0.7.0 发布资产提供，当前重点覆盖设备绑定、管理、调试、更新引导、BLE 调试和实时视频查看。
 
-### 2. AI对话
+### 2. RTSP 视频流与云端 AI 识别
+
+- **主码流**：`rtsp://<device_lan_ip>:554/live/0`
+- **子码流**：`rtsp://<device_lan_ip>:554/live/1`
+- **典型用途**：云端视频 AI 识别、远程巡检、视觉调试和手机端实时预览。
+- **使用指南**：[RTSP 视频流指南](docs/RTSP_VIDEO_STREAMING.md)
+
+### 3. AI对话
 - **操作方式**：配网完成后，长按左侧镜腿按键开始说话，松开结束，等待AI回复。
 
 > [!WARNING]
@@ -217,8 +234,21 @@ ls -lh output/image/update.img
 **SDK核心功能：**
 *   **GPIO事件订阅**：低延迟获取按键等GPIO事件
 *   **摄像头调用**：通过共享内存零拷贝获取图像数据
-*   **音频播放控制**：控制音频播放，支持TTS
+*   **音频控制**：音频播放、TTS、录音开始/停止/状态查询，并改善录音与播放共存能力
+*   **物理动作控制**：禁用、恢复和只读查询 AI-Core 物理按键业务动作，同时保留 GPIO 事件分发
+*   **媒体资源仲裁**：请求 AI-Core 释放或回收相机/音频资源，方便外部应用接管
+*   **显示提交**：共享内存帧缓冲提交和显示焦点管理
+*   **文本事件监听**：订阅 ASR、LLM 和 System 文本事件
+*   **BLE 文本通道**：通过眼镜 BLE 网关收发 UTF-8 JSON 文本消息
 *   **进程间通信**：基于Unix Domain Socket的可靠通信
+
+**v0.7.0 SDK 文档更新：**
+*   新增 BLE 文本客户端 API 文档和 `ai_ble.h` 头文件入口。
+*   新增录音控制 API：`ai_audio_record_start()`、`ai_audio_record_stop()`、`ai_audio_record_get_status()`。
+*   新增物理动作控制/查询 API：`ai_audio_set_disable_aicore_physical_actions()`、`ai_audio_get_disable_aicore_physical_actions()`。
+*   新增相机/音频资源释放、回收和状态查询的媒体资源仲裁 API。
+*   新增只读查询物理动作状态示例，避免现场排查时误修改运行态。
+*   示例程序统一改为链接预编译 SDK 库，并使用统一构建输出目录。
 
 **SDK位置**：[`SDK/ai_glass_sdk`](SDK/ai_glass_sdk)
 
@@ -241,6 +271,7 @@ ls -lh output/image/update.img
 - [📖 用户使用手册](docs/USER_GUIDE.md) - 眼镜组装完毕之后读这个
 - [🧰 开发环境搭建指南](docs/ENV_SETUP.md) | [English](docs/ENV_SETUP.en.md)
 - [💻 应用开发指南](docs/APPLICATION_DEVELOPMENT.md) | [English](docs/APPLICATION_DEVELOPMENT.en.md)
+- [📡 RTSP 视频流指南](docs/RTSP_VIDEO_STREAMING.md) | [English](docs/RTSP_VIDEO_STREAMING.en.md)
 - [⚡ 固件烧录指南](docs/FIRMWARE_FLASHING.md) | [English](docs/FIRMWARE_FLASHING.en.md)
 
 ## 🛠️ 开发
@@ -430,4 +461,4 @@ ls -lh output/image/update.img
 
 ---
 
-**最后更新**: 2026-03-30 | **版本**: v0.6.5
+**最后更新**: 2026-05-18 | **版本**: v0.7.0

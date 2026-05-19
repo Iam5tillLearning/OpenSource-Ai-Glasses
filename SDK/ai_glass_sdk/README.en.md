@@ -4,11 +4,21 @@
 
 ## Introduction
 
-This SDK provides a complete client development kit for AI Core Service, including GPIO event subscription, camera capture, audio playback, recording control, physical interaction control, media resource arbitration, display submission, and text event listening.
+This SDK provides a complete client development kit for AI Core Service, including GPIO event subscription, camera capture, audio playback, recording control, physical interaction control, media resource arbitration, display submission, BLE text send/receive, and text event listening.
 
 Note: example programs are linked against `lib/libai_glass_sdk.a` or `lib/libai_glass_sdk.so`. They no longer compile by directly referencing sources under `src/`.
 
 Note: the current release package contains headers, prebuilt libraries, and examples only. It does not ship a `src/` directory, so examples should link against `lib/libai_glass_sdk.a` or `lib/libai_glass_sdk.so`.
+
+## v0.7.0 SDK Updates
+
+- Added BLE text channel access through `ai_ble.h` and `BLE_Client_API.en.md`.
+- Added recording control APIs: `ai_audio_record_start()`, `ai_audio_record_stop()`, and `ai_audio_record_get_status()`.
+- Added physical action control/query APIs: `ai_audio_set_disable_aicore_physical_actions()` and `ai_audio_get_disable_aicore_physical_actions()`.
+- Added media resource arbitration APIs for camera/audio release, resume, and status query.
+- Added display submission and text event listener documentation entries.
+- Added the query-only physical actions example for field checks that must not change runtime state.
+- Updated examples to link against the prebuilt SDK libraries and use the unified `examples/build/` output directory.
 
 ## 📦 SDK Contents
 
@@ -20,6 +30,7 @@ ai_glass_sdk/
 │   ├── ai_camera.h                # Camera client API
 │   ├── ai_audio.h                 # Audio client API
 │   ├── ai_display.h               # Display client API
+│   ├── ai_ble.h                   # BLE text client API
 │   ├── ai_text_event.h            # Text event client API
 │   └── ai_log.h                   # Log system API
 ├── lib/                  # Prebuilt libraries
@@ -30,6 +41,7 @@ ai_glass_sdk/
 │   ├── audio_play_example/                   # Audio playback example
 │   ├── camera_capture_example/               # Camera capture example
 │   ├── disable_aicore_physical_actions_example/ # Disable AI-Core physical actions example
+│   ├── query_aicore_physical_actions_example/   # Query-only AI-Core physical actions state example
 │   ├── record_audio_example/                 # SDK-controlled recording example
 │   ├── media_resource_control/               # Camera/audio resource switch console
 │   ├── text_event_example/                   # ASR / LLM / System text stream example
@@ -40,6 +52,7 @@ ai_glass_sdk/
 │   ├── Camera_Client_API.en.md     # Camera client API documentation
 │   ├── Audio_Client_API.en.md      # Audio client API documentation
 │   ├── Display_Client_API.en.md    # Display client API documentation
+│   ├── BLE_Client_API.en.md        # BLE text client API documentation
 │   ├── Text_Event_Client_API.en.md # Text event client API documentation
 │   └── Log_API.en.md               # Log API documentation
 ├── README.md             # Chinese guide
@@ -76,6 +89,11 @@ ai_glass_sdk/
 - Supports streaming output and final-result markers
 - Dedicated receive thread without blocking the main loop
 
+### 6. BLE Text Channel
+- Access BLE text messages through the local Unix Socket exposed by `bt_service`
+- Subscribe by `datatype`, for example `display.text`
+- Send UTF-8 JSON text from local applications to the mobile side through BLE notify
+
 ## 🚀 Quick Start
 
 ### 1. Build the SDK or Example Programs
@@ -94,6 +112,7 @@ cd examples/gpio_example && make
 cd ../audio_play_example && make
 cd ../camera_capture_example && make
 cd ../disable_aicore_physical_actions_example && make
+cd ../query_aicore_physical_actions_example && make
 cd ../record_audio_example && make
 cd ../media_resource_control && make
 cd ../text_event_example && make
@@ -134,6 +153,14 @@ cd examples/audio_play_example
 cd examples/disable_aicore_physical_actions_example
 ./../build/disable_aicore_physical_actions_example
 ```
+
+#### Query AI-Core Physical Actions State
+```bash
+cd examples/query_aicore_physical_actions_example
+./../build/query_aicore_physical_actions_example
+```
+
+This example only queries the current `disable_aicore_physical_actions` state. It does not modify the server runtime state, so it is suitable for field diagnostics.
 
 #### SDK-Controlled Recording
 ```bash
@@ -273,6 +300,18 @@ int main(void) {
 | `ai_text_event_client_start()` | Connect and start listening |
 | `ai_text_event_client_destroy()` | Destroy the client |
 
+### BLE Text Client API
+
+| API Function | Description |
+| --- | --- |
+| `ai_ble_client_create()` | Create a BLE text client |
+| `ai_ble_client_start()` | Start the background receive thread and connect to `/var/run/ai_ble.sock` |
+| `ai_ble_register_datatype()` | Subscribe to a `datatype` and register a callback |
+| `ai_ble_unregister_datatype()` | Unsubscribe from a `datatype` |
+| `ai_ble_send()` | Send UTF-8 JSON text to the mobile side through BLE notify |
+| `ai_ble_client_stop()` | Stop the BLE text client |
+| `ai_ble_client_destroy()` | Destroy the BLE text client |
+
 ### Log API
 
 | API Function | Description |
@@ -293,6 +332,7 @@ For the full document list, see [docs/README.en.md](docs/README.en.md).
 | [Camera_Client_API.en.md](docs/Camera_Client_API.en.md) | Camera client API guide |
 | [Audio_Client_API.en.md](docs/Audio_Client_API.en.md) | Audio client API guide |
 | [Display_Client_API.en.md](docs/Display_Client_API.en.md) | Display client API guide |
+| [BLE_Client_API.en.md](docs/BLE_Client_API.en.md) | BLE text client API guide |
 | [Text_Event_Client_API.en.md](docs/Text_Event_Client_API.en.md) | Text event client API guide |
 | [Log_API.en.md](docs/Log_API.en.md) | Log API guide |
 
@@ -303,6 +343,7 @@ For the full document list, see [docs/README.en.md](docs/README.en.md).
 | [Camera Client Example](examples/camera_capture_example/README.en.md) | One-shot image capture example |
 | [Audio Playback Example](examples/audio_play_example/README.en.md) | Audio playback example |
 | [Disable AI-Core Physical Actions Example](examples/disable_aicore_physical_actions_example/README.en.md) | Disable AI-Core auto physical-button actions through the SDK |
+| [Query AI-Core Physical Actions Example](examples/query_aicore_physical_actions_example/README.md) | Query `disable_aicore_physical_actions` without changing runtime state |
 | [Record Audio Example](examples/record_audio_example/README.en.md) | Start/stop recording and copy the recorded file |
 | [Media Resource Control Example](examples/media_resource_control/README.en.md) | Release and resume camera/audio resources |
 | [Text Event Client Example](examples/text_event_example/README.en.md) | Listen to text streams |
@@ -337,7 +378,7 @@ For the full document list, see [docs/README.en.md](docs/README.en.md).
 
 ### Camera Service
 - Supports JPEG and NV12 formats
-- Shared memory size is 2 MB, enough for 1920x1080 images
+- Shared memory size is 4 MB, enough for 1920x1080 images
 - Multi-client concurrent access is supported
 - Resources are created on the first client connection and cleaned on the last disconnect
 
@@ -345,6 +386,11 @@ For the full document list, see [docs/README.en.md](docs/README.en.md).
 - Supports PCM playback, recording, physical interaction control, and resource arbitration
 - `record_audio_example` currently depends on the `--enable-gpio` recording loop
 - `media_resource_control` should be paired with a cleanly exited `rkipc`
+
+### BLE Text Channel
+- Uses `/var/run/ai_ble.sock`, provided by `bt_service`
+- Packets are UTF-8 JSON text with `datatype` and `data`
+- The encoded packet must not exceed 180 bytes
 
 ## 🔧 Troubleshooting
 
@@ -363,6 +409,12 @@ cat /sys/class/gpio/gpio1/value
 ### Camera Capture Timeout
 ```bash
 ls -la /dev/video*
+```
+
+### BLE Text Connection Failure
+```bash
+ps aux | grep bt_service
+ls -la /var/run/ai_ble.sock
 ```
 
 ## 📄 License

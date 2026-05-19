@@ -87,6 +87,26 @@ Hello from AI Smart Glasses!
 4. 在设备上运行并查看日志
 5. 迭代修改
 
+## 📡 通过 RTSP 接入云端视频 AI
+
+如果要做云端视频 AI 识别，优先使用眼镜输出的 RTSP 实时视频流，不要反复拉取单张相机快照。
+
+参考流地址：
+
+```text
+rtsp://<device_lan_ip>:554/live/0
+rtsp://<device_lan_ip>:554/live/1
+```
+
+通过 USB 调试时，可以先把设备 RTSP 端口转发到主机：
+
+```bash
+adb forward tcp:8554 tcp:554
+ffprobe -v error -rtsp_transport tcp rtsp://127.0.0.1:8554/live/0
+```
+
+局域网或云端接入细节见 [RTSP 视频流指南](RTSP_VIDEO_STREAMING.md)。
+
 ## 💡 编译建议
 
 ```bash
@@ -122,3 +142,4 @@ adb devices
 
 - [开发环境搭建指南](ENV_SETUP.md)
 - [固件烧录指南](FIRMWARE_FLASHING.md)
+- [RTSP 视频流指南](RTSP_VIDEO_STREAMING.md)

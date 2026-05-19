@@ -10,6 +10,16 @@
 
 说明：当前发布包为“头文件 + 预编译库 + 示例程序”形态，不包含 `src/` 源码目录；示例程序应直接链接 `lib/libai_glass_sdk.a` 或 `lib/libai_glass_sdk.so`。
 
+## v0.7.0 SDK 更新
+
+- 新增 `ai_ble.h` 与 `BLE_Client_API.md`，支持 BLE 文本通道接入。
+- 新增录音控制 API：`ai_audio_record_start()`、`ai_audio_record_stop()`、`ai_audio_record_get_status()`。
+- 新增物理动作控制/查询 API：`ai_audio_set_disable_aicore_physical_actions()`、`ai_audio_get_disable_aicore_physical_actions()`。
+- 新增相机/音频资源释放、回收和状态查询 API。
+- 补齐显示提交与文本事件监听文档入口。
+- 新增只读查询物理动作状态示例，便于现场排查时不改变运行态。
+- 示例程序统一链接预编译 SDK 库，并使用 `examples/build/` 统一输出目录。
+
 ## 📦 SDK内容
 
 ```text
@@ -291,6 +301,18 @@ int main(void) {
 | `ai_text_event_client_start()` | 连接并开始监听 |
 | `ai_text_event_client_destroy()` | 销毁客户端 |
 
+### BLE 文本客户端 API
+
+| API函数 | 说明 |
+| --- | --- |
+| `ai_ble_client_create()` | 创建 BLE 文本客户端 |
+| `ai_ble_client_start()` | 启动后台接收线程并连接 `/var/run/ai_ble.sock` |
+| `ai_ble_register_datatype()` | 订阅指定 `datatype` 并注册回调 |
+| `ai_ble_unregister_datatype()` | 取消订阅指定 `datatype` |
+| `ai_ble_send()` | 通过 BLE notify 向手机端发送 UTF-8 JSON 文本 |
+| `ai_ble_client_stop()` | 停止 BLE 文本客户端 |
+| `ai_ble_client_destroy()` | 销毁 BLE 文本客户端 |
+
 ### 日志系统 API
 
 | API函数 | 说明 |
@@ -357,7 +379,7 @@ int main(void) {
 
 ### 摄像头服务
 - 支持 JPEG 和 NV12 两种格式
-- 共享内存大小 2 MB（足够 1920x1080 图像）
+- 共享内存大小 4 MB（足够 1920x1080 图像）
 - 支持多客户端并发访问
 - 动态资源管理：首个客户端连接时创建，最后一个断开时清理
 
@@ -365,6 +387,11 @@ int main(void) {
 - 支持 PCM 播放、录音、物理交互控制和资源仲裁
 - `record_audio_example` 当前依赖 `--enable-gpio` 录音链路
 - `media_resource_control` 建议与正常退出的 `rkipc` 配合使用
+
+### BLE 文本通道
+- 依赖 `bt_service` 提供 `/var/run/ai_ble.sock`
+- 数据包为包含 `datatype` 与 `data` 的 UTF-8 JSON 文本
+- 编码后的整包不得超过 180 字节
 
 ## 🔧 故障排查
 
@@ -383,6 +410,12 @@ cat /sys/class/gpio/gpio1/value
 ### 摄像头捕获超时
 ```bash
 ls -la /dev/video*
+```
+
+### BLE 文本通道连接失败
+```bash
+ps aux | grep bt_service
+ls -la /var/run/ai_ble.sock
 ```
 
 ## 📄 许可证
