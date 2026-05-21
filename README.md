@@ -39,9 +39,9 @@ You can develop this project in two ways:
 - Use your own RV1106B-based development board to work on the open-source system and software stack. This option is cheaper, but bring-up can involve many issues, and you may spend considerable time on system compatibility, drivers, and related problems. If your goal is to quickly develop AI glasses interaction applications, we recommend buying our carefully tuned AI glasses device.
 - Use our deeply integrated AI glasses kit if you want a faster bring-up path with pre-wired peripherals, preloaded firmware, and less hardware integration work.
 
-[**Optional: Get the Official AI Glasses Kit**](https://item.taobao.com/item.htm?ft=t&id=1044923880613) — *Recommended for faster bring-up, not required for development*
+[**Optional: Get the Official AI Glasses Kit**](https://item.taobao.com/item.htm?id=1007109700786) — *Recommended for faster bring-up, not required for development*
 
-[**Backup purchase link**](https://item.taobao.com/item.htm?id=1007109700786) — *Use this if the primary purchase page is unavailable*
+[**Backup purchase link**](https://item.taobao.com/item.htm?ft=t&id=1044923880613) — *Use this if the primary purchase page is unavailable*
 
 > [!CAUTION]
 > **Official Hardware Compatibility Notice**: The v0.6.x and v0.7.x reference firmware builds are **only compatible with integrated hardware produced after January 1, 2026**. If your official kit or same-reference hardware was purchased/produced before this date, please use v0.6.0 or earlier firmware versions.
@@ -160,7 +160,7 @@ You can develop this project in two ways:
 
 ## 🚀 Quick Start
 
-> **💡 Note**: If you purchased the [official AI glasses kit](https://item.taobao.com/item.htm?ft=t&id=1044923880613) linked above, it comes with pre-installed firmware and is ready to use. If you are developing on your own RV1106B board, start from the host setup and flashing guide below.
+> **💡 Note**: If you purchased the [official AI glasses kit](https://item.taobao.com/item.htm?id=1007109700786) linked above, it comes with pre-installed firmware and is ready to use. If you are developing on your own RV1106B board, start from the host setup and flashing guide below.
 
 ### Using Native Host Environment (Recommended)
 
