@@ -5,6 +5,7 @@
 #include <pthread.h>
 #include "lvgl/lvgl.h"
 #include "../../SDK/ai_glass_sdk/include/ai_ble.h"
+#include "../../SDK/ai_glass_sdk/include/ai_camera.h"
 #include "../../SDK/ai_glass_sdk/include/ai_display.h"
 #include "../../SDK/ai_glass_sdk/include/ai_gpio.h"
 #include "ui/ui.h"
@@ -117,6 +118,60 @@ static void on_ble_display_text(const char *datatype, const char *data, void *us
     pthread_mutex_unlock(&ui_mutex);
 
     printf("[Launcher][BLE] recv %s => %s\n", datatype, pending_ble_text);
+}
+
+static void queue_overlay_text(const char *text) {
+    pthread_mutex_lock(&ui_mutex);
+    strncpy(pending_ble_text, text ? text : "", AI_BLE_MAX_DATA_LEN);
+    pending_ble_text[AI_BLE_MAX_DATA_LEN] = '\0';
+    ble_text_pending = 1;
+    pthread_mutex_unlock(&ui_mutex);
+}
+
+static void handle_camera_action(void) {
+    char path[AI_CAMERA_ACTION_PATH_MAX] = {0};
+    char message[AI_BLE_MAX_DATA_LEN + 1];
+
+    if (ai_camera_take_photo(path, sizeof(path), 8000) == AI_MEDIA_SUCCESS) {
+        snprintf(message, sizeof(message), "Photo saved\n%s", path);
+        printf("[Launcher] ACTION: Camera saved %s\n", path);
+    } else {
+        snprintf(message, sizeof(message), "Photo failed");
+        printf("[Launcher] ACTION: Camera failed\n");
+    }
+
+    queue_overlay_text(message);
+}
+
+static void handle_record_action(void) {
+    ai_camera_video_status_t status;
+    char path[AI_CAMERA_ACTION_PATH_MAX] = {0};
+    char message[AI_BLE_MAX_DATA_LEN + 1];
+
+    memset(&status, 0, sizeof(status));
+    if (ai_camera_video_get_status(&status) == AI_MEDIA_SUCCESS && status.recording) {
+        if (ai_camera_video_stop(&status) == AI_MEDIA_SUCCESS) {
+            snprintf(message, sizeof(message), "Video stopped\n%llu KB",
+                     (unsigned long long)(status.bytes / 1024));
+            printf("[Launcher] ACTION: Record stopped path=%s bytes=%llu frames=%llu\n",
+                   status.path,
+                   (unsigned long long)status.bytes,
+                   (unsigned long long)status.frames);
+        } else {
+            snprintf(message, sizeof(message), "Video stop failed");
+            printf("[Launcher] ACTION: Record stop failed\n");
+        }
+    } else {
+        if (ai_camera_video_start(path, sizeof(path)) == AI_MEDIA_SUCCESS) {
+            snprintf(message, sizeof(message), "Video started\n%s", path);
+            printf("[Launcher] ACTION: Record started path=%s\n", path);
+        } else {
+            snprintf(message, sizeof(message), "Video start failed");
+            printf("[Launcher] ACTION: Record start failed\n");
+        }
+    }
+
+    queue_overlay_text(message);
 }
 
 static int init_ble_client(void) {
@@ -242,6 +297,8 @@ void handle_page_key(void) {
 
 // 处理确认键 (GPIO 75)
 void handle_confirm_key(void) {
+    int action = 0;
+
     pthread_mutex_lock(&ui_mutex);
 
     if (ble_text_visible) {
@@ -255,8 +312,10 @@ void handle_confirm_key(void) {
         case STATE_HOME:
             if (current_menu_index == HOME_ITEM_CAMERA) {
                 printf("[Launcher] ACTION: Camera\n");
+                action = 1;
             } else if (current_menu_index == HOME_ITEM_RECORD) {
                 printf("[Launcher] ACTION: Record\n");
+                action = 2;
             } else if (current_menu_index == HOME_ITEM_MORE) {
                 switch_to_state(STATE_SUB_MENU);
             }
@@ -272,6 +331,12 @@ void handle_confirm_key(void) {
     }
     
     pthread_mutex_unlock(&ui_mutex);
+
+    if (action == 1) {
+        handle_camera_action();
+    } else if (action == 2) {
+        handle_record_action();
+    }
 }
 
 // ==================== GPIO 事件回调 (统一回调) ====================
