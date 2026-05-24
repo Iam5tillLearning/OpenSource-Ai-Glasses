@@ -7,8 +7,9 @@
 它适合这些场景：
 
 - 在 launcher 或外部应用启动前，把相机/音频释放给外部应用
-- 在 `rkipc` 退出后，把相机/音频交还给 `ai-core`
 - 调试资源切换时，快速确认当前资源状态
+
+说明：当前 RTSP 实时视频主路径已经切换为 `ai-core` H.265 共享主码流架构。启动或关闭实时视频流时，不再使用本工具执行 `cam_off/cam_on`、`aud_off/aud_on`；应使用设备侧 `/oem/usr/bin/rkipc_device_enter.sh` 和 `/oem/usr/bin/rkipc_device_exit_to_aicore.sh`，全过程 camera/audio 仍由 `ai-core` 持有。
 
 ### 核心特性
 - ✅ 直接复用 SDK 资源仲裁 API
@@ -62,7 +63,7 @@ media-resource> status
 状态: camera=active(ai-core持有), audio=active(ai-core持有)
 ```
 
-### 2. 切换到 `rkipc`
+### 2. 释放资源给外部应用
 
 ```text
 media-resource> cam_off
@@ -76,9 +77,11 @@ media-resource> status
 状态: camera=suspended(已释放), audio=suspended(已释放)
 ```
 
-### 3. 从 `rkipc` 回切到 `ai-core`
+该流程仅适用于确实需要外部应用直接持有 camera/audio 的调试场景，不适用于当前 RTSP 实时视频主路径。
 
-先保证 `rkipc` 已正常退出，再执行：
+### 3. 回切到 `ai-core`
+
+外部应用释放完毕后执行：
 
 ```text
 media-resource> cam_on
@@ -86,21 +89,22 @@ media-resource> aud_on
 media-resource> status
 ```
 
-### 4. 推荐与 `rkipc` 配合方式
+### 4. RTSP 实时视频流入口
 
-退出 `rkipc` 时，推荐使用正常退出：
+当前实时视频流不通过本工具切换资源。请使用：
+
+```bash
+/oem/usr/bin/rkipc_device_enter.sh
+/oem/usr/bin/rkipc_device_exit_to_aicore.sh
+```
+
+若手工停止 `rkipc`，推荐使用正常退出，不推荐 `kill -9`：
 
 ```bash
 killall -TERM rkipc
 ```
 
-不推荐：
-
-```bash
-kill -9 <rkipc_pid>
-```
-
-因为硬杀会跳过 `rkipc` 的用户态清理流程，可能导致后续 `cam_on` 恢复不稳定。
+因为硬杀会跳过 `rkipc` 的 RTSP、socket 和订阅断开清理流程，可能导致后续订阅状态或日志证据不完整。
 
 ## 返回与输出说明
 
@@ -134,4 +138,4 @@ ls -l /tmp/ai-core_audio_ctrl
 
 ### 3. `cam_on` 失败
 
-如果前序运行过 `rkipc`，优先确认它是否使用了正常退出，而不是 `kill -9`。
+先确认外部 holder 是否已经真实释放资源；如果前序手工运行过 `rkipc`，优先确认它是否使用了正常退出，而不是 `kill -9`。

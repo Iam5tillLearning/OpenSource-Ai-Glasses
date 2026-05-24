@@ -377,9 +377,11 @@ int ai_audio_get_resource_status(ai_audio_t *client, ai_audio_resource_status_t 
 
 **示例程序**: `ai_glass_sdk/examples/media_resource_control/`
 
+> 说明：该资源仲裁 API 只用于外部应用确实需要直接持有 camera/audio 的场景。当前 RTSP 实时视频流由 `ai-core` 持有 camera/audio，并通过 H.265 共享主码流供 `rkipc` 订阅，不再用本 API 作为 RTSP 进入/退出路径。
+
 **使用场景**：
-- 进入 IPC 前，释放相机/音频给外部应用
-- IPC 退出后，把资源交还给 `ai-core`
+- 进入外部 IPC 应用前，释放相机/音频给外部应用
+- 外部 IPC 应用退出后，把资源交还给 `ai-core`
 
 ---
 
