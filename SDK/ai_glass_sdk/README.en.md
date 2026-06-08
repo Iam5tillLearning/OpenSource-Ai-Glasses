@@ -118,7 +118,7 @@ cd ../media_resource_control && make
 #### GPIO Event Client
 ```bash
 # Make sure the service is running (the sample listens to GPIO 75)
-./ai-core --enable-gpio --gpio-number 1 --gpio-numbers 0,1,75
+./ai-core --enable-gpio --gpio-number 1 --gpio-numbers 0,1,75 --gpio-active-low 0,75
 
 cd examples/gpio_example
 ./../build/gpio_example -g 75

@@ -57,7 +57,7 @@ cd service
 Server needs to correctly configure the GPIO pins to monitor. To expose multiple GPIOs, start `ai-core` with `--gpio-numbers`, for example:
 
 ```bash
-./build/ai-core --enable-gpio --gpio-number 1 --gpio-numbers 0,1,75
+./build/ai-core --enable-gpio --gpio-number 1 --gpio-numbers 0,1,75 --gpio-active-low 0,75
 ```
 
 ## Usage
@@ -84,7 +84,7 @@ Server needs to correctly configure the GPIO pins to monitor. To expose multiple
 📝 [Step 2/3] Connecting to GPIO Hub event center...
 ✅ Connected to service
 
-📌 Active GPIOs in Hub: GPIO0(released) GPIO1(released) GPIO75(released)
+📌 Active GPIOs in Hub: GPIO0(raw=high,active-low,released) GPIO1(raw=low,active-high,released) GPIO75(raw=high,active-low,released)
 
 📝 [Step 3/3] Subscribing to GPIO events...
 ✅ Subscribed to GPIO events

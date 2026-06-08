@@ -55,7 +55,7 @@ cd service
 服务端需要正确配置要监控的 GPIO 引脚。若设备需要同时暴露多个 GPIO，启动时指定 `--gpio-numbers`，例如：
 
 ```bash
-./build/ai-core --enable-gpio --gpio-number 1 --gpio-numbers 0,1,75
+./build/ai-core --enable-gpio --gpio-number 1 --gpio-numbers 0,1,75 --gpio-active-low 0,75
 ```
 
 ## 使用方法
@@ -82,7 +82,7 @@ cd service
 📝 [步骤2/3] 连接到GPIO Hub事件中心...
 ✅ 已连接到服务
 
-📌 当前Hub活跃GPIO: GPIO0(释放) GPIO1(释放) GPIO75(释放)
+📌 当前Hub活跃GPIO: GPIO0(raw=高,低有效,释放) GPIO1(raw=低,高有效,释放) GPIO75(raw=高,低有效,释放)
 
 📝 [步骤3/3] 订阅GPIO事件...
 ✅ 已订阅GPIO事件

@@ -179,8 +179,24 @@ int run_gpio_event_client(void) {
     if (active_count > 0) {
         printf("📌 当前Hub活跃GPIO:");
         for (int i = 0; i < active_count; i++) {
-            int state = ai_gpio_hub_client_get_gpio_state(&client, active_gpios[i]);
-            printf(" GPIO%d(%s)", active_gpios[i], state == 1 ? "按下" : "释放");
+            const gpio_hub_gpio_state_t *state = NULL;
+            for (int j = 0; client.shm_ptr && j < GPIO_HUB_MAX_GPIO; j++) {
+                if (client.shm_ptr->gpio_states[j].is_active &&
+                    client.shm_ptr->gpio_states[j].gpio_number == active_gpios[i]) {
+                    state = &client.shm_ptr->gpio_states[j];
+                    break;
+                }
+            }
+            if (state) {
+                printf(" GPIO%d(raw=%s,%s,%s)",
+                       active_gpios[i],
+                       state->current_state ? "高" : "低",
+                       state->active_low ? "低有效" : "高有效",
+                       state->is_pressed ? "按下" : "释放");
+            } else {
+                int pressed = ai_gpio_hub_client_get_gpio_state(&client, active_gpios[i]);
+                printf(" GPIO%d(%s)", active_gpios[i], pressed == 1 ? "按下" : "释放");
+            }
         }
         printf("\n\n");
     } else {

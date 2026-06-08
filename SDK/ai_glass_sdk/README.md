@@ -118,7 +118,7 @@ cd ../media_resource_control && make
 #### GPIO 事件客户端
 ```bash
 # 确保服务端已启动（示例中监听 GPIO 75）
-./ai-core --enable-gpio --gpio-number 1 --gpio-numbers 0,1,75
+./ai-core --enable-gpio --gpio-number 1 --gpio-numbers 0,1,75 --gpio-active-low 0,75
 
 cd examples/gpio_example
 ./../build/gpio_example -g 75
