@@ -65,6 +65,7 @@ public class MainActivity extends Activity {
     private BluetoothGatt gatt;
     private BluetoothGattCharacteristic communicateCharacteristic;
     private boolean scanning;
+    private boolean notifyEnabled;
 
     private TextView statusText;
     private TextView responseText;
@@ -109,7 +110,6 @@ public class MainActivity extends Activity {
                     appendLog("GATT connected");
                     updateButtons();
                 });
-                gatt.requestMtu(247);
                 gatt.discoverServices();
                 return;
             }
@@ -117,6 +117,7 @@ public class MainActivity extends Activity {
             if (newState == BluetoothProfile.STATE_DISCONNECTED) {
                 runOnUiThreadSafe(() -> {
                     communicateCharacteristic = null;
+                    notifyEnabled = false;
                     setStatus("Disconnected");
                     appendLog("GATT disconnected, status=" + status);
                     closeGatt();
@@ -127,7 +128,15 @@ public class MainActivity extends Activity {
 
         @Override
         public void onMtuChanged(BluetoothGatt gatt, int mtu, int status) {
-            runOnUiThreadSafe(() -> appendLog("MTU changed: mtu=" + mtu + " status=" + status));
+            runOnUiThreadSafe(() -> {
+                appendLog("MTU changed: mtu=" + mtu + " status=" + status);
+                if (status == BluetoothGatt.GATT_SUCCESS) {
+                    setStatus("Ready. Send a ping.");
+                } else {
+                    setStatus("Ready. MTU request failed: " + status);
+                }
+                updateButtons();
+            });
         }
 
         @Override
@@ -157,8 +166,8 @@ public class MainActivity extends Activity {
 
             communicateCharacteristic = characteristic;
             runOnUiThreadSafe(() -> {
-                setStatus("Characteristic found. Enabling notify...");
-                appendLog("Characteristic ready");
+                setStatus("Characteristic found. Enabling notify/indicate...");
+                appendLog("Characteristic ready, properties=" + formatProperties(characteristic));
                 updateButtons();
             });
             enableNotify(gatt, characteristic);
@@ -169,9 +178,15 @@ public class MainActivity extends Activity {
             runOnUiThreadSafe(() -> {
                 if (CLIENT_CHARACTERISTIC_CONFIG_UUID.equals(descriptor.getUuid())
                         && status == BluetoothGatt.GATT_SUCCESS) {
-                    setStatus("Ready. Send a ping.");
+                    notifyEnabled = true;
                     appendLog("Notify enabled");
+                    setStatus("Notify enabled. Requesting MTU...");
+                    if (!gatt.requestMtu(247)) {
+                        appendLog("requestMtu returned false");
+                        setStatus("Ready. MTU request did not start.");
+                    }
                 } else {
+                    notifyEnabled = false;
                     setStatus("Notify setup failed: " + status);
                     appendLog("Descriptor write status=" + status);
                 }
@@ -361,6 +376,7 @@ public class MainActivity extends Activity {
 
     private void closeGatt() {
         communicateCharacteristic = null;
+        notifyEnabled = false;
         if (gatt != null) {
             gatt.close();
             gatt = null;
@@ -389,15 +405,14 @@ public class MainActivity extends Activity {
             return;
         }
 
+        byte[] cccdValue = chooseCccdValue(characteristic);
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
-            int result = gatt.writeDescriptor(
-                    descriptor,
-                    BluetoothGattDescriptor.ENABLE_NOTIFICATION_VALUE);
+            int result = gatt.writeDescriptor(descriptor, cccdValue);
             if (result != 0) {
                 runOnUiThreadSafe(() -> appendLog("writeDescriptor returned " + result));
             }
         } else {
-            descriptor.setValue(BluetoothGattDescriptor.ENABLE_NOTIFICATION_VALUE);
+            descriptor.setValue(cccdValue);
             if (!gatt.writeDescriptor(descriptor)) {
                 runOnUiThreadSafe(() -> appendLog("writeDescriptor returned false"));
             }
@@ -432,10 +447,47 @@ public class MainActivity extends Activity {
 
     private int chooseWriteType(BluetoothGattCharacteristic characteristic) {
         int properties = characteristic.getProperties();
-        if ((properties & BluetoothGattCharacteristic.PROPERTY_WRITE_NO_RESPONSE) != 0) {
-            return BluetoothGattCharacteristic.WRITE_TYPE_NO_RESPONSE;
+        if ((properties & BluetoothGattCharacteristic.PROPERTY_WRITE) != 0) {
+            return BluetoothGattCharacteristic.WRITE_TYPE_DEFAULT;
         }
-        return BluetoothGattCharacteristic.WRITE_TYPE_DEFAULT;
+        return BluetoothGattCharacteristic.WRITE_TYPE_NO_RESPONSE;
+    }
+
+    private byte[] chooseCccdValue(BluetoothGattCharacteristic characteristic) {
+        int properties = characteristic.getProperties();
+        boolean canNotify = (properties & BluetoothGattCharacteristic.PROPERTY_NOTIFY) != 0;
+        boolean canIndicate = (properties & BluetoothGattCharacteristic.PROPERTY_INDICATE) != 0;
+        if (canNotify) {
+            appendLog("Enable CCCD for notify");
+            return BluetoothGattDescriptor.ENABLE_NOTIFICATION_VALUE;
+        }
+        if (canIndicate) {
+            appendLog("Enable CCCD for indicate");
+            return BluetoothGattDescriptor.ENABLE_INDICATION_VALUE;
+        }
+        appendLog("Enable CCCD for notify");
+        return BluetoothGattDescriptor.ENABLE_NOTIFICATION_VALUE;
+    }
+
+    private String formatProperties(BluetoothGattCharacteristic characteristic) {
+        int properties = characteristic.getProperties();
+        List<String> names = new ArrayList<>();
+        if ((properties & BluetoothGattCharacteristic.PROPERTY_READ) != 0) {
+            names.add("read");
+        }
+        if ((properties & BluetoothGattCharacteristic.PROPERTY_WRITE) != 0) {
+            names.add("write");
+        }
+        if ((properties & BluetoothGattCharacteristic.PROPERTY_WRITE_NO_RESPONSE) != 0) {
+            names.add("write-no-response");
+        }
+        if ((properties & BluetoothGattCharacteristic.PROPERTY_NOTIFY) != 0) {
+            names.add("notify");
+        }
+        if ((properties & BluetoothGattCharacteristic.PROPERTY_INDICATE) != 0) {
+            names.add("indicate");
+        }
+        return names.toString();
     }
 
     private void handleNotify(byte[] value) {
@@ -522,7 +574,7 @@ public class MainActivity extends Activity {
     }
 
     private void updateButtons() {
-        boolean connected = gatt != null && communicateCharacteristic != null;
+        boolean connected = gatt != null && communicateCharacteristic != null && notifyEnabled;
         scanButton.setEnabled(!scanning);
         sendButton.setEnabled(connected);
         disconnectButton.setEnabled(gatt != null || scanning);
