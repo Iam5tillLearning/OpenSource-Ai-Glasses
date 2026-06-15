@@ -155,23 +155,55 @@ ai_glass_sdk
 Local application
 ```
 
-## 6. Troubleshooting
+## 6. BLE Roundtrip Demo
 
-### 6.1 `ai_ble_client_start()` Fails
+The SDK provides `examples/ble_demo/` as a complete mobile/glasses roundtrip reference:
+
+- The glasses-side `ble_demo.c` subscribes to `sdk.demo.ping`.
+- The Android demo under `android/` scans `OSAIG-XXXX` and sends `sdk.demo.ping`.
+- The glasses side receives the message and replies with `sdk.demo.pong` through `ai_ble_send()`.
+- The Android side enables notify and displays `sdk.demo.pong`.
+
+Example messages:
+
+```json
+{"datatype":"sdk.demo.ping","data":"hello from android"}
+{"datatype":"sdk.demo.pong","data":"ack:hello from android"}
+```
+
+Build the glasses-side demo:
+
+```bash
+cd examples/ble_demo
+make
+```
+
+Build the Android demo:
+
+```bash
+cd examples/ble_demo/android
+bash build_android.sh
+```
+
+These demo datatypes are only for SDK examples. They do not trigger camera, stream, display, or fixed toast behavior.
+
+## 7. Troubleshooting
+
+### 7.1 `ai_ble_client_start()` Fails
 
 Check:
 - Whether `bt_service` is running
 - Whether `/var/run/ai_ble.sock` exists
 - Whether the current process can access the socket
 
-### 6.2 No Messages Received
+### 7.2 No Messages Received
 
 Check:
 - Whether the target `datatype` has been registered
 - Whether the JSON sent by the mobile side contains `datatype` and `data`
 - Whether the full UTF-8 JSON packet is no longer than `180` bytes
 
-### 6.3 Send Failure
+### 7.3 Send Failure
 
 Check:
 - Whether `datatype` follows the naming rules

@@ -30,6 +30,7 @@
 - [SDK 控制录音示例](../examples/record_audio_example/) - 开始/停止录音并保存到固定路径
 - [媒体资源切换控制台](../examples/media_resource_control/) - 相机/音频资源释放与回收示例
 - [文本事件客户端](../examples/text_event_example/) - 文本流监听示例
+- [BLE 往返 Demo](../examples/ble_demo/) - Android 端和眼镜端 BLE 文本往返示例
 
 ---
 
@@ -55,7 +56,8 @@
 ### 4. BLE 文本开发
 1. 阅读 [BLE 文本客户端 API](BLE_Client_API.md)
 2. 确认 `bt_service` 已提供 `/var/run/ai_ble.sock`
-3. 按 `datatype` 订阅消息，例如 `display.text`
+3. 查看 [BLE 往返 Demo](../examples/ble_demo/)
+4. 按 `datatype` 订阅消息，例如 `display.text`
 
 ---
 
@@ -101,6 +103,7 @@ AI Media Service (服务端)
 - 只读查询 AI-Core 物理动作状态示例：`../examples/query_aicore_physical_actions_example/`
 - 录音示例：`../examples/record_audio_example/`
 - 媒体资源切换示例：`../examples/media_resource_control/`
+- BLE 往返 Demo：`../examples/ble_demo/`
 
 ### 头文件位置
 - GPIO API：`../include/ai_gpio.h`
