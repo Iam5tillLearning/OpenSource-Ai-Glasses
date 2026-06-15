@@ -43,6 +43,7 @@ ai_glass_sdk/
 │   ├── record_audio_example/                 # SDK 控制录音示例
 │   ├── media_resource_control/               # 相机/音频资源切换控制台示例
 │   ├── text_event_example/                   # ASR/LLM/System 文本流监听示例
+│   ├── ble_demo/                             # BLE 手机端/眼镜端往返示例
 │   ├── http_example/                         # HTTP 客户端示例
 │   └── websocket_example/                    # WebSocket 客户端示例
 ├── docs/                 # 客户端接入文档
@@ -111,6 +112,7 @@ cd ../disable_aicore_physical_actions_example && make
 cd ../query_aicore_physical_actions_example && make
 cd ../record_audio_example && make
 cd ../media_resource_control && make
+cd ../ble_demo && make
 ```
 
 ### 2. 运行示例程序
@@ -175,6 +177,18 @@ cd examples/media_resource_control
 ```bash
 cd examples/text_event_example
 ./../build/text_event_client
+```
+
+#### BLE 往返 Demo
+```bash
+# 眼镜端示例：订阅 sdk.demo.ping 并回发 sdk.demo.pong
+cd examples/ble_demo
+make
+./../build/ble_demo
+
+# Android 端示例：扫描 OSAIG-XXXX，发送 sdk.demo.ping 并显示 sdk.demo.pong
+cd android
+bash build_android.sh
 ```
 
 ### 3. 集成到自己的项目

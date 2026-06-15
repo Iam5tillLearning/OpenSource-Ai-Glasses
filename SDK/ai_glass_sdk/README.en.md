@@ -43,6 +43,7 @@ ai_glass_sdk/
 │   ├── record_audio_example/                 # SDK-controlled recording example
 │   ├── media_resource_control/               # Camera/audio resource switch console
 │   ├── text_event_example/                   # ASR / LLM / System text stream example
+│   ├── ble_demo/                             # BLE Android/glasses roundtrip demo
 │   ├── http_example/                         # HTTP client example
 │   └── websocket_example/                    # WebSocket client example
 ├── docs/                 # Client integration docs
@@ -111,6 +112,7 @@ cd ../disable_aicore_physical_actions_example && make
 cd ../query_aicore_physical_actions_example && make
 cd ../record_audio_example && make
 cd ../media_resource_control && make
+cd ../ble_demo && make
 ```
 
 ### 2. Run Example Programs
@@ -174,6 +176,18 @@ cd examples/media_resource_control
 ```bash
 cd examples/text_event_example
 ./../build/text_event_client
+```
+
+#### BLE Roundtrip Demo
+```bash
+# Glasses side: subscribe to sdk.demo.ping and reply with sdk.demo.pong
+cd examples/ble_demo
+make
+./../build/ble_demo
+
+# Android side: scan OSAIG-XXXX, send sdk.demo.ping, and display sdk.demo.pong
+cd android
+bash build_android.sh
 ```
 
 ### 3. Integrate Into Your Own Project

@@ -155,23 +155,55 @@ ai_glass_sdk
 本地应用
 ```
 
-## 6. 故障排查
+## 6. BLE 往返 demo
 
-### 6.1 `ai_ble_client_start()` 失败
+SDK 提供 `examples/ble_demo/` 作为完整手机端/眼镜端往返示例：
+
+- 眼镜端 `ble_demo.c` 订阅 `sdk.demo.ping`。
+- Android 端 `android/` 扫描 `OSAIG-XXXX` 并发送 `sdk.demo.ping`。
+- 眼镜端收到后通过 `ai_ble_send()` 回发 `sdk.demo.pong`。
+- Android 端开启 notify 后显示 `sdk.demo.pong`。
+
+示例消息：
+
+```json
+{"datatype":"sdk.demo.ping","data":"hello from android"}
+{"datatype":"sdk.demo.pong","data":"ack:hello from android"}
+```
+
+眼镜端编译：
+
+```bash
+cd examples/ble_demo
+make
+```
+
+Android 端编译：
+
+```bash
+cd examples/ble_demo/android
+bash build_android.sh
+```
+
+该 demo datatype 只用于 SDK 示例，不触发相机、串流、显示或固定播报业务。
+
+## 7. 故障排查
+
+### 7.1 `ai_ble_client_start()` 失败
 
 检查：
 - `bt_service` 是否已启动
 - `/var/run/ai_ble.sock` 是否存在
 - 当前进程是否能访问该 socket
 
-### 6.2 收不到消息
+### 7.2 收不到消息
 
 检查：
 - 是否已成功注册对应 `datatype`
 - 手机发来的 JSON 是否包含 `datatype` 和 `data`
 - 手机发来的 UTF-8 JSON 总长度是否小于等于 `180`
 
-### 6.3 发送失败
+### 7.3 发送失败
 
 检查：
 - `datatype` 是否符合命名规则
