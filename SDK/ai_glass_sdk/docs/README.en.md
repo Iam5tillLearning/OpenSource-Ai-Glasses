@@ -30,7 +30,7 @@ Welcome to the AI Glass SDK Documentation Center. This contains all the document
 - [Record Audio Example](../examples/record_audio_example/) - Start/stop recording and copy to a fixed path
 - [Media Resource Control](../examples/media_resource_control/) - Camera/audio resource release and resume example
 - [Text Event Client](../examples/text_event_example/) - Text stream listener example
-- [BLE Roundtrip Demo](../examples/ble_demo/) - Android and glasses-side BLE text roundtrip example
+- [Bluetooth Demo](../examples/bluetooth_demo/README.en.md) - BLE and classic Bluetooth client/glasses-side communication examples
 
 ---
 
@@ -56,7 +56,7 @@ Welcome to the AI Glass SDK Documentation Center. This contains all the document
 ### 4. BLE Text Development
 1. Read [BLE Text Client API](BLE_Client_API.en.md)
 2. Confirm `bt_service` exposes `/var/run/ai_ble.sock`
-3. View [BLE Roundtrip Demo](../examples/ble_demo/)
+3. View [Bluetooth Demo](../examples/bluetooth_demo/README.en.md)
 4. Subscribe by `datatype`, such as `display.text`
 
 ---
@@ -104,7 +104,7 @@ Hardware Resources (GPIO, Camera, Audio)
 - Query AI-Core Physical Actions Example: `../examples/query_aicore_physical_actions_example/`
 - Record Audio Example: `../examples/record_audio_example/`
 - Media Resource Example: `../examples/media_resource_control/`
-- BLE Roundtrip Demo: `../examples/ble_demo/`
+- Bluetooth Demo: `../examples/bluetooth_demo/`
 
 ### Header File Locations
 - GPIO API: `../include/ai_gpio.h`

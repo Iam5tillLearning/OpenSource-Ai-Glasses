@@ -157,12 +157,12 @@ ai_glass_sdk
 
 ## 6. BLE 往返 demo
 
-SDK 提供 `examples/ble_demo/` 作为完整手机端/眼镜端往返示例：
+SDK 提供 `examples/bluetooth_demo/ble_demo/` 作为完整外部客户端/眼镜端往返示例：
 
-- 眼镜端 `ble_demo.c` 订阅 `sdk.demo.ping`。
-- Android 端 `android/` 扫描 `OSAIG-XXXX` 并发送 `sdk.demo.ping`。
+- 眼镜端 `glasses/ble_demo.c` 订阅 `sdk.demo.ping`。
+- Android 客户端 `clients/android/` 扫描 `OSAIG-XXXX` 并发送 `sdk.demo.ping`。
 - 眼镜端收到后通过 `ai_ble_send()` 回发 `sdk.demo.pong`。
-- Android 端开启 notify 后显示 `sdk.demo.pong`。
+- Android 客户端开启 notify 后显示 `sdk.demo.pong`。
 
 示例消息：
 
@@ -174,14 +174,14 @@ SDK 提供 `examples/ble_demo/` 作为完整手机端/眼镜端往返示例：
 眼镜端编译：
 
 ```bash
-cd examples/ble_demo
+cd examples/bluetooth_demo/ble_demo/glasses
 make
 ```
 
 Android 端编译：
 
 ```bash
-cd examples/ble_demo/android
+cd examples/bluetooth_demo/ble_demo/clients/android
 bash build_android.sh
 ```
 

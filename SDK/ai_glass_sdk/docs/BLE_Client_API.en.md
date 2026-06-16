@@ -157,12 +157,12 @@ Local application
 
 ## 6. BLE Roundtrip Demo
 
-The SDK provides `examples/ble_demo/` as a complete mobile/glasses roundtrip reference:
+The SDK provides `examples/bluetooth_demo/ble_demo/` as a complete external-client/glasses roundtrip reference:
 
-- The glasses-side `ble_demo.c` subscribes to `sdk.demo.ping`.
-- The Android demo under `android/` scans `OSAIG-XXXX` and sends `sdk.demo.ping`.
+- The glasses-side `glasses/ble_demo.c` subscribes to `sdk.demo.ping`.
+- The Android client under `clients/android/` scans `OSAIG-XXXX` and sends `sdk.demo.ping`.
 - The glasses side receives the message and replies with `sdk.demo.pong` through `ai_ble_send()`.
-- The Android side enables notify and displays `sdk.demo.pong`.
+- The Android client enables notify and displays `sdk.demo.pong`.
 
 Example messages:
 
@@ -174,14 +174,14 @@ Example messages:
 Build the glasses-side demo:
 
 ```bash
-cd examples/ble_demo
+cd examples/bluetooth_demo/ble_demo/glasses
 make
 ```
 
 Build the Android demo:
 
 ```bash
-cd examples/ble_demo/android
+cd examples/bluetooth_demo/ble_demo/clients/android
 bash build_android.sh
 ```
 

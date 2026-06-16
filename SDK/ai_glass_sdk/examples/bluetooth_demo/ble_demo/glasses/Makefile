@@ -1,6 +1,7 @@
 # Makefile for BLE Demo
 
-DEV_ENV_ROOT := ../../../../..
+SDK_DIR := ../../../..
+DEV_ENV_ROOT := $(SDK_DIR)/../../..
 TOOLCHAIN_BIN := $(DEV_ENV_ROOT)/tools/linux/toolchain/arm-rockchip831-linux-uclibcgnueabihf/bin
 
 ifeq ($(CROSS_COMPILE),)
@@ -14,11 +15,10 @@ endif
 CC = $(CROSS_COMPILE)gcc
 CFLAGS = -Wall -Wextra -g -O2 -std=gnu99
 
-SDK_DIR = ../..
 INCLUDES = -I$(SDK_DIR)/include
 SDK_STATIC_LIB = $(SDK_DIR)/lib/libai_glass_sdk.a
 
-BUILD_DIR = ../build
+BUILD_DIR = ../../../build
 TARGET = $(BUILD_DIR)/ble_demo
 SOURCE = ble_demo.c
 
@@ -43,6 +43,6 @@ help:
 	@echo "  clean - Remove glasses-side build output"
 	@echo ""
 	@echo "Android demo:"
-	@echo "  cd android && bash build_android.sh"
+	@echo "  cd ../clients/android && bash build_android.sh"
 
 .PHONY: all clean help
