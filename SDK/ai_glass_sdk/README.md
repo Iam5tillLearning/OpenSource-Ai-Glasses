@@ -34,6 +34,10 @@ ai_glass_sdk/
 ├── lib/                  # 预编译库文件
 │   ├── libai_glass_sdk.a          # 静态库
 │   └── libai_glass_sdk.so         # 动态库
+├── third_party/          # 示例链接所需第三方依赖
+│   └── mbedtls/                   # HTTP/WebSocket HTTPS/WSS 静态链接依赖
+│       ├── include/               # mbedTLS 头文件
+│       └── library/               # libmbedtls.a / libmbedx509.a / libmbedcrypto.a
 ├── examples/             # 示例程序
 │   ├── gpio_example/                         # GPIO 事件订阅示例
 │   ├── audio_play_example/                   # 音频播放示例

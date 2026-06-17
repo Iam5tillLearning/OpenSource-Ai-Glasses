@@ -34,6 +34,10 @@ ai_glass_sdk/
 ├── lib/                  # Prebuilt libraries
 │   ├── libai_glass_sdk.a          # Static library
 │   └── libai_glass_sdk.so         # Shared library
+├── third_party/          # Third-party dependencies required by examples
+│   └── mbedtls/                   # Static-link dependency for HTTP/WebSocket HTTPS/WSS
+│       ├── include/               # mbedTLS headers
+│       └── library/               # libmbedtls.a / libmbedx509.a / libmbedcrypto.a
 ├── examples/             # Example programs
 │   ├── gpio_example/                         # GPIO event subscription example
 │   ├── audio_play_example/                   # Audio playback example
