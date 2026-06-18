@@ -36,6 +36,10 @@ ai_glass_sdk/
 ├── lib/                  # 预编译库文件
 │   ├── libai_glass_sdk.a          # 静态库
 │   └── libai_glass_sdk.so         # 动态库
+├── third_party/          # 示例链接所需第三方依赖
+│   └── mbedtls/                   # HTTP/WebSocket HTTPS/WSS 静态链接依赖
+│       ├── include/               # mbedTLS 头文件
+│       └── library/               # libmbedtls.a / libmbedx509.a / libmbedcrypto.a
 ├── examples/             # 示例程序
 │   ├── gpio_example/                         # GPIO 事件订阅示例
 │   ├── audio_play_example/                   # 音频播放示例
@@ -45,6 +49,7 @@ ai_glass_sdk/
 │   ├── record_audio_example/                 # SDK 控制录音示例
 │   ├── media_resource_control/               # 相机/音频资源切换控制台示例
 │   ├── text_event_example/                   # ASR/LLM/System 文本流监听示例
+│   ├── bluetooth_demo/                       # BLE 与经典蓝牙通信示例
 │   ├── http_example/                         # HTTP 客户端示例
 │   └── websocket_example/                    # WebSocket 客户端示例
 ├── docs/                 # 客户端接入文档
@@ -117,6 +122,7 @@ cd ../media_resource_control && make
 cd ../text_event_example && make
 cd ../http_example && make
 cd ../websocket_example && make
+cd ../bluetooth_demo/ble_demo/glasses && make
 ```
 
 ### 2. 运行示例程序
@@ -124,7 +130,7 @@ cd ../websocket_example && make
 #### GPIO 事件客户端
 ```bash
 # 确保服务端已启动（示例中监听 GPIO 75）
-./ai-core --enable-gpio --gpio-number 1 --gpio-numbers 0,1,75
+./ai-core --enable-gpio --gpio-number 1 --gpio-numbers 0,1,75 --gpio-active-low 0,75
 
 cd examples/gpio_example
 ./../build/gpio_example -g 75
@@ -181,6 +187,25 @@ cd examples/media_resource_control
 ```bash
 cd examples/text_event_example
 ./../build/text_event_client
+```
+
+#### BLE 往返 Demo
+```bash
+# 眼镜端示例：订阅 sdk.demo.ping 并回发 sdk.demo.pong
+cd examples/bluetooth_demo/ble_demo/glasses
+make
+./../../../build/ble_demo
+
+# Android 端示例：扫描 OSAIG-XXXX，发送 sdk.demo.ping 并显示 sdk.demo.pong
+cd ../clients/android
+bash build_android.sh
+```
+
+#### 经典蓝牙 SPP Demo
+```bash
+# Android 端示例：连接已配对的 OSAIG-XXXX，发送文本并显示眼镜端回显
+cd examples/bluetooth_demo/classic_bt_demo/clients/android
+bash build_android.sh
 ```
 
 ### 3. 集成到自己的项目

@@ -2,12 +2,14 @@
 
 ## 简介
 
-`gpio_example` 是一个演示程序，展示如何使用 AI Glass SDK 的 GPIO 事件广播服务订阅和处理 GPIO 按键事件。
+`gpio_example` 是一个演示程序，展示如何使用 AI Glass SDK 的 GPIO Hub 事件中心订阅和处理 GPIO 按键事件。
 
 ### 核心特性
 - 订阅 GPIO 按键事件（按下/释放）
 - 异步事件回调机制，实时响应
-- 多进程共享同一 GPIO 事件源
+- 默认订阅 Hub 中全部活跃 GPIO，按下任一 GPIO 时输出实际编号
+- 支持 `-g <gpio_number>` 只订阅指定 GPIO
+- 多进程共享同一 GPIO Hub 事件源
 - 无需直接访问 GPIO 硬件
 - 完整的事件统计和调试信息
 
@@ -28,7 +30,7 @@
 ```
 
 1. **服务端** (ai-core)：监控 GPIO 硬件状态变化
-2. **事件广播**：通过 Unix Domain Socket 广播事件给所有订阅客户端
+2. **GPIO Hub**：通过统一共享内存和 Unix Domain Socket 广播事件给所有订阅客户端
 3. **客户端**：接收事件并在独立线程中执行回调函数
 
 ## 编译
@@ -50,52 +52,45 @@ cd service
 ```
 
 ### 2. 确认 GPIO 配置
-服务端需要正确配置要监控的 GPIO 引脚（默认为 gpio-1，对应左镜腿物理按键）。
+服务端需要正确配置要监控的 GPIO 引脚。若设备需要同时暴露多个 GPIO，启动时指定 `--gpio-numbers`，例如：
+
+```bash
+./build/ai-core --enable-gpio --gpio-number 1 --gpio-numbers 0,1,75 --gpio-active-low 0,75
+```
 
 ## 使用方法
 
 ### 基本运行
 ```bash
+# 订阅 Hub 中全部活跃 GPIO，适合排查当前到底按下了哪个 GPIO
 ./gpio_example
+
+# 只订阅 GPIO 1
+./gpio_example -g 1
 ```
 
 ### 程序输出示例
 ```
 ═══════════════════════════════════════════════════════════
-  GPIO事件客户端示例程序
+  GPIO事件客户端 - Hub异步回调模式
+  监听目标: 全部活跃GPIO
 ═══════════════════════════════════════════════════════════
 
-【功能】订阅GPIO事件，实时接收按键通知
-
-【使用方法】
-  ./gpio_example
-
-【前置条件】
-  1. 确保ai-core服务端已启动
-  2. 服务端需要启用GPIO功能（--enable-gpio）
-
-【退出方式】
-  按 Ctrl+C 退出程序
-
-═══════════════════════════════════════════════════════════
-
-═══════════════════════════════════════════════════════════
-  GPIO事件客户端 - 异步回调模式
-═══════════════════════════════════════════════════════════
-
-📝 [步骤1/3] 创建GPIO事件客户端...
+📝 [步骤1/3] 创建GPIO Hub事件客户端...
 ✅ 客户端已创建
 
-📝 [步骤2/3] 连接到GPIO事件广播服务...
+📝 [步骤2/3] 连接到GPIO Hub事件中心...
 ✅ 已连接到服务
+
+📌 当前Hub活跃GPIO: GPIO0(raw=高,低有效,释放) GPIO1(raw=低,高有效,释放) GPIO75(raw=高,低有效,释放)
 
 📝 [步骤3/3] 订阅GPIO事件...
 ✅ 已订阅GPIO事件
-   - 本地通知Socket: /tmp/gpio_notify_12345
+   - 本地通知Socket: /tmp/ai_gpio_hub_client_12345_123456789
    - 当前事件序列号: 0
 
 ═══════════════════════════════════════════════════════════
-  🎧 监听中... 请按下GPIO按键
+  🎧 监听中... 请按下任一活跃GPIO按键
   💡 提示：按 Ctrl+C 退出程序
 ═══════════════════════════════════════════════════════════
 ```
@@ -222,7 +217,7 @@ void my_gpio_event_callback(gpio_event_t event_type, int gpio_number, void *user
 ❌ 订阅失败
 ```
 **解决**：
-- 检查 GPIO 管理器是否正确初始化
+- 检查 GPIO Hub 是否正确初始化
 - 查看服务端日志了解详细错误信息
 
 #### 3. 服务停止
@@ -244,28 +239,34 @@ void my_gpio_event_callback(gpio_event_t event_type, int gpio_number, void *user
 ### 核心 API 函数
 
 ```c
-// 1. 创建客户端
-int ai_gpio_event_client_create(gpio_event_client_t *client);
+// 1. 创建 Hub 客户端
+int ai_gpio_hub_client_create(gpio_event_hub_client_t *client);
 
-// 2. 连接到服务
-int ai_gpio_event_client_connect(gpio_event_client_t *client);
+// 2. 连接到 GPIO Hub
+int ai_gpio_hub_client_connect(gpio_event_hub_client_t *client);
 
-// 3. 订阅事件（注册回调函数）
-int ai_gpio_event_client_subscribe(gpio_event_client_t *client,
-                                   gpio_event_callback_t callback,
-                                   void *user_data);
+// 3. 订阅指定 GPIO
+int ai_gpio_hub_client_subscribe_gpios(gpio_event_hub_client_t *client,
+                                       const int *gpio_list,
+                                       int gpio_count,
+                                       gpio_event_callback_t callback,
+                                       void *user_data);
 
-// 4. 检查服务状态
-int ai_gpio_event_client_is_service_alive(gpio_event_client_t *client);
+// 4. 订阅全部 GPIO
+int ai_gpio_hub_client_subscribe_all(gpio_event_hub_client_t *client,
+                                     gpio_event_callback_t callback,
+                                     void *user_data);
 
-// 5. 取消订阅
-void ai_gpio_event_client_unsubscribe(gpio_event_client_t *client);
+// 5. 获取活跃 GPIO 列表
+int ai_gpio_hub_client_get_active_gpios(gpio_event_hub_client_t *client,
+                                        int *gpio_list,
+                                        int max_count);
 
-// 6. 断开连接
-void ai_gpio_event_client_disconnect(gpio_event_client_t *client);
+// 6. 检查服务状态
+int ai_gpio_hub_client_is_service_alive(gpio_event_hub_client_t *client);
 
 // 7. 销毁客户端
-void ai_gpio_event_client_destroy(gpio_event_client_t *client);
+void ai_gpio_hub_client_destroy(gpio_event_hub_client_t *client);
 
 // 辅助函数
 uint64_t ai_gpio_get_timestamp_us(void);  // 获取微秒级时间戳
@@ -306,10 +307,13 @@ uint64_t ai_gpio_get_timestamp_us(void);  // 获取微秒级时间戳
 ### 2. 检查 Socket 连接
 ```bash
 # 查看客户端 Socket
-ls -la /tmp/gpio_notify_*
+ls -la /tmp/ai_gpio_hub_client_*
 
 # 查看服务端 Socket
-ls -la /tmp/ai-core_gpio_*
+ls -la /tmp/ai_gpio_event_hub_broadcast
+
+# 查看 Hub 共享内存
+ls -la /dev/shm/ai_gpio_event_hub
 ```
 
 ### 3. 启用详细日志
@@ -326,7 +330,7 @@ ls -la /tmp/ai-core_gpio_*
 
 - 查看帮助: 运行程序会自动显示使用说明
 - 检查服务: `ps aux | grep ai-core`
-- 查看 Socket: `ls -la /tmp/gpio_*`
+- 查看 Socket: `ls -la /tmp/ai_gpio_event_hub_broadcast /tmp/ai_gpio_hub_client_*`
 
 ## 相关文档
 

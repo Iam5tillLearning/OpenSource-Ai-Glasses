@@ -6,7 +6,7 @@ This document explains how to use the glasses RTSP stream for mobile live previe
 
 ## Scope
 
-The v0.7.0 reference firmware can start an `rkipc` streaming runtime that exposes the camera as RTSP.
+The v0.7.0 reference firmware can start an `rkipc` streaming runtime that exposes the camera as RTSP. In the current architecture, `ai-core` still owns camera/audio and produces the H.265 video stream plus the audio mirror stream; `rkipc` only subscribes to those streams and serves RTSP. It does not take camera/audio ownership.
 
 Reference URLs:
 
@@ -89,13 +89,13 @@ ffmpeg -rtsp_transport tcp \
 
 ## Stop Streaming
 
-When RTSP is no longer needed, exit `rkipc` cleanly and return camera/audio resources to `ai-core`:
+When RTSP is no longer needed, exit `rkipc` cleanly. After `rkipc` exits, the SDK subscriptions are disconnected and `ai-core` stops the H.265 producer after the no-subscriber grace period. Camera/audio remain owned by `ai-core` throughout the flow, so there is no extra `cam_on` / `aud_on` step:
 
 ```bash
 adb shell /oem/usr/bin/rkipc_device_exit_to_aicore.sh
 ```
 
-Avoid `kill -9` for `rkipc`, because it skips user-space cleanup and can make later camera recovery unstable.
+Avoid `kill -9` for `rkipc`, because it skips RTSP, socket, and subscription cleanup and can leave incomplete subscription state or log evidence.
 
 ## Troubleshooting
 

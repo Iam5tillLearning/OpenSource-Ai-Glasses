@@ -464,6 +464,7 @@ typedef struct {
     int          is_active;          // 是否已激活监控
     int          current_state;      // 当前电平状态
     int          is_pressed;         // 按键逻辑状态
+    int          active_low;         // 有效低电平（1=低电平表示按下）
     uint64_t     last_event_time;    // 最后事件时间（微秒）
     uint64_t     press_count;        // 按下次数统计
     uint64_t     release_count;      // 释放次数统计

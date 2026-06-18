@@ -36,6 +36,10 @@ ai_glass_sdk/
 ├── lib/                  # Prebuilt libraries
 │   ├── libai_glass_sdk.a          # Static library
 │   └── libai_glass_sdk.so         # Shared library
+├── third_party/          # Third-party dependencies required by examples
+│   └── mbedtls/                   # Static-link dependency for HTTP/WebSocket HTTPS/WSS
+│       ├── include/               # mbedTLS headers
+│       └── library/               # libmbedtls.a / libmbedx509.a / libmbedcrypto.a
 ├── examples/             # Example programs
 │   ├── gpio_example/                         # GPIO event subscription example
 │   ├── audio_play_example/                   # Audio playback example
@@ -45,6 +49,7 @@ ai_glass_sdk/
 │   ├── record_audio_example/                 # SDK-controlled recording example
 │   ├── media_resource_control/               # Camera/audio resource switch console
 │   ├── text_event_example/                   # ASR / LLM / System text stream example
+│   ├── bluetooth_demo/                       # BLE and classic Bluetooth demos
 │   ├── http_example/                         # HTTP client example
 │   └── websocket_example/                    # WebSocket client example
 ├── docs/                 # Client integration docs
@@ -118,6 +123,7 @@ cd ../media_resource_control && make
 cd ../text_event_example && make
 cd ../http_example && make
 cd ../websocket_example && make
+cd ../bluetooth_demo/ble_demo/glasses && make
 ```
 
 ### 2. Run Example Programs
@@ -125,7 +131,7 @@ cd ../websocket_example && make
 #### GPIO Event Client
 ```bash
 # Make sure the service is running (the sample listens to GPIO 75)
-./ai-core --enable-gpio --gpio-number 1 --gpio-numbers 0,1,75
+./ai-core --enable-gpio --gpio-number 1 --gpio-numbers 0,1,75 --gpio-active-low 0,75
 
 cd examples/gpio_example
 ./../build/gpio_example -g 75
@@ -181,6 +187,25 @@ cd examples/media_resource_control
 ```bash
 cd examples/text_event_example
 ./../build/text_event_client
+```
+
+#### BLE Roundtrip Demo
+```bash
+# Glasses side: subscribe to sdk.demo.ping and reply with sdk.demo.pong
+cd examples/bluetooth_demo/ble_demo/glasses
+make
+./../../../build/ble_demo
+
+# Android side: scan OSAIG-XXXX, send sdk.demo.ping, and display sdk.demo.pong
+cd ../clients/android
+bash build_android.sh
+```
+
+#### Classic Bluetooth SPP Demo
+```bash
+# Android side: connect to a paired OSAIG-XXXX device, send text, and display echo
+cd examples/bluetooth_demo/classic_bt_demo/clients/android
+bash build_android.sh
 ```
 
 ### 3. Integrate Into Your Own Project

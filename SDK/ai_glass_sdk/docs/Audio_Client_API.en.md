@@ -438,9 +438,11 @@ int ai_audio_get_resource_status(ai_audio_t *client, ai_audio_resource_status_t 
 
 **Example Program**: `ai_glass_sdk/examples/media_resource_control/`
 
+> Note: This resource arbitration API is only for external applications that must directly own camera/audio. The current RTSP live-video path keeps camera/audio owned by `ai-core` and lets `rkipc` subscribe to the shared H.265 main stream, so it does not use this API as the RTSP start/stop path.
+
 **Typical Use Cases**:
-- Release camera/audio to an external application before launching IPC
-- Return camera/audio back to `ai-core` after IPC exits
+- Release camera/audio to an external application before launching it
+- Return camera/audio to `ai-core` after that external application exits
 
 ---
 

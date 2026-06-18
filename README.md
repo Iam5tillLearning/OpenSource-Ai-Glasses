@@ -41,7 +41,7 @@ You can develop this project in two ways:
 
 [**Optional: Get the Official AI Glasses Kit**](https://item.taobao.com/item.htm?id=1007109700786) — *Recommended for faster bring-up, not required for development*
 
-[**Backup purchase link**](https://item.taobao.com/item.htm?ft=t&id=1044923880613) — *Use this if the primary purchase page is unavailable*
+[**Backup purchase link**](https://item.taobao.com/item.htm?ft=t&id=1056653633568) — *Use this if the primary purchase page is unavailable*
 
 > [!NOTE]
 > **For international buyers**: Please find your own purchasing agent or package forwarding company for now. A global shipping platform is being set up and is expected to go live in about one week. We apologize for the inconvenience.

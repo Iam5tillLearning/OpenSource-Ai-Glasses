@@ -47,6 +47,7 @@ EXAMPLE_DIRS = examples/audio_play_example \
                examples/disable_aicore_physical_actions_example \
                examples/query_aicore_physical_actions_example \
                examples/record_audio_example \
+               examples/bluetooth_demo/ble_demo/glasses \
                examples/http_example \
                examples/websocket_example \
                examples/text_event_example \
