@@ -177,6 +177,7 @@ typedef struct {
 #define AI_AUDIO_ERROR_PARAM      -4    // 参数错误
 #define AI_AUDIO_ERROR_RESPONSE   -5    // 服务端响应错误
 #define AI_AUDIO_ERROR_STATE      -6    // 状态错误（例如重复开始录音）
+#define AI_AUDIO_ERROR_TIMEOUT    -7    // 流订阅读取超时，可重试
 ```
 
 ### 核心API
@@ -385,6 +386,124 @@ int ai_audio_get_resource_status(ai_audio_t *client, ai_audio_resource_status_t 
 
 ---
 
+#### Holder 仲裁 API（第二阶段）
+
+用于当前持有外部媒体资源的应用向 `ai-core` 注册自己，并暴露统一 reclaim 能力。
+
+```c
+#define AI_MEDIA_HOLDER_ID_MAX 64
+#define AI_MEDIA_ENDPOINT_PATH_MAX 108
+
+typedef struct {
+    int (*release_resources)(int resource_mask, void *user_data);
+    int (*acquire_resources)(int resource_mask, void *user_data);
+    int (*get_resource_status)(int *camera_owned, int *audio_owned, void *user_data);
+} ai_media_holder_ops_t;
+
+typedef struct {
+    const char *holder_id;
+    int owned_mask;
+    int reclaim_timeout_ms;
+    ai_media_holder_ops_t ops;
+    void *user_data;
+} ai_media_holder_registration_t;
+
+typedef struct {
+    int holder_registered;
+    int owned_mask;
+    int reclaim_pending;
+    int camera_suspended;
+    int audio_suspended;
+    char holder_id[AI_MEDIA_HOLDER_ID_MAX];
+    char endpoint_path[AI_MEDIA_ENDPOINT_PATH_MAX];
+    unsigned int holder_generation;
+    int loan_active;
+    int loan_auto_return;
+    int return_pending;
+} ai_media_arbitration_status_t;
+
+int ai_media_register_holder(ai_audio_t *client,
+                             const ai_media_holder_registration_t *registration);
+int ai_media_unregister_holder(ai_audio_t *client, const char *holder_id);
+int ai_media_get_arbitration_status(ai_audio_t *client,
+                                    ai_media_arbitration_status_t *status);
+```
+
+**说明**：
+- 当前已实现单 holder、`audio` 优先的统一 reclaim / auto-return
+- holder app 只需要注册本地 `ops`；reclaim Unix socket endpoint 由 SDK 在进程内自动创建并注册给 `ai-core`
+- 当前 `endpoint_path` 只用于状态查询和调试展示，不需要 app 显式配置
+- `holder_generation` 用于标识 holder 实例代际，避免把资源还给旧实例
+- `loan_active=1` 表示当前 `audio` 是 `ai-core` 主动借回但尚未归还
+- `loan_auto_return=1` 表示本次借回在本地使用结束后需要自动返还
+- `return_pending=1` 表示当前已进入自动返还流程
+
+**典型时序**：
+- 外部应用先用 `ai_audio_suspend_resources()` 拿资源
+- 拿到资源后调用 `ai_media_register_holder()`
+- 需要回收时，`ai-core` 通过统一 reclaim endpoint 反向请求 holder 释放资源
+- 如果这次回收属于 `ai-core` 主动借回，且本地使用结束，`ai-core` 会再通过统一 `ACQUIRE` 自动把资源还回原 holder
+- holder 退出前调用 `ai_media_unregister_holder()`
+
+**语义边界**：
+- 如果资源是外部应用主动归还给 `ai-core`，则视为所有权转移，不自动返还
+- 只有 `ai-core` 主动借回建立了 loan 上下文，才会触发自动返还
+
+---
+
+#### 音频镜像流订阅 API（第一阶段）
+
+用于外部应用从 `ai-core` 订阅常驻 `mic` 的旁路音频镜像流。
+
+```c
+#define AI_AUDIO_STREAM_DEFAULT_SOCKET_PATH "/tmp/ai-core_audio_stream"
+#define AI_AUDIO_STREAM_MAGIC 0x41415346u
+#define AI_AUDIO_STREAM_VERSION 1
+#define AI_AUDIO_STREAM_CODEC_G711A 1
+#define AI_AUDIO_STREAM_MAX_PAYLOAD 4096
+
+typedef struct __attribute__((packed)) {
+    uint32_t magic;
+    uint16_t version;
+    uint16_t header_size;
+
+    uint32_t codec;
+    uint32_t sample_rate;
+    uint16_t channels;
+    uint16_t bits_per_sample;
+
+    uint32_t frame_samples;
+    uint32_t payload_size;
+
+    uint64_t capture_ts_us;
+    uint64_t seq;
+} ai_audio_stream_frame_header_t;
+
+typedef struct {
+    ai_audio_stream_frame_header_t header;
+    unsigned char payload[AI_AUDIO_STREAM_MAX_PAYLOAD];
+} ai_audio_stream_packet_t;
+
+typedef struct {
+    int fd;
+    char socket_path[AI_MEDIA_ENDPOINT_PATH_MAX];
+} ai_audio_stream_handle_t;
+
+int ai_audio_stream_subscribe(const char *socket_path,
+                              ai_audio_stream_handle_t *handle);
+int ai_audio_stream_read_packet(ai_audio_stream_handle_t *handle,
+                                ai_audio_stream_packet_t *packet);
+void ai_audio_stream_unsubscribe(ai_audio_stream_handle_t *handle);
+```
+
+**说明**：
+- 第一阶段使用本地 `AF_UNIX + SOCK_SEQPACKET`
+- 第一阶段默认输出 `G711A`
+- `capture_ts_us` 取自 `ai-core` 采集/编码链时间戳，不是 socket 接收时刻
+- 该 API 只提供旁路镜像流，不改变 `ai-core` 当前物理按键、录音、云端对话主链语义
+
+---
+
 #### ai_audio_cleanup()
 
 清理客户端资源。
@@ -488,6 +607,48 @@ int ai_audio_play_tts_simple(ai_audio_t *client, const char *text);
 **说明**：
 - 使用默认参数播放TTS
 - 等价于使用默认TTS参数调用 `ai_audio_play_tts()`
+
+---
+
+#### ai_audio_play_toast()
+
+播放适合短提示的TTS文本。
+
+```c
+int ai_audio_play_toast(ai_audio_t *client, const char *text);
+```
+
+**参数**：
+- `client` - 客户端句柄
+- `text` - 要播报的短提示文本
+
+**返回值**：
+- 错误码
+
+**说明**：
+- SDK 会先过滤不适合朗读或会破坏TTS命令协议的字符
+- 固定使用音量 `80`、排队播放、启用缓存
+- 适合操作反馈、状态提示等可重复短文案
+
+---
+
+#### ai_audio_play_toast_text()
+
+使用默认音频Socket播放适合短提示的TTS文本。
+
+```c
+int ai_audio_play_toast_text(const char *text);
+```
+
+**参数**：
+- `text` - 要播报的短提示文本
+
+**返回值**：
+- 错误码
+
+**说明**：
+- 等价于创建默认音频客户端后调用 `ai_audio_play_toast()`
+- 调用方不需要手动管理 `ai_audio_t` 生命周期
 
 ---
 

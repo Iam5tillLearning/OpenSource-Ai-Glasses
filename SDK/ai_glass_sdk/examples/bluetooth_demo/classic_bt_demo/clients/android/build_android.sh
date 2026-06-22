@@ -5,8 +5,7 @@ SCRIPT_DIR=$(cd "$(dirname "$0")"; pwd)
 FALLBACK_WRAPPER=""
 
 for candidate in \
-    "$SCRIPT_DIR/../../../../../../../OSAIG/android/gradlew" \
-    "$SCRIPT_DIR/../../../../../../../../InternalProjects/OSAIG/android/gradlew"; do
+    "$SCRIPT_DIR/../../../../../../../OSAIG/android/gradlew"; do
     if [ -x "$candidate" ]; then
         FALLBACK_WRAPPER="$candidate"
         break

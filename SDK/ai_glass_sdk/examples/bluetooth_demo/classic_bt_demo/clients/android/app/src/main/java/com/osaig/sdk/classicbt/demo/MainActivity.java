@@ -1,18 +1,19 @@
 package com.osaig.sdk.classicbt.demo;
 
 import android.Manifest;
-import android.annotation.SuppressLint;
 import android.app.Activity;
 import android.bluetooth.BluetoothAdapter;
 import android.bluetooth.BluetoothDevice;
-import android.bluetooth.BluetoothManager;
 import android.bluetooth.BluetoothSocket;
+import android.content.BroadcastReceiver;
 import android.content.Context;
+import android.content.Intent;
+import android.content.IntentFilter;
 import android.content.pm.PackageManager;
 import android.os.Build;
 import android.os.Bundle;
-import android.os.Handler;
-import android.os.Looper;
+import android.util.Log;
+import android.view.View;
 import android.widget.Button;
 import android.widget.LinearLayout;
 import android.widget.ScrollView;
@@ -21,377 +22,416 @@ import android.widget.TextView;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
+import java.lang.reflect.Method;
 import java.nio.charset.StandardCharsets;
-import java.text.SimpleDateFormat;
 import java.util.ArrayList;
-import java.util.Date;
 import java.util.List;
-import java.util.Locale;
 import java.util.Set;
 import java.util.UUID;
-import java.util.regex.Pattern;
+import java.util.concurrent.CountDownLatch;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
+import java.util.concurrent.TimeUnit;
+import java.util.concurrent.atomic.AtomicBoolean;
+import java.util.concurrent.atomic.AtomicReference;
 
-@SuppressLint("MissingPermission")
 public class MainActivity extends Activity {
-    private static final int REQUEST_BT_PERMISSIONS = 2001;
+    private static final String TAG = "OSAIG_SPP_FD_TEST";
     private static final UUID SPP_UUID =
-            UUID.fromString("00001101-0000-1000-8000-00805f9b34fb");
-    private static final Pattern OSAIG_NAME_PATTERN = Pattern.compile("^OSAIG-[0-9A-F]{4}$");
+            UUID.fromString("00001911-0000-1000-8000-00805f9b34fb");
+    private static final int REQUEST_BLUETOOTH_PERMISSIONS = 1001;
+    private static final long DISCOVERY_TIMEOUT_MS = 15000;
+    private static final long BOND_TIMEOUT_MS = 30000;
 
-    private final Handler mainHandler = new Handler(Looper.getMainLooper());
-    private final SimpleDateFormat timeFormat =
-            new SimpleDateFormat("HH:mm:ss.SSS", Locale.US);
+    private final ExecutorService executor = Executors.newSingleThreadExecutor();
+    private final AtomicBoolean testRunning = new AtomicBoolean(false);
 
-    private BluetoothAdapter bluetoothAdapter;
-    private BluetoothDevice selectedDevice;
+    private TextView logView;
     private BluetoothSocket socket;
-    private OutputStream outputStream;
-    private Thread connectThread;
-    private Thread readThread;
-    private volatile boolean connected;
-
-    private TextView statusText;
-    private TextView deviceText;
-    private TextView responseText;
-    private TextView logText;
-    private Button listButton;
-    private Button connectButton;
-    private Button sendButton;
-    private Button disconnectButton;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        buildUi();
+        setContentView(createContentView());
 
-        BluetoothManager manager = (BluetoothManager) getSystemService(Context.BLUETOOTH_SERVICE);
-        bluetoothAdapter = manager == null ? null : manager.getAdapter();
-        setStatus("Idle");
-        updateButtons();
-
-        if (!hasRequiredPermissions()) {
-            requestPermissions(requiredPermissions(), REQUEST_BT_PERMISSIONS);
+        if (hasBluetoothPermissions()) {
+            runSppTest();
         } else {
-            refreshPairedDevices();
+            requestBluetoothPermissions();
+        }
+    }
+
+    @Override
+    public void onRequestPermissionsResult(int requestCode, String[] permissions,
+                                           int[] grantResults) {
+        super.onRequestPermissionsResult(requestCode, permissions, grantResults);
+        if (requestCode == REQUEST_BLUETOOTH_PERMISSIONS && hasBluetoothPermissions()) {
+            runSppTest();
+        } else {
+            appendLog("Bluetooth permissions denied");
         }
     }
 
     @Override
     protected void onDestroy() {
-        closeConnection();
+        closeSocket();
+        executor.shutdownNow();
         super.onDestroy();
     }
 
-    @Override
-    public void onRequestPermissionsResult(int requestCode, String[] permissions, int[] grantResults) {
-        super.onRequestPermissionsResult(requestCode, permissions, grantResults);
-        if (requestCode != REQUEST_BT_PERMISSIONS) {
-            return;
-        }
-        if (hasRequiredPermissions()) {
-            appendLog("Bluetooth permission granted");
-            refreshPairedDevices();
-        } else {
-            setStatus("Bluetooth permission denied");
-            appendLog("Bluetooth permission denied");
-        }
-        updateButtons();
-    }
-
-    private void buildUi() {
-        int padding = dp(16);
+    private View createContentView() {
         LinearLayout root = new LinearLayout(this);
         root.setOrientation(LinearLayout.VERTICAL);
-        root.setPadding(padding, padding, padding, padding);
+        root.setPadding(24, 24, 24, 24);
 
-        TextView title = new TextView(this);
-        title.setText("OSAIG Classic BT SPP Demo");
-        title.setTextSize(22);
-        title.setPadding(0, 0, 0, dp(12));
-        root.addView(title);
+        Button runButton = new Button(this);
+        runButton.setText("Run SPP FD Test");
+        runButton.setAllCaps(false);
+        runButton.setOnClickListener(v -> runSppTest());
+        root.addView(runButton, new LinearLayout.LayoutParams(
+                LinearLayout.LayoutParams.MATCH_PARENT,
+                LinearLayout.LayoutParams.WRAP_CONTENT));
 
-        statusText = new TextView(this);
-        statusText.setTextSize(16);
-        statusText.setPadding(0, 0, 0, dp(8));
-        root.addView(statusText);
-
-        deviceText = new TextView(this);
-        deviceText.setText("Device: --");
-        deviceText.setTextSize(16);
-        deviceText.setPadding(0, 0, 0, dp(8));
-        root.addView(deviceText);
-
-        responseText = new TextView(this);
-        responseText.setText("Last response: --");
-        responseText.setTextSize(16);
-        responseText.setPadding(0, 0, 0, dp(12));
-        root.addView(responseText);
-
-        LinearLayout buttons = new LinearLayout(this);
-        buttons.setOrientation(LinearLayout.HORIZONTAL);
-
-        listButton = new Button(this);
-        listButton.setText("List Paired OSAIG");
-        listButton.setAllCaps(false);
-        listButton.setOnClickListener(v -> refreshPairedDevices());
-        buttons.addView(listButton, new LinearLayout.LayoutParams(0, dp(48), 1));
-
-        connectButton = new Button(this);
-        connectButton.setText("Connect");
-        connectButton.setAllCaps(false);
-        connectButton.setOnClickListener(v -> connectSelectedDevice());
-        buttons.addView(connectButton, new LinearLayout.LayoutParams(0, dp(48), 1));
-
-        root.addView(buttons);
-
-        LinearLayout buttons2 = new LinearLayout(this);
-        buttons2.setOrientation(LinearLayout.HORIZONTAL);
-        buttons2.setPadding(0, dp(8), 0, dp(8));
-
-        sendButton = new Button(this);
-        sendButton.setText("Send Echo");
-        sendButton.setAllCaps(false);
-        sendButton.setOnClickListener(v -> sendEcho());
-        buttons2.addView(sendButton, new LinearLayout.LayoutParams(0, dp(48), 1));
-
-        disconnectButton = new Button(this);
-        disconnectButton.setText("Disconnect");
-        disconnectButton.setAllCaps(false);
-        disconnectButton.setOnClickListener(v -> closeConnection());
-        buttons2.addView(disconnectButton, new LinearLayout.LayoutParams(0, dp(48), 1));
-
-        root.addView(buttons2);
+        Button clearButton = new Button(this);
+        clearButton.setText("Clear Log");
+        clearButton.setAllCaps(false);
+        clearButton.setOnClickListener(v -> logView.setText(""));
+        root.addView(clearButton, new LinearLayout.LayoutParams(
+                LinearLayout.LayoutParams.MATCH_PARENT,
+                LinearLayout.LayoutParams.WRAP_CONTENT));
 
         ScrollView scrollView = new ScrollView(this);
-        logText = new TextView(this);
-        logText.setTextSize(13);
-        logText.setTextIsSelectable(true);
-        scrollView.addView(logText);
+        logView = new TextView(this);
+        logView.setTextSize(13);
+        logView.setTextIsSelectable(true);
+        scrollView.addView(logView);
         root.addView(scrollView, new LinearLayout.LayoutParams(
                 LinearLayout.LayoutParams.MATCH_PARENT, 0, 1));
 
-        setContentView(root);
+        return root;
     }
 
-    private String[] requiredPermissions() {
+    private boolean hasBluetoothPermissions() {
+        if (Build.VERSION.SDK_INT < Build.VERSION_CODES.S) {
+            return true;
+        }
+        return checkSelfPermission(Manifest.permission.BLUETOOTH_CONNECT)
+                == PackageManager.PERMISSION_GRANTED &&
+                checkSelfPermission(Manifest.permission.BLUETOOTH_SCAN)
+                        == PackageManager.PERMISSION_GRANTED;
+    }
+
+    private void requestBluetoothPermissions() {
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.S) {
-            return new String[]{Manifest.permission.BLUETOOTH_CONNECT};
+            requestPermissions(new String[]{
+                    Manifest.permission.BLUETOOTH_CONNECT,
+                    Manifest.permission.BLUETOOTH_SCAN
+            }, REQUEST_BLUETOOTH_PERMISSIONS);
         }
-        return new String[]{Manifest.permission.BLUETOOTH};
     }
 
-    private boolean hasRequiredPermissions() {
-        for (String permission : requiredPermissions()) {
-            if (checkSelfPermission(permission) != PackageManager.PERMISSION_GRANTED) {
-                return false;
-            }
+    private void runSppTest() {
+        if (!hasBluetoothPermissions()) {
+            appendLog("missing Bluetooth permissions");
+            requestBluetoothPermissions();
+            return;
         }
-        return true;
-    }
-
-    private boolean isBluetoothReady() {
-        if (bluetoothAdapter == null) {
-            setStatus("Bluetooth adapter not found");
-            return false;
-        }
-        if (!hasRequiredPermissions()) {
-            setStatus("Bluetooth permission required");
-            requestPermissions(requiredPermissions(), REQUEST_BT_PERMISSIONS);
-            return false;
-        }
-        if (!bluetoothAdapter.isEnabled()) {
-            setStatus("Bluetooth is disabled");
-            return false;
-        }
-        return true;
-    }
-
-    private void refreshPairedDevices() {
-        if (!isBluetoothReady()) {
-            updateButtons();
+        if (!testRunning.compareAndSet(false, true)) {
+            appendLog("test already running");
             return;
         }
 
-        Set<BluetoothDevice> bondedDevices = bluetoothAdapter.getBondedDevices();
-        List<BluetoothDevice> targets = new ArrayList<>();
-        for (BluetoothDevice device : bondedDevices) {
-            String name = device.getName();
-            if (name != null && OSAIG_NAME_PATTERN.matcher(name).matches()) {
-                targets.add(device);
-            }
-        }
-
-        appendLog("Paired OSAIG devices: " + targets.size());
-        for (BluetoothDevice device : targets) {
-            appendLog("  " + formatDevice(device));
-        }
-
-        if (targets.isEmpty()) {
-            selectedDevice = null;
-            deviceText.setText("Device: --");
-            setStatus("Pair OSAIG-XXXX in system Bluetooth settings first");
-        } else {
-            selectedDevice = targets.get(0);
-            deviceText.setText("Device: " + formatDevice(selectedDevice));
-            setStatus("Ready to connect");
-        }
-        updateButtons();
-    }
-
-    private void connectSelectedDevice() {
-        if (selectedDevice == null || !isBluetoothReady() || connected) {
-            updateButtons();
-            return;
-        }
-
-        setStatus("Connecting...");
-        appendLog("Connecting to " + formatDevice(selectedDevice));
-        updateButtons();
-
-        connectThread = new Thread(() -> {
-            BluetoothSocket newSocket = null;
+        executor.execute(() -> {
             try {
-                newSocket = selectedDevice.createRfcommSocketToServiceRecord(SPP_UUID);
-                newSocket.connect();
-
-                synchronized (this) {
-                    socket = newSocket;
-                    outputStream = newSocket.getOutputStream();
-                    connected = true;
-                }
-
-                runOnUiThreadSafe(() -> {
-                    setStatus("Connected");
-                    appendLog("SPP connected");
-                    updateButtons();
-                });
-                startReadLoop(newSocket);
-            } catch (IOException e) {
-                closeQuietly(newSocket);
-                runOnUiThreadSafe(() -> {
-                    setStatus("Connect failed: " + e.getMessage());
-                    appendLog("Connect failed: " + e.getMessage());
-                    updateButtons();
-                });
-            }
-        }, "classic-bt-connect");
-        connectThread.start();
-    }
-
-    private void startReadLoop(BluetoothSocket activeSocket) {
-        readThread = new Thread(() -> {
-            byte[] buffer = new byte[1024];
-            try {
-                InputStream inputStream = activeSocket.getInputStream();
-                while (connected) {
-                    int read = inputStream.read(buffer);
-                    if (read <= 0) {
-                        break;
-                    }
-                    String text = new String(buffer, 0, read, StandardCharsets.UTF_8);
-                    runOnUiThreadSafe(() -> {
-                        responseText.setText("Last response: " + text);
-                        appendLog("RX: " + text);
-                    });
-                }
-            } catch (IOException e) {
-                runOnUiThreadSafe(() -> appendLog("Read stopped: " + e.getMessage()));
+                executeSppTest();
             } finally {
-                closeConnection();
+                testRunning.set(false);
             }
-        }, "classic-bt-read");
-        readThread.start();
-    }
-
-    private void sendEcho() {
-        final OutputStream stream;
-        synchronized (this) {
-            stream = outputStream;
-        }
-
-        if (!connected || stream == null) {
-            setStatus("Not connected");
-            updateButtons();
-            return;
-        }
-
-        String message = "hello from android spp";
-        byte[] payload = message.getBytes(StandardCharsets.UTF_8);
-        new Thread(() -> {
-            try {
-                stream.write(payload);
-                stream.flush();
-                runOnUiThreadSafe(() -> appendLog("TX: " + message));
-            } catch (IOException e) {
-                runOnUiThreadSafe(() -> {
-                    setStatus("Send failed: " + e.getMessage());
-                    appendLog("Send failed: " + e.getMessage());
-                    updateButtons();
-                });
-            }
-        }, "classic-bt-send").start();
-    }
-
-    private void closeConnection() {
-        BluetoothSocket oldSocket;
-        synchronized (this) {
-            oldSocket = socket;
-            socket = null;
-            outputStream = null;
-            connected = false;
-        }
-        closeQuietly(oldSocket);
-        runOnUiThreadSafe(() -> {
-            setStatus(selectedDevice == null ? "Idle" : "Disconnected");
-            updateButtons();
         });
     }
 
-    private void closeQuietly(BluetoothSocket target) {
-        if (target == null) {
+    private void executeSppTest() {
+        BluetoothAdapter adapter = BluetoothAdapter.getDefaultAdapter();
+        if (adapter == null) {
+            appendLog("BluetoothAdapter is null");
             return;
         }
+        if (!adapter.isEnabled()) {
+            appendLog("Bluetooth is disabled");
+            return;
+        }
+
+        closeSocket();
+
+        BluetoothDevice discovered = discoverOsaigDevice(adapter);
+        if (discovered != null) {
+            appendLog("selected discovered device " + describe(discovered));
+            connectAndSend(discovered, false);
+            return;
+        }
+
+        List<BluetoothDevice> bondedDevices = findPairedOsaigDevices(adapter);
+        if (bondedDevices.isEmpty()) {
+            appendLog("no usable OSAIG-* classic Bluetooth device");
+            return;
+        }
+
+        for (BluetoothDevice device : bondedDevices) {
+            if (connectAndSend(device, true)) {
+                return;
+            }
+        }
+        appendLog("all bonded OSAIG devices failed");
+    }
+
+    private BluetoothDevice discoverOsaigDevice(BluetoothAdapter adapter) {
+        AtomicReference<BluetoothDevice> foundDevice = new AtomicReference<>();
+        CountDownLatch latch = new CountDownLatch(1);
+        IntentFilter filter = new IntentFilter();
+        filter.addAction(BluetoothDevice.ACTION_FOUND);
+        filter.addAction(BluetoothAdapter.ACTION_DISCOVERY_FINISHED);
+
+        BroadcastReceiver receiver = new BroadcastReceiver() {
+            @Override
+            public void onReceive(Context context, Intent intent) {
+                String action = intent.getAction();
+                if (BluetoothDevice.ACTION_FOUND.equals(action)) {
+                    BluetoothDevice device = intent.getParcelableExtra(BluetoothDevice.EXTRA_DEVICE);
+                    if (device == null) {
+                        return;
+                    }
+                    String name = safeName(device);
+                    appendLog("found " + name + " " + device.getAddress());
+                    if (isOsaigName(name) && foundDevice.compareAndSet(null, device)) {
+                        adapter.cancelDiscovery();
+                        latch.countDown();
+                    }
+                } else if (BluetoothAdapter.ACTION_DISCOVERY_FINISHED.equals(action)) {
+                    appendLog("discovery finished");
+                    latch.countDown();
+                }
+            }
+        };
+
+        registerReceiverCompat(receiver, filter);
         try {
-            target.close();
-        } catch (IOException ignored) {
+            if (adapter.isDiscovering()) {
+                adapter.cancelDiscovery();
+            }
+            appendLog("starting discovery");
+            if (!adapter.startDiscovery()) {
+                appendLog("startDiscovery returned false");
+                return null;
+            }
+            try {
+                latch.await(DISCOVERY_TIMEOUT_MS, TimeUnit.MILLISECONDS);
+            } catch (InterruptedException e) {
+                Thread.currentThread().interrupt();
+            }
+            return foundDevice.get();
+        } finally {
+            try {
+                unregisterReceiver(receiver);
+            } catch (IllegalArgumentException ignored) {
+                // Receiver may already be unregistered during Activity shutdown.
+            }
+            if (adapter.isDiscovering()) {
+                adapter.cancelDiscovery();
+            }
         }
     }
 
-    private String formatDevice(BluetoothDevice device) {
-        String name = device.getName();
-        return (name == null ? "<unnamed>" : name) + " [" + device.getAddress() + "]";
-    }
-
-    private void setStatus(String status) {
-        statusText.setText("Status: " + status);
-    }
-
-    private void appendLog(String message) {
-        String line = timeFormat.format(new Date()) + "  " + message + "\n";
-        logText.append(line);
-    }
-
-    private void updateButtons() {
-        boolean hasPermission = hasRequiredPermissions();
-        boolean hasAdapter = false;
-        if (hasPermission && bluetoothAdapter != null) {
-            hasAdapter = bluetoothAdapter.isEnabled();
+    private boolean ensureBonded(BluetoothDevice device) {
+        if (device.getBondState() == BluetoothDevice.BOND_BONDED) {
+            return true;
         }
-        listButton.setEnabled(hasPermission && hasAdapter && !connected);
-        connectButton.setEnabled(hasPermission && hasAdapter && selectedDevice != null && !connected);
-        sendButton.setEnabled(connected);
-        disconnectButton.setEnabled(connected);
+
+        CountDownLatch latch = new CountDownLatch(1);
+        AtomicBoolean bonded = new AtomicBoolean(false);
+        IntentFilter filter = new IntentFilter();
+        filter.addAction(BluetoothDevice.ACTION_BOND_STATE_CHANGED);
+        filter.addAction(BluetoothDevice.ACTION_PAIRING_REQUEST);
+        filter.setPriority(1000);
+        BroadcastReceiver receiver = new BroadcastReceiver() {
+            @Override
+            public void onReceive(Context context, Intent intent) {
+                String action = intent.getAction();
+                BluetoothDevice changed = intent.getParcelableExtra(BluetoothDevice.EXTRA_DEVICE);
+                if (changed == null || !changed.getAddress().equals(device.getAddress())) {
+                    return;
+                }
+                if (BluetoothDevice.ACTION_PAIRING_REQUEST.equals(action)) {
+                    int variant = intent.getIntExtra(BluetoothDevice.EXTRA_PAIRING_VARIANT, -1);
+                    appendLog("pairing request " + describe(changed) + " variant=" + variant);
+                    boolean handled = confirmPairing(changed, variant);
+                    if (handled && isOrderedBroadcast()) {
+                        abortBroadcast();
+                    }
+                    return;
+                }
+                int state = intent.getIntExtra(BluetoothDevice.EXTRA_BOND_STATE,
+                        BluetoothDevice.ERROR);
+                appendLog("bond state " + describe(changed) + " state=" + state);
+                if (state == BluetoothDevice.BOND_BONDED) {
+                    bonded.set(true);
+                    latch.countDown();
+                } else if (state == BluetoothDevice.BOND_NONE) {
+                    latch.countDown();
+                }
+            }
+        };
+
+        registerReceiverCompat(receiver, filter);
+        try {
+            appendLog("createBond " + describe(device));
+            if (!device.createBond()) {
+                appendLog("createBond returned false");
+                return false;
+            }
+            try {
+                latch.await(BOND_TIMEOUT_MS, TimeUnit.MILLISECONDS);
+            } catch (InterruptedException e) {
+                Thread.currentThread().interrupt();
+            }
+            return bonded.get() || device.getBondState() == BluetoothDevice.BOND_BONDED;
+        } finally {
+            try {
+                unregisterReceiver(receiver);
+            } catch (IllegalArgumentException ignored) {
+                // Receiver may already be unregistered during Activity shutdown.
+            }
+        }
     }
 
-    private void runOnUiThreadSafe(Runnable runnable) {
-        if (Looper.myLooper() == Looper.getMainLooper()) {
-            runnable.run();
+    private boolean confirmPairing(BluetoothDevice device, int variant) {
+        if (variant == 0) {
+            try {
+                Method setPin = device.getClass().getMethod("setPin", byte[].class);
+                setPin.invoke(device, "1234".getBytes(StandardCharsets.UTF_8));
+                appendLog("setPin invoked");
+                return true;
+            } catch (Exception e) {
+                appendLog("setPin skipped: " + e.getClass().getSimpleName());
+            }
+        }
+        try {
+            Method setPairingConfirmation =
+                    device.getClass().getMethod("setPairingConfirmation", boolean.class);
+            setPairingConfirmation.invoke(device, true);
+            appendLog("setPairingConfirmation invoked");
+            return true;
+        } catch (Exception e) {
+            appendLog("setPairingConfirmation skipped: " + e.getClass().getSimpleName());
+        }
+        return false;
+    }
+
+    private List<BluetoothDevice> findPairedOsaigDevices(BluetoothAdapter adapter) {
+        Set<BluetoothDevice> bondedDevices = adapter.getBondedDevices();
+        List<BluetoothDevice> result = new ArrayList<>();
+        appendLog("bonded devices=" + bondedDevices.size());
+        for (BluetoothDevice device : bondedDevices) {
+            String name = safeName(device);
+            appendLog("bonded " + name + " " + device.getAddress());
+            if (isOsaigName(name)) {
+                result.add(device);
+            }
+        }
+        return result;
+    }
+
+    private boolean connectAndSend(BluetoothDevice device, boolean allowFailure) {
+        appendLog("connecting to " + describe(device));
+
+        try {
+            socket = device.createInsecureRfcommSocketToServiceRecord(SPP_UUID);
+            socket.connect();
+            appendLog("connected");
+
+            Thread reader = new Thread(() -> readLoop(socket), "spp-reader");
+            reader.start();
+
+            OutputStream out = socket.getOutputStream();
+            for (int i = 1; i <= 5; i++) {
+                String payload = "OSAIG_SPP_FD_PROBE_RX_" + i + " from android\n";
+                byte[] data = payload.getBytes(StandardCharsets.UTF_8);
+                out.write(data);
+                out.flush();
+                appendLog("TX " + payload.trim());
+                Thread.sleep(1200);
+            }
+
+            Thread.sleep(10000);
+            closeSocket();
+            appendLog("test finished");
+            return true;
+        } catch (Exception e) {
+            appendLog("connect/test failed for " + describe(device) + ": "
+                    + e.getClass().getSimpleName() + ": " + e.getMessage());
+            closeSocket();
+            return false;
+        }
+    }
+
+    private void registerReceiverCompat(BroadcastReceiver receiver, IntentFilter filter) {
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
+            registerReceiver(receiver, filter, Context.RECEIVER_NOT_EXPORTED);
         } else {
-            mainHandler.post(runnable);
+            registerReceiver(receiver, filter);
         }
     }
 
-    private int dp(int value) {
-        return (int) (value * getResources().getDisplayMetrics().density + 0.5f);
+    private boolean isOsaigName(String name) {
+        return name.startsWith("OSAIG-") || name.equals("OSAIG");
+    }
+
+    private String describe(BluetoothDevice device) {
+        return safeName(device) + " " + device.getAddress();
+    }
+
+    private String safeName(BluetoothDevice device) {
+        String name = device.getName();
+        return name == null ? "" : name;
+    }
+
+    private void readLoop(BluetoothSocket activeSocket) {
+        byte[] buffer = new byte[512];
+        try {
+            InputStream in = activeSocket.getInputStream();
+            while (activeSocket.isConnected()) {
+                int len = in.read(buffer);
+                if (len < 0) {
+                    appendLog("RX EOF");
+                    return;
+                }
+                String text = new String(buffer, 0, len, StandardCharsets.UTF_8);
+                appendLog("RX len=" + len + " text=" + text.replace("\n", "\\n"));
+            }
+        } catch (IOException e) {
+            appendLog("reader stopped: " + e.getClass().getSimpleName() + ": " + e.getMessage());
+        }
+    }
+
+    private synchronized void closeSocket() {
+        if (socket != null) {
+            try {
+                socket.close();
+            } catch (IOException ignored) {
+                // Best-effort cleanup for a test client.
+            }
+            socket = null;
+        }
+    }
+
+    private void appendLog(String line) {
+        Log.i(TAG, line);
+        runOnUiThread(() -> {
+            logView.append(line + "\n");
+            int scrollAmount = logView.getLayout() == null ? 0 :
+                    logView.getLayout().getLineTop(logView.getLineCount()) - logView.getHeight();
+            if (scrollAmount > 0) {
+                logView.scrollTo(0, scrollAmount);
+            }
+        });
     }
 }

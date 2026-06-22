@@ -14,6 +14,11 @@ bluetooth_demo/
     clients/
       android/
       windows/
+  combo_camera_spp_demo/
+    glasses/
+    clients/
+      android/
+      windows/
 ```
 
 - `glasses/`: glasses-side demo or runtime notes.
@@ -37,9 +42,36 @@ bash build_android.sh
 
 ## Classic Bluetooth demo
 
-The classic Bluetooth demo uses SPP/RFCOMM. The glasses-side `bt_service` enables an SPP server and echoes received client bytes. The Android client connects to a paired `OSAIG-XXXX` device and displays the echoed text.
+The classic Bluetooth demo uses SPP/RFCOMM. The broker built into `bt_service` registers the OSAIG SDK SPP UUID `00001911-0000-1000-8000-00805f9b34fb` on RFCOMM channel `10`, and `glasses/sdk_spp_demo/` receives the RFCOMM fd through the `ai_spp_*` API and reads/writes it directly. The Android client scans for `OSAIG-XXXX`, connects with an insecure RFCOMM socket, and displays the echoed text; the current demo does not require prior system Bluetooth pairing.
+
+Glasses side:
+
+```bash
+cd examples/bluetooth_demo/classic_bt_demo/glasses/sdk_spp_demo
+make
+```
+
+Android client:
 
 ```bash
 cd examples/bluetooth_demo/classic_bt_demo/clients/android
+bash build_android.sh
+```
+
+## BLE + SPP camera transfer demo
+
+The combo demo sends a short take-photo command over BLE and transfers the resulting JPG over classic Bluetooth SPP. The glasses-side `combo_camera_spp_demo/glasses/` subscribes to BLE `combo.camera.takephoto`, calls `ai_camera_take_photo()`, then sends an `OSAIG_JPG_V1` file header and raw JPG bytes over SPP. The Android client decodes and displays the received image.
+
+Glasses side:
+
+```bash
+cd examples/bluetooth_demo/combo_camera_spp_demo/glasses
+make
+```
+
+Android client:
+
+```bash
+cd examples/bluetooth_demo/combo_camera_spp_demo/clients/android
 bash build_android.sh
 ```

@@ -13,9 +13,21 @@ endif
 endif
 
 CC = $(CROSS_COMPILE)gcc
+STRIP = $(CROSS_COMPILE)strip
+DEBUG ?= 0
+ifeq ($(DEBUG),1)
+STRIP_OUTPUTS ?= 0
+else
+STRIP_OUTPUTS ?= 1
+endif
 
-CFLAGS = -Wall -g -O2
+CFLAGS = -Wall -O2
 CFLAGS += -std=gnu99
+ifeq ($(DEBUG),1)
+CFLAGS += -DDEBUG -g
+else
+CFLAGS += -DNDEBUG
+endif
 
 SDK_DIR = ../..
 INCLUDES = -I$(SDK_DIR)/include
@@ -33,6 +45,7 @@ $(BUILD_DIR):
 $(TARGET): $(EXAMPLE_SOURCE) | $(BUILD_DIR)
 	@echo "🔨 编译媒体资源切换控制台..."
 	$(CC) $(CFLAGS) $(INCLUDES) -o $@ $(EXAMPLE_SOURCE) $(SDK_STATIC_LIB) -lpthread -lrt -lm
+	@if [ "$(STRIP_OUTPUTS)" != "0" ]; then $(STRIP) --strip-unneeded $@; fi
 	@echo "✅ 编译完成: $(TARGET)"
 
 clean:

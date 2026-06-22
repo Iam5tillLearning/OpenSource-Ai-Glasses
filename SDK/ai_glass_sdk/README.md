@@ -4,21 +4,9 @@
 
 ## 简介
 
-本 SDK 为 AI Core Service 提供完整的客户端开发套件，支持 GPIO 事件订阅、摄像头抓拍、音频播放、录音控制、物理交互控制、媒体资源仲裁、显示提交、BLE 文本收发和文本事件监听。
+本 SDK 为 AI Core Service 提供完整的客户端开发套件，支持 GPIO 事件订阅、摄像头抓拍、音频播放、录音控制、物理交互控制、媒体资源仲裁、显示提交、文本事件监听、BLE 文本消息收发和经典蓝牙 SPP 大数据通道。
 
 说明：示例程序统一通过 `lib/libai_glass_sdk.a` 或 `lib/libai_glass_sdk.so` 链接 SDK。
-
-说明：当前发布包为“头文件 + 预编译库 + 示例程序”形态，不包含 `src/` 源码目录；示例程序应直接链接 `lib/libai_glass_sdk.a` 或 `lib/libai_glass_sdk.so`。
-
-## v0.7.0 SDK 更新
-
-- 新增 `ai_ble.h` 与 `BLE_Client_API.md`，支持 BLE 文本通道接入。
-- 新增录音控制 API：`ai_audio_record_start()`、`ai_audio_record_stop()`、`ai_audio_record_get_status()`。
-- 新增物理动作控制/查询 API：`ai_audio_set_disable_aicore_physical_actions()`、`ai_audio_get_disable_aicore_physical_actions()`。
-- 新增相机/音频资源释放、回收和状态查询 API。
-- 补齐显示提交与文本事件监听文档入口。
-- 新增只读查询物理动作状态示例，便于现场排查时不改变运行态。
-- 示例程序统一链接预编译 SDK 库，并使用 `examples/build/` 统一输出目录。
 
 ## 📦 SDK内容
 
@@ -30,8 +18,9 @@ ai_glass_sdk/
 │   ├── ai_camera.h                # 摄像头客户端 API
 │   ├── ai_audio.h                 # 音频客户端 API
 │   ├── ai_display.h               # 显示客户端 API
-│   ├── ai_ble.h                   # BLE 文本客户端 API
 │   ├── ai_text_event.h            # 文本事件客户端 API
+│   ├── ai_ble.h                   # BLE 文本消息客户端 API
+│   ├── ai_spp.h                   # 经典蓝牙 SPP 客户端 API
 │   └── ai_log.h                   # 日志系统 API
 ├── lib/                  # 预编译库文件
 │   ├── libai_glass_sdk.a          # 静态库
@@ -45,7 +34,6 @@ ai_glass_sdk/
 │   ├── audio_play_example/                   # 音频播放示例
 │   ├── camera_capture_example/               # 摄像头抓拍示例
 │   ├── disable_aicore_physical_actions_example/ # 禁用 AI-Core 物理动作示例
-│   ├── query_aicore_physical_actions_example/   # 只读查询 AI-Core 物理动作状态示例
 │   ├── record_audio_example/                 # SDK 控制录音示例
 │   ├── media_resource_control/               # 相机/音频资源切换控制台示例
 │   ├── text_event_example/                   # ASR/LLM/System 文本流监听示例
@@ -57,8 +45,9 @@ ai_glass_sdk/
 │   ├── Camera_Client_API.md         # 摄像头客户端 API 文档
 │   ├── Audio_Client_API.md          # 音频客户端 API 文档
 │   ├── Display_Client_API.md        # 显示客户端 API 文档
-│   ├── BLE_Client_API.md            # BLE 文本客户端 API 文档
 │   ├── Text_Event_Client_API.md     # 文本事件客户端 API 文档
+│   ├── BLE_Client_API.md            # BLE 文本消息客户端 API 文档
+│   ├── SPP_Client_API.md            # 经典蓝牙 SPP 客户端 API 文档
 │   └── Log_API.md                   # 日志系统 API 文档
 ├── README.md            # 本文件
 ├── README.en.md         # 英文说明
@@ -94,35 +83,36 @@ ai_glass_sdk/
 - 支持流式输出和最终结果标记
 - 独立接收线程，不阻塞主循环
 
-### 6. BLE 文本通道
-- 通过 `bt_service` 暴露的本地 Unix Socket 统一接入 BLE 文本消息
-- 支持按 `datatype` 订阅，例如 `display.text`
-- 支持从本地应用发送 UTF-8 JSON 文本到手机侧 notify
+### 6. BLE 文本消息
+- 通过 `bt_service` 暴露的本地 Unix Socket 接入 BLE 能力
+- 本地应用按 `datatype` 注册和接收消息
+- 手机与设备双向统一使用 UTF-8 JSON 文本包
+
+### 7. 经典蓝牙 SPP
+- 通过 `bt_service` 内置 broker 注册 OSAIG SDK SPP UUID `00001911-0000-1000-8000-00805f9b34fb` 和 RFCOMM channel `10`
+- 本地应用作为 SDK owner 直接接收 RFCOMM fd
+- 适合图片、文件、批量日志等较大字节流传输
 
 ## 🚀 快速开始
 
-### 1. 编译 SDK 或示例程序
+### 1. 编译 SDK
 
 ```bash
-# SDK 发布包已包含预编译库；如需一次性构建默认示例集合，可直接执行
+# 编译 SDK 库和默认示例集合
 cd ai_glass_sdk
 make
 ```
 
-如果只想单独编译某个示例，也可以直接进入对应目录：
+如果只想单独编译某个示例：
 
 ```bash
-cd examples/gpio_example && make
-cd ../audio_play_example && make
+cd examples/audio_play_example && make
 cd ../camera_capture_example && make
 cd ../disable_aicore_physical_actions_example && make
-cd ../query_aicore_physical_actions_example && make
 cd ../record_audio_example && make
 cd ../media_resource_control && make
-cd ../text_event_example && make
-cd ../http_example && make
-cd ../websocket_example && make
 cd ../bluetooth_demo/ble_demo/glasses && make
+cd ../../classic_bt_demo/glasses/sdk_spp_demo && make
 ```
 
 ### 2. 运行示例程序
@@ -160,14 +150,6 @@ cd examples/disable_aicore_physical_actions_example
 ./../build/disable_aicore_physical_actions_example
 ```
 
-#### 只读查询 AI-Core 物理动作状态
-```bash
-cd examples/query_aicore_physical_actions_example
-./../build/query_aicore_physical_actions_example
-```
-
-说明：该示例只查询 `disable_aicore_physical_actions` 当前状态，不会像 `disable_aicore_physical_actions_example` 一样修改服务端状态，适合现场排查使用。
-
 #### SDK 控制录音
 ```bash
 # 推荐服务端启用 GPIO 录音链路
@@ -203,12 +185,68 @@ bash build_android.sh
 
 #### 经典蓝牙 SPP Demo
 ```bash
-# Android 端示例：连接已配对的 OSAIG-XXXX，发送文本并显示眼镜端回显
+# 眼镜端：注册 SDK owner，接收 bt_service 内置 broker 分发的 RFCOMM fd
+cd examples/bluetooth_demo/classic_bt_demo/glasses/sdk_spp_demo
+make
+./../../../build/spp_sdk_demo
+
+# Android 端：扫描 OSAIG-XXXX，使用 insecure RFCOMM 连接并显示眼镜端回显
 cd examples/bluetooth_demo/classic_bt_demo/clients/android
 bash build_android.sh
 ```
 
-### 3. 集成到自己的项目
+### 3. BLE 最小示例
+
+```c
+#include "ai_ble.h"
+#include <signal.h>
+#include <stdio.h>
+#include <unistd.h>
+
+static volatile int running = 1;
+
+static void signal_handler(int sig) {
+    (void)sig;
+    running = 0;
+}
+
+static void on_ble_text(const char *datatype, const char *data, void *user_data) {
+    (void)user_data;
+    printf("BLE %s => %s\n", datatype, data);
+}
+
+int main(void) {
+    ai_ble_client_t *client = ai_ble_client_create();
+    if (!client)
+        return 1;
+
+    signal(SIGINT, signal_handler);
+
+    if (ai_ble_client_start(client) != 0) {
+        ai_ble_client_destroy(client);
+        return 1;
+    }
+
+    if (ai_ble_register_datatype(client, "display.text", on_ble_text, NULL) != 0) {
+        ai_ble_client_destroy(client);
+        return 1;
+    }
+
+    sleep(1);
+    if (ai_ble_send(client, "display.text", "hello from sdk") != 0) {
+        printf("BLE send failed, retry later\n");
+    }
+
+    while (running) {
+        sleep(1);
+    }
+
+    ai_ble_client_destroy(client);
+    return 0;
+}
+```
+
+### 4. 集成到自己的项目
 
 #### 链接 SDK 库
 ```bash
@@ -220,7 +258,7 @@ arm-rockchip831-linux-uclibcgnueabihf-gcc \
     -lpthread -lrt
 ```
 
-### 4. GPIO 最小示例
+### 5. GPIO 最小示例
 
 ```c
 #include "ai_gpio.h"
@@ -331,12 +369,12 @@ int main(void) {
 | API函数 | 说明 |
 | --- | --- |
 | `ai_ble_client_create()` | 创建 BLE 文本客户端 |
-| `ai_ble_client_start()` | 启动后台接收线程并连接 `/var/run/ai_ble.sock` |
-| `ai_ble_register_datatype()` | 订阅指定 `datatype` 并注册回调 |
-| `ai_ble_unregister_datatype()` | 取消订阅指定 `datatype` |
-| `ai_ble_send()` | 通过 BLE notify 向手机端发送 UTF-8 JSON 文本 |
-| `ai_ble_client_stop()` | 停止 BLE 文本客户端 |
-| `ai_ble_client_destroy()` | 销毁 BLE 文本客户端 |
+| `ai_ble_client_start()` | 连接 `bt_service` 的本地 BLE 网关 |
+| `ai_ble_register_datatype()` | 注册要接收的 `datatype` |
+| `ai_ble_unregister_datatype()` | 取消注册指定 `datatype` |
+| `ai_ble_send()` | 发送 `datatype + data` 给手机端 |
+| `ai_ble_client_stop()` | 停止客户端并断开连接 |
+| `ai_ble_client_destroy()` | 销毁客户端 |
 
 ### 日志系统 API
 
@@ -358,8 +396,8 @@ int main(void) {
 | [Camera_Client_API.md](docs/Camera_Client_API.md) | 摄像头客户端 API 文档 |
 | [Audio_Client_API.md](docs/Audio_Client_API.md) | 音频客户端 API 文档 |
 | [Display_Client_API.md](docs/Display_Client_API.md) | 显示客户端 API 文档 |
-| [BLE_Client_API.md](docs/BLE_Client_API.md) | BLE 文本客户端 API 文档 |
 | [Text_Event_Client_API.md](docs/Text_Event_Client_API.md) | 文本事件客户端 API 文档 |
+| [BLE_Client_API.md](docs/BLE_Client_API.md) | BLE 文本客户端 API 文档 |
 | [Log_API.md](docs/Log_API.md) | 日志系统 API 文档 |
 
 ### 示例程序文档
@@ -369,10 +407,10 @@ int main(void) {
 | [摄像头客户端示例](examples/camera_capture_example/README.md) | 单帧抓拍并保存图像 |
 | [音频播放客户端示例](examples/audio_play_example/README.md) | 音频播放示例 |
 | [禁用 AI-Core 物理动作示例](examples/disable_aicore_physical_actions_example/README.md) | 通过 SDK 禁用 AI-Core 自动物理按键动作 |
-| [只读查询 AI-Core 物理动作状态示例](examples/query_aicore_physical_actions_example/README.md) | 只查询 `disable_aicore_physical_actions` 当前状态，不修改服务端运行态 |
 | [SDK 控制录音示例](examples/record_audio_example/README.md) | SDK 控制开始/停止录音并复制到固定路径 |
 | [媒体资源切换控制台示例](examples/media_resource_control/README.md) | 相机/音频资源释放与回收示例 |
 | [文本事件客户端示例](examples/text_event_example/README.md) | 文本流监听完整示例 |
+| [蓝牙 Demo](examples/bluetooth_demo/README.md) | BLE 与经典蓝牙客户端/眼镜端通信参考 |
 
 ## ⚙️ 前置条件
 
@@ -404,19 +442,14 @@ int main(void) {
 
 ### 摄像头服务
 - 支持 JPEG 和 NV12 两种格式
-- 共享内存大小 4 MB（足够 1920x1080 图像）
+- 共享内存大小 2 MB（足够 1920x1080 图像）
 - 支持多客户端并发访问
 - 动态资源管理：首个客户端连接时创建，最后一个断开时清理
 
 ### 音频控制
-- 支持 PCM 播放、录音、物理交互控制和资源仲裁
+- 支持 PCM 播放、TTS、短提示 TTS、录音、物理交互控制和资源仲裁
 - `record_audio_example` 当前依赖 `--enable-gpio` 录音链路
 - `media_resource_control` 建议与正常退出的 `rkipc` 配合使用
-
-### BLE 文本通道
-- 依赖 `bt_service` 提供 `/var/run/ai_ble.sock`
-- 数据包为包含 `datatype` 与 `data` 的 UTF-8 JSON 文本
-- 编码后的整包不得超过 180 字节
 
 ## 🔧 故障排查
 
@@ -435,12 +468,6 @@ cat /sys/class/gpio/gpio1/value
 ### 摄像头捕获超时
 ```bash
 ls -la /dev/video*
-```
-
-### BLE 文本通道连接失败
-```bash
-ps aux | grep bt_service
-ls -la /var/run/ai_ble.sock
 ```
 
 ## 📄 许可证

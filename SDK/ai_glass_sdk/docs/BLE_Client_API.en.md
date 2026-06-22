@@ -2,8 +2,7 @@
 
 ## 1. Overview
 
-The `ai_ble` module provides local applications with a unified BLE text-message access layer.
-Applications do not operate BLE GATT directly. Instead, they connect to the local Unix Socket gateway exposed by `bt_service` through `ai_glass_sdk`.
+The `ai_ble` module provides local applications with a unified BLE text-message access layer. Applications do not operate BLE GATT directly. Instead, they connect to the local Unix Socket gateway exposed by `bt_service` through `ai_glass_sdk`.
 
 The current V1 protocol uses UTF-8 JSON text:
 
@@ -12,6 +11,7 @@ The current V1 protocol uses UTF-8 JSON text:
 ```
 
 Rules:
+
 - `datatype` is required and must be a string
 - `data` is required and must be a string
 - The full UTF-8 JSON packet must not exceed `180` bytes
@@ -52,6 +52,7 @@ void ai_ble_client_destroy(ai_ble_client_t *client);
 ```
 
 Notes:
+
 - `ai_ble_client_create()` creates a client handle.
 - `ai_ble_client_start()` starts the background receive thread and tries to connect to `/var/run/ai_ble.sock`.
 - If `bt_service` is not available yet, the client reconnects in the background.
@@ -70,11 +71,13 @@ int ai_ble_unregister_datatype(ai_ble_client_t *client,
 ```
 
 Notes:
+
 - An application receives messages only for the `datatype` values it has registered.
 - Multiple local applications can register the same `datatype`.
 - Registering the same `datatype` again on the same client updates the callback and `user_data`.
 
 `datatype` naming limits:
+
 - Only lowercase ASCII letters, digits, `.`, and `_` are allowed
 - The first character must be a lowercase letter
 - Maximum length is 32 bytes
@@ -87,11 +90,12 @@ int ai_ble_send(ai_ble_client_t *client, const char *datatype, const char *data)
 ```
 
 Notes:
+
 - The SDK encodes `datatype + data` as UTF-8 JSON text and sends it to `bt_service`.
 - `bt_service` then sends the message to the mobile side through BLE notify.
 - Sending fails if the encoded JSON packet exceeds `180` bytes.
 
-## 4. Example
+## 4. Minimal Example
 
 ```c
 #include "ai_ble.h"
@@ -192,6 +196,7 @@ These demo datatypes are only for SDK examples. They do not trigger camera, stre
 ### 7.1 `ai_ble_client_start()` Fails
 
 Check:
+
 - Whether `bt_service` is running
 - Whether `/var/run/ai_ble.sock` exists
 - Whether the current process can access the socket
@@ -199,6 +204,7 @@ Check:
 ### 7.2 No Messages Received
 
 Check:
+
 - Whether the target `datatype` has been registered
 - Whether the JSON sent by the mobile side contains `datatype` and `data`
 - Whether the full UTF-8 JSON packet is no longer than `180` bytes
@@ -206,6 +212,7 @@ Check:
 ### 7.3 Send Failure
 
 Check:
+
 - Whether `datatype` follows the naming rules
 - Whether `data` is valid UTF-8
 - Whether the encoded packet exceeds `180` bytes
