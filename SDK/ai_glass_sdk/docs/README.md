@@ -29,6 +29,7 @@
 - [SDK 控制录音示例](../examples/record_audio_example/) - 开始/停止录音并保存到固定路径
 - [媒体资源切换控制台](../examples/media_resource_control/) - 相机/音频资源释放与回收示例
 - [蓝牙 Demo](../examples/bluetooth_demo/) - BLE 与经典蓝牙外部客户端/眼镜端通信示例
+- [传输测速 Demo](../examples/transport_benchmark_demo/) - Wi-Fi / SPP 约 200KB 内存数据传输测速示例
 
 ---
 
@@ -59,6 +60,11 @@
 1. 阅读 [经典蓝牙 SPP 客户端API](SPP_Client_API.md)
 2. 查看 [蓝牙 Demo](../examples/bluetooth_demo/)
 3. 使用应用层协议承载自己的大数据格式
+
+### 6. Wi-Fi / SPP 传输测速
+1. 查看 [传输测速 Demo](../examples/transport_benchmark_demo/)
+2. 先用 SPP 模式确认经典蓝牙大数据传输基线
+3. 再用 Wi-Fi 模式分离控制链路与数据链路耗时
 
 ### 6. TTS功能开发
 1. 阅读 [TTS客户端API](TTS_Client_API.md)
@@ -115,6 +121,7 @@ AI Media Service (服务端)
 - 录音示例：`../examples/record_audio_example/`
 - 媒体资源切换示例：`../examples/media_resource_control/`
 - 蓝牙 Demo：`../examples/bluetooth_demo/`
+- 传输测速 Demo：`../examples/transport_benchmark_demo/`
 
 ### 头文件位置
 - GPIO API：`../include/ai_gpio.h`

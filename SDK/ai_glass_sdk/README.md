@@ -38,6 +38,7 @@ ai_glass_sdk/
 │   ├── media_resource_control/               # 相机/音频资源切换控制台示例
 │   ├── text_event_example/                   # ASR/LLM/System 文本流监听示例
 │   ├── bluetooth_demo/                       # BLE 与经典蓝牙通信示例
+│   ├── transport_benchmark_demo/             # Wi-Fi / SPP 约 200KB 内存数据传输测速示例
 │   ├── http_example/                         # HTTP 客户端示例
 │   └── websocket_example/                    # WebSocket 客户端示例
 ├── docs/                 # 客户端接入文档
@@ -113,6 +114,7 @@ cd ../record_audio_example && make
 cd ../media_resource_control && make
 cd ../bluetooth_demo/ble_demo/glasses && make
 cd ../../classic_bt_demo/glasses/sdk_spp_demo && make
+cd ../../transport_benchmark_demo/glasses && make
 ```
 
 ### 2. 运行示例程序
@@ -192,6 +194,18 @@ make
 
 # Android 端：扫描 OSAIG-XXXX，使用 insecure RFCOMM 连接并显示眼镜端回显
 cd examples/bluetooth_demo/classic_bt_demo/clients/android
+bash build_android.sh
+```
+
+#### Wi-Fi / SPP 传输测速 Demo
+```bash
+# 眼镜端：等待 SPP 控制命令，默认发送约 200KB 内存 payload
+cd examples/transport_benchmark_demo/glasses
+make
+../../build/transport_benchmark_demo
+
+# Android 端：连接 SPP，按需准备 Wi-Fi listener，并显示 SPP/Wi-Fi 两种链路的耗时
+cd ../clients/android
 bash build_android.sh
 ```
 
