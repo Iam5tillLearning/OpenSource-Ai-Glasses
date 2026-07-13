@@ -1,17 +1,37 @@
 # 眼镜端 classic BT SPP demo
 
-眼镜端不需要单独启动 SDK demo 进程。经典蓝牙 SPP server 由 `bt_service` 提供：
+正式 classic BT SPP 数据面由 `bt_service` 内置 SPP broker 提供：
 
-1. `bt_service` 默认 profile 需要包含 `PROFILE_SPP`。
-2. Android 或 Windows 客户端先与眼镜 `OSAIG-XXXX` 完成经典蓝牙配对。
-3. 客户端使用标准 SPP UUID `00001101-0000-1000-8000-00805f9b34fb` 建立 RFCOMM 连接。
-4. `bt_service` 收到 `RK_BT_STATE_SPP_RECV_DATA` 后把收到的字节原样写回当前 SPP fd。
+1. `bt_service` 不启用 `PROFILE_SPP`，避免 RK receive path 抢读。
+2. `bt_service` 内置 broker 向 BlueZ 注册 OSAIG SDK SPP UUID `00001911-0000-1000-8000-00805f9b34fb`。
+3. 本目录 `sdk_spp_demo/` 使用 `ai_spp_*` API 注册 owner。
+4. Android 或 Windows 客户端连接 OSAIG SDK SPP UUID 后，SDK demo 直接收到 RFCOMM fd 并读写。
 
-构建眼镜端服务：
+构建蓝牙基础服务：
 
 ```bash
-cd InternalProjects/bt_service/bt/rk_btapp
+cd bt_service/bt/rk_btapp
 make
 ```
 
-构建完成后，模块 Makefile 会同步 stripped `bt_service` 到 `project/oem/bin/bt_service`。真机验证时应按设备真实启动链路替换并启动 `bt_service`，不要用 `/tmp` 临时前台运行来规避服务替换。
+构建 SDK 和眼镜端 demo：
+
+```bash
+cd SDK/ai_glass_sdk
+make
+```
+
+单独构建眼镜端 demo：
+
+```bash
+cd SDK/ai_glass_sdk/examples/bluetooth_demo/classic_bt_demo/glasses/sdk_spp_demo
+make
+```
+
+构建产物：
+
+```text
+SDK/ai_glass_sdk/examples/bluetooth_demo/build/spp_sdk_demo
+```
+
+真机运行顺序：先启动 `bt_service`，再启动 `spp_sdk_demo`；设备侧不应存在独立 `ai_spp_service` 进程。

@@ -2,7 +2,7 @@
 
 ## 1. 概述
 
-`ai_ble` 模块为本地应用提供统一的 BLE 文本消息接入能力。  
+`ai_ble` 模块为本地应用提供统一的 BLE 文本消息接入能力。
 应用不直接操作 BLE GATT，而是通过 `ai_glass_sdk` 连接 `bt_service` 提供的本地 Unix Socket 网关。
 
 当前 V1 协议固定为 UTF-8 JSON 文本：

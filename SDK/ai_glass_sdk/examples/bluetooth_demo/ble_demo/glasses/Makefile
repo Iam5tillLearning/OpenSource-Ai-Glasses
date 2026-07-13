@@ -13,7 +13,20 @@ endif
 endif
 
 CC = $(CROSS_COMPILE)gcc
-CFLAGS = -Wall -Wextra -g -O2 -std=gnu99
+STRIP = $(CROSS_COMPILE)strip
+DEBUG ?= 0
+ifeq ($(DEBUG),1)
+STRIP_OUTPUTS ?= 0
+else
+STRIP_OUTPUTS ?= 1
+endif
+
+CFLAGS = -Wall -Wextra -O2 -std=gnu99
+ifeq ($(DEBUG),1)
+CFLAGS += -DDEBUG -g
+else
+CFLAGS += -DNDEBUG
+endif
 
 INCLUDES = -I$(SDK_DIR)/include
 SDK_STATIC_LIB = $(SDK_DIR)/lib/libai_glass_sdk.a
@@ -30,6 +43,7 @@ $(BUILD_DIR):
 $(TARGET): $(SOURCE) $(SDK_STATIC_LIB) | $(BUILD_DIR)
 	@echo "Building BLE demo..."
 	$(CC) $(CFLAGS) $(INCLUDES) -o $@ $(SOURCE) $(SDK_STATIC_LIB) -lpthread -lrt -lm
+	@if [ "$(STRIP_OUTPUTS)" != "0" ]; then $(STRIP) --strip-unneeded $@; fi
 	@echo "Built: $(TARGET)"
 
 clean:

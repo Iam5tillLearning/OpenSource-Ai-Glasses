@@ -14,10 +14,22 @@ endif
 endif
 
 CC = $(CROSS_COMPILE)gcc
+STRIP = $(CROSS_COMPILE)strip
+DEBUG ?= 0
+ifeq ($(DEBUG),1)
+STRIP_OUTPUTS ?= 0
+else
+STRIP_OUTPUTS ?= 1
+endif
 
 # 编译选项
-CFLAGS = -Wall -g -O2
+CFLAGS = -Wall -O2
 CFLAGS += -std=gnu99
+ifeq ($(DEBUG),1)
+CFLAGS += -DDEBUG -g
+else
+CFLAGS += -DNDEBUG
+endif
 
 # SDK路径（当前在ai_glass_sdk/examples/camera_capture_example/）
 SDK_DIR = ../..
@@ -46,6 +58,7 @@ $(BUILD_DIR):
 $(TARGET): $(EXAMPLE_SOURCE) | $(BUILD_DIR)
 	@echo "编译摄像头捕获示例程序..."
 	$(CC) $(CFLAGS) $(INCLUDES) -o $@ $(EXAMPLE_SOURCE) $(LIBS)
+	@if [ "$(STRIP_OUTPUTS)" != "0" ]; then $(STRIP) --strip-unneeded $@; fi
 	@echo "✅ 编译完成: $(TARGET)"
 	@echo ""
 	@echo "运行方法:"

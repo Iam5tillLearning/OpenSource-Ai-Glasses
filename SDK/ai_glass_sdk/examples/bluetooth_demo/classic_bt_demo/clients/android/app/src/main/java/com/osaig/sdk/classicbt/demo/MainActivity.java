@@ -1,397 +1,583 @@
 package com.osaig.sdk.classicbt.demo;
 
 import android.Manifest;
-import android.annotation.SuppressLint;
 import android.app.Activity;
 import android.bluetooth.BluetoothAdapter;
 import android.bluetooth.BluetoothDevice;
-import android.bluetooth.BluetoothManager;
 import android.bluetooth.BluetoothSocket;
+import android.content.BroadcastReceiver;
 import android.content.Context;
+import android.content.Intent;
+import android.content.IntentFilter;
 import android.content.pm.PackageManager;
 import android.os.Build;
 import android.os.Bundle;
-import android.os.Handler;
-import android.os.Looper;
+import android.text.InputType;
+import android.text.TextUtils;
+import android.util.Log;
+import android.view.View;
 import android.widget.Button;
+import android.widget.EditText;
 import android.widget.LinearLayout;
 import android.widget.ScrollView;
 import android.widget.TextView;
+
+import org.json.JSONObject;
 
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
 import java.nio.charset.StandardCharsets;
-import java.text.SimpleDateFormat;
 import java.util.ArrayList;
-import java.util.Date;
 import java.util.List;
-import java.util.Locale;
 import java.util.Set;
 import java.util.UUID;
-import java.util.regex.Pattern;
+import java.util.concurrent.CountDownLatch;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
+import java.util.concurrent.TimeUnit;
+import java.util.concurrent.atomic.AtomicBoolean;
+import java.util.concurrent.atomic.AtomicReference;
 
-@SuppressLint("MissingPermission")
 public class MainActivity extends Activity {
-    private static final int REQUEST_BT_PERMISSIONS = 2001;
+    private static final String TAG = "OSAIG_SPP_WIFI_DEMO";
     private static final UUID SPP_UUID =
-            UUID.fromString("00001101-0000-1000-8000-00805f9b34fb");
-    private static final Pattern OSAIG_NAME_PATTERN = Pattern.compile("^OSAIG-[0-9A-F]{4}$");
+            UUID.fromString("00001911-0000-1000-8000-00805f9b34fb");
+    private static final int REQUEST_BLUETOOTH_PERMISSIONS = 1001;
+    private static final long DISCOVERY_TIMEOUT_MS = 15000;
 
-    private final Handler mainHandler = new Handler(Looper.getMainLooper());
-    private final SimpleDateFormat timeFormat =
-            new SimpleDateFormat("HH:mm:ss.SSS", Locale.US);
+    private final ExecutorService executor = Executors.newSingleThreadExecutor();
+    private final AtomicBoolean connectRunning = new AtomicBoolean(false);
 
-    private BluetoothAdapter bluetoothAdapter;
-    private BluetoothDevice selectedDevice;
+    private TextView deviceStatusView;
+    private TextView wifiStatusView;
+    private TextView logView;
+    private EditText ssidInput;
+    private EditText passwordInput;
+    private Button connectDeviceButton;
+    private Button disconnectDeviceButton;
+    private Button connectWifiButton;
+    private Button disconnectWifiButton;
+    private Button refreshWifiButton;
+
     private BluetoothSocket socket;
-    private OutputStream outputStream;
-    private Thread connectThread;
-    private Thread readThread;
-    private volatile boolean connected;
-
-    private TextView statusText;
-    private TextView deviceText;
-    private TextView responseText;
-    private TextView logText;
-    private Button listButton;
-    private Button connectButton;
-    private Button sendButton;
-    private Button disconnectButton;
+    private Thread readerThread;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        buildUi();
-
-        BluetoothManager manager = (BluetoothManager) getSystemService(Context.BLUETOOTH_SERVICE);
-        bluetoothAdapter = manager == null ? null : manager.getAdapter();
-        setStatus("Idle");
+        setContentView(createContentView());
+        updateConnectionStatus("Disconnected");
+        updateWifiStatus("Wi-Fi status: --");
         updateButtons();
 
-        if (!hasRequiredPermissions()) {
-            requestPermissions(requiredPermissions(), REQUEST_BT_PERMISSIONS);
+        if (hasBluetoothPermissions()) {
+            connectDevice();
         } else {
-            refreshPairedDevices();
+            requestBluetoothPermissions();
+        }
+    }
+
+    @Override
+    public void onRequestPermissionsResult(int requestCode,
+                                           String[] permissions,
+                                           int[] grantResults) {
+        super.onRequestPermissionsResult(requestCode, permissions, grantResults);
+        if (requestCode == REQUEST_BLUETOOTH_PERMISSIONS && hasBluetoothPermissions()) {
+            appendLog("Bluetooth permissions granted");
+            connectDevice();
+        } else {
+            appendLog("Bluetooth permissions denied");
+            updateConnectionStatus("Permissions denied");
         }
     }
 
     @Override
     protected void onDestroy() {
-        closeConnection();
+        closeSocket();
+        executor.shutdownNow();
         super.onDestroy();
     }
 
-    @Override
-    public void onRequestPermissionsResult(int requestCode, String[] permissions, int[] grantResults) {
-        super.onRequestPermissionsResult(requestCode, permissions, grantResults);
-        if (requestCode != REQUEST_BT_PERMISSIONS) {
-            return;
-        }
-        if (hasRequiredPermissions()) {
-            appendLog("Bluetooth permission granted");
-            refreshPairedDevices();
-        } else {
-            setStatus("Bluetooth permission denied");
-            appendLog("Bluetooth permission denied");
-        }
-        updateButtons();
-    }
-
-    private void buildUi() {
+    private View createContentView() {
         int padding = dp(16);
+
         LinearLayout root = new LinearLayout(this);
         root.setOrientation(LinearLayout.VERTICAL);
         root.setPadding(padding, padding, padding, padding);
 
         TextView title = new TextView(this);
-        title.setText("OSAIG Classic BT SPP Demo");
+        title.setText("OSAIG SPP Wi-Fi Demo");
         title.setTextSize(22);
         title.setPadding(0, 0, 0, dp(12));
         root.addView(title);
 
-        statusText = new TextView(this);
-        statusText.setTextSize(16);
-        statusText.setPadding(0, 0, 0, dp(8));
-        root.addView(statusText);
+        deviceStatusView = new TextView(this);
+        deviceStatusView.setTextSize(16);
+        deviceStatusView.setPadding(0, 0, 0, dp(8));
+        root.addView(deviceStatusView);
 
-        deviceText = new TextView(this);
-        deviceText.setText("Device: --");
-        deviceText.setTextSize(16);
-        deviceText.setPadding(0, 0, 0, dp(8));
-        root.addView(deviceText);
+        wifiStatusView = new TextView(this);
+        wifiStatusView.setTextSize(14);
+        wifiStatusView.setPadding(0, 0, 0, dp(12));
+        root.addView(wifiStatusView);
 
-        responseText = new TextView(this);
-        responseText.setText("Last response: --");
-        responseText.setTextSize(16);
-        responseText.setPadding(0, 0, 0, dp(12));
-        root.addView(responseText);
+        LinearLayout deviceButtons = new LinearLayout(this);
+        deviceButtons.setOrientation(LinearLayout.HORIZONTAL);
 
-        LinearLayout buttons = new LinearLayout(this);
-        buttons.setOrientation(LinearLayout.HORIZONTAL);
+        connectDeviceButton = new Button(this);
+        connectDeviceButton.setText("Connect SPP");
+        connectDeviceButton.setAllCaps(false);
+        connectDeviceButton.setOnClickListener(v -> connectDevice());
+        deviceButtons.addView(connectDeviceButton,
+                new LinearLayout.LayoutParams(0, dp(48), 1));
 
-        listButton = new Button(this);
-        listButton.setText("List Paired OSAIG");
-        listButton.setAllCaps(false);
-        listButton.setOnClickListener(v -> refreshPairedDevices());
-        buttons.addView(listButton, new LinearLayout.LayoutParams(0, dp(48), 1));
+        disconnectDeviceButton = new Button(this);
+        disconnectDeviceButton.setText("Disconnect");
+        disconnectDeviceButton.setAllCaps(false);
+        disconnectDeviceButton.setOnClickListener(v -> disconnectDevice());
+        deviceButtons.addView(disconnectDeviceButton,
+                new LinearLayout.LayoutParams(0, dp(48), 1));
 
-        connectButton = new Button(this);
-        connectButton.setText("Connect");
-        connectButton.setAllCaps(false);
-        connectButton.setOnClickListener(v -> connectSelectedDevice());
-        buttons.addView(connectButton, new LinearLayout.LayoutParams(0, dp(48), 1));
+        root.addView(deviceButtons);
 
-        root.addView(buttons);
+        ssidInput = new EditText(this);
+        ssidInput.setHint("Wi-Fi SSID");
+        root.addView(ssidInput);
 
-        LinearLayout buttons2 = new LinearLayout(this);
-        buttons2.setOrientation(LinearLayout.HORIZONTAL);
-        buttons2.setPadding(0, dp(8), 0, dp(8));
+        passwordInput = new EditText(this);
+        passwordInput.setHint("Wi-Fi Password");
+        passwordInput.setInputType(InputType.TYPE_CLASS_TEXT
+                | InputType.TYPE_TEXT_VARIATION_PASSWORD);
+        root.addView(passwordInput);
 
-        sendButton = new Button(this);
-        sendButton.setText("Send Echo");
-        sendButton.setAllCaps(false);
-        sendButton.setOnClickListener(v -> sendEcho());
-        buttons2.addView(sendButton, new LinearLayout.LayoutParams(0, dp(48), 1));
+        LinearLayout wifiButtons = new LinearLayout(this);
+        wifiButtons.setOrientation(LinearLayout.HORIZONTAL);
 
-        disconnectButton = new Button(this);
-        disconnectButton.setText("Disconnect");
-        disconnectButton.setAllCaps(false);
-        disconnectButton.setOnClickListener(v -> closeConnection());
-        buttons2.addView(disconnectButton, new LinearLayout.LayoutParams(0, dp(48), 1));
+        connectWifiButton = new Button(this);
+        connectWifiButton.setText("Connect Wi-Fi");
+        connectWifiButton.setAllCaps(false);
+        connectWifiButton.setOnClickListener(v -> sendWifiConnect());
+        wifiButtons.addView(connectWifiButton,
+                new LinearLayout.LayoutParams(0, dp(48), 1));
 
-        root.addView(buttons2);
+        disconnectWifiButton = new Button(this);
+        disconnectWifiButton.setText("Disconnect Wi-Fi");
+        disconnectWifiButton.setAllCaps(false);
+        disconnectWifiButton.setOnClickListener(v -> sendWifiDisconnect());
+        wifiButtons.addView(disconnectWifiButton,
+                new LinearLayout.LayoutParams(0, dp(48), 1));
+
+        root.addView(wifiButtons);
+
+        LinearLayout utilButtons = new LinearLayout(this);
+        utilButtons.setOrientation(LinearLayout.HORIZONTAL);
+
+        refreshWifiButton = new Button(this);
+        refreshWifiButton.setText("Refresh Status");
+        refreshWifiButton.setAllCaps(false);
+        refreshWifiButton.setOnClickListener(v -> sendWifiStatus());
+        utilButtons.addView(refreshWifiButton,
+                new LinearLayout.LayoutParams(0, dp(48), 1));
+
+        Button clearLogButton = new Button(this);
+        clearLogButton.setText("Clear Log");
+        clearLogButton.setAllCaps(false);
+        clearLogButton.setOnClickListener(v -> logView.setText(""));
+        utilButtons.addView(clearLogButton,
+                new LinearLayout.LayoutParams(0, dp(48), 1));
+
+        root.addView(utilButtons);
 
         ScrollView scrollView = new ScrollView(this);
-        logText = new TextView(this);
-        logText.setTextSize(13);
-        logText.setTextIsSelectable(true);
-        scrollView.addView(logText);
+        logView = new TextView(this);
+        logView.setTextSize(13);
+        logView.setTextIsSelectable(true);
+        scrollView.addView(logView);
         root.addView(scrollView, new LinearLayout.LayoutParams(
-                LinearLayout.LayoutParams.MATCH_PARENT, 0, 1));
+                LinearLayout.LayoutParams.MATCH_PARENT,
+                0,
+                1));
 
-        setContentView(root);
+        return root;
     }
 
-    private String[] requiredPermissions() {
+    private boolean hasBluetoothPermissions() {
+        if (Build.VERSION.SDK_INT < Build.VERSION_CODES.S) {
+            return true;
+        }
+        return checkSelfPermission(Manifest.permission.BLUETOOTH_CONNECT)
+                == PackageManager.PERMISSION_GRANTED
+                && checkSelfPermission(Manifest.permission.BLUETOOTH_SCAN)
+                == PackageManager.PERMISSION_GRANTED;
+    }
+
+    private void requestBluetoothPermissions() {
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.S) {
-            return new String[]{Manifest.permission.BLUETOOTH_CONNECT};
+            requestPermissions(new String[]{
+                    Manifest.permission.BLUETOOTH_CONNECT,
+                    Manifest.permission.BLUETOOTH_SCAN
+            }, REQUEST_BLUETOOTH_PERMISSIONS);
         }
-        return new String[]{Manifest.permission.BLUETOOTH};
     }
 
-    private boolean hasRequiredPermissions() {
-        for (String permission : requiredPermissions()) {
-            if (checkSelfPermission(permission) != PackageManager.PERMISSION_GRANTED) {
-                return false;
-            }
+    private void connectDevice() {
+        if (!hasBluetoothPermissions()) {
+            requestBluetoothPermissions();
+            return;
         }
-        return true;
-    }
-
-    private boolean isBluetoothReady() {
-        if (bluetoothAdapter == null) {
-            setStatus("Bluetooth adapter not found");
-            return false;
-        }
-        if (!hasRequiredPermissions()) {
-            setStatus("Bluetooth permission required");
-            requestPermissions(requiredPermissions(), REQUEST_BT_PERMISSIONS);
-            return false;
-        }
-        if (!bluetoothAdapter.isEnabled()) {
-            setStatus("Bluetooth is disabled");
-            return false;
-        }
-        return true;
-    }
-
-    private void refreshPairedDevices() {
-        if (!isBluetoothReady()) {
-            updateButtons();
+        if (!connectRunning.compareAndSet(false, true)) {
+            appendLog("connection already running");
             return;
         }
 
-        Set<BluetoothDevice> bondedDevices = bluetoothAdapter.getBondedDevices();
-        List<BluetoothDevice> targets = new ArrayList<>();
-        for (BluetoothDevice device : bondedDevices) {
-            String name = device.getName();
-            if (name != null && OSAIG_NAME_PATTERN.matcher(name).matches()) {
-                targets.add(device);
-            }
-        }
-
-        appendLog("Paired OSAIG devices: " + targets.size());
-        for (BluetoothDevice device : targets) {
-            appendLog("  " + formatDevice(device));
-        }
-
-        if (targets.isEmpty()) {
-            selectedDevice = null;
-            deviceText.setText("Device: --");
-            setStatus("Pair OSAIG-XXXX in system Bluetooth settings first");
-        } else {
-            selectedDevice = targets.get(0);
-            deviceText.setText("Device: " + formatDevice(selectedDevice));
-            setStatus("Ready to connect");
-        }
+        updateConnectionStatus("Connecting...");
         updateButtons();
-    }
-
-    private void connectSelectedDevice() {
-        if (selectedDevice == null || !isBluetoothReady() || connected) {
-            updateButtons();
-            return;
-        }
-
-        setStatus("Connecting...");
-        appendLog("Connecting to " + formatDevice(selectedDevice));
-        updateButtons();
-
-        connectThread = new Thread(() -> {
-            BluetoothSocket newSocket = null;
+        executor.execute(() -> {
             try {
-                newSocket = selectedDevice.createRfcommSocketToServiceRecord(SPP_UUID);
-                newSocket.connect();
-
-                synchronized (this) {
-                    socket = newSocket;
-                    outputStream = newSocket.getOutputStream();
-                    connected = true;
-                }
-
-                runOnUiThreadSafe(() -> {
-                    setStatus("Connected");
-                    appendLog("SPP connected");
-                    updateButtons();
-                });
-                startReadLoop(newSocket);
-            } catch (IOException e) {
-                closeQuietly(newSocket);
-                runOnUiThreadSafe(() -> {
-                    setStatus("Connect failed: " + e.getMessage());
-                    appendLog("Connect failed: " + e.getMessage());
-                    updateButtons();
-                });
-            }
-        }, "classic-bt-connect");
-        connectThread.start();
-    }
-
-    private void startReadLoop(BluetoothSocket activeSocket) {
-        readThread = new Thread(() -> {
-            byte[] buffer = new byte[1024];
-            try {
-                InputStream inputStream = activeSocket.getInputStream();
-                while (connected) {
-                    int read = inputStream.read(buffer);
-                    if (read <= 0) {
-                        break;
-                    }
-                    String text = new String(buffer, 0, read, StandardCharsets.UTF_8);
-                    runOnUiThreadSafe(() -> {
-                        responseText.setText("Last response: " + text);
-                        appendLog("RX: " + text);
-                    });
-                }
-            } catch (IOException e) {
-                runOnUiThreadSafe(() -> appendLog("Read stopped: " + e.getMessage()));
+                doConnectDevice();
             } finally {
-                closeConnection();
+                connectRunning.set(false);
+                runOnUiThread(this::updateButtons);
             }
-        }, "classic-bt-read");
-        readThread.start();
-    }
-
-    private void sendEcho() {
-        final OutputStream stream;
-        synchronized (this) {
-            stream = outputStream;
-        }
-
-        if (!connected || stream == null) {
-            setStatus("Not connected");
-            updateButtons();
-            return;
-        }
-
-        String message = "hello from android spp";
-        byte[] payload = message.getBytes(StandardCharsets.UTF_8);
-        new Thread(() -> {
-            try {
-                stream.write(payload);
-                stream.flush();
-                runOnUiThreadSafe(() -> appendLog("TX: " + message));
-            } catch (IOException e) {
-                runOnUiThreadSafe(() -> {
-                    setStatus("Send failed: " + e.getMessage());
-                    appendLog("Send failed: " + e.getMessage());
-                    updateButtons();
-                });
-            }
-        }, "classic-bt-send").start();
-    }
-
-    private void closeConnection() {
-        BluetoothSocket oldSocket;
-        synchronized (this) {
-            oldSocket = socket;
-            socket = null;
-            outputStream = null;
-            connected = false;
-        }
-        closeQuietly(oldSocket);
-        runOnUiThreadSafe(() -> {
-            setStatus(selectedDevice == null ? "Idle" : "Disconnected");
-            updateButtons();
         });
     }
 
-    private void closeQuietly(BluetoothSocket target) {
-        if (target == null) {
+    private void doConnectDevice() {
+        BluetoothAdapter adapter = BluetoothAdapter.getDefaultAdapter();
+        if (adapter == null) {
+            appendLog("BluetoothAdapter is null");
+            updateConnectionStatus("Bluetooth unavailable");
             return;
         }
+        if (!adapter.isEnabled()) {
+            appendLog("Bluetooth is disabled");
+            updateConnectionStatus("Bluetooth disabled");
+            return;
+        }
+
+        closeSocket();
+        BluetoothDevice target = discoverOsaigDevice(adapter);
+        if (target == null) {
+            List<BluetoothDevice> bondedDevices = findPairedOsaigDevices(adapter);
+            if (!bondedDevices.isEmpty()) {
+                target = bondedDevices.get(0);
+                appendLog("fallback to bonded " + describe(target));
+            }
+        }
+        if (target == null) {
+            appendLog("no OSAIG device found");
+            updateConnectionStatus("No OSAIG device");
+            return;
+        }
+
+        appendLog("connecting to " + describe(target));
         try {
-            target.close();
-        } catch (IOException ignored) {
+            adapter.cancelDiscovery();
+            BluetoothSocket activeSocket =
+                    target.createInsecureRfcommSocketToServiceRecord(SPP_UUID);
+            activeSocket.connect();
+            socket = activeSocket;
+            appendLog("SPP connected");
+            updateConnectionStatus("SPP connected: " + safeName(target));
+            startReader(activeSocket);
+            sendWifiStatus();
+        } catch (IOException e) {
+            appendLog("connect failed: " + e.getClass().getSimpleName()
+                    + ": " + e.getMessage());
+            updateConnectionStatus("Connect failed");
+            closeSocket();
         }
     }
 
-    private String formatDevice(BluetoothDevice device) {
-        String name = device.getName();
-        return (name == null ? "<unnamed>" : name) + " [" + device.getAddress() + "]";
+    private BluetoothDevice discoverOsaigDevice(BluetoothAdapter adapter) {
+        AtomicReference<BluetoothDevice> foundDevice = new AtomicReference<>();
+        CountDownLatch latch = new CountDownLatch(1);
+        IntentFilter filter = new IntentFilter();
+        filter.addAction(BluetoothDevice.ACTION_FOUND);
+        filter.addAction(BluetoothAdapter.ACTION_DISCOVERY_FINISHED);
+
+        BroadcastReceiver receiver = new BroadcastReceiver() {
+            @Override
+            public void onReceive(Context context, Intent intent) {
+                String action = intent.getAction();
+                if (BluetoothDevice.ACTION_FOUND.equals(action)) {
+                    BluetoothDevice device = intent.getParcelableExtra(BluetoothDevice.EXTRA_DEVICE);
+                    if (device == null) {
+                        return;
+                    }
+                    String name = safeName(device);
+                    appendLog("found " + name + " " + device.getAddress());
+                    if (isOsaigName(name) && foundDevice.compareAndSet(null, device)) {
+                        adapter.cancelDiscovery();
+                        latch.countDown();
+                    }
+                } else if (BluetoothAdapter.ACTION_DISCOVERY_FINISHED.equals(action)) {
+                    appendLog("discovery finished");
+                    latch.countDown();
+                }
+            }
+        };
+
+        registerReceiverCompat(receiver, filter);
+        try {
+            if (adapter.isDiscovering()) {
+                adapter.cancelDiscovery();
+            }
+            appendLog("starting discovery");
+            if (!adapter.startDiscovery()) {
+                appendLog("startDiscovery returned false");
+                return null;
+            }
+            try {
+                latch.await(DISCOVERY_TIMEOUT_MS, TimeUnit.MILLISECONDS);
+            } catch (InterruptedException e) {
+                Thread.currentThread().interrupt();
+            }
+            return foundDevice.get();
+        } finally {
+            try {
+                unregisterReceiver(receiver);
+            } catch (IllegalArgumentException ignored) {
+                // Receiver may already be unregistered.
+            }
+            if (adapter.isDiscovering()) {
+                adapter.cancelDiscovery();
+            }
+        }
     }
 
-    private void setStatus(String status) {
-        statusText.setText("Status: " + status);
+    private List<BluetoothDevice> findPairedOsaigDevices(BluetoothAdapter adapter) {
+        Set<BluetoothDevice> bondedDevices = adapter.getBondedDevices();
+        List<BluetoothDevice> result = new ArrayList<>();
+        appendLog("bonded devices=" + bondedDevices.size());
+        for (BluetoothDevice device : bondedDevices) {
+            String name = safeName(device);
+            if (isOsaigName(name)) {
+                appendLog("bonded " + describe(device));
+                result.add(device);
+            }
+        }
+        return result;
     }
 
-    private void appendLog(String message) {
-        String line = timeFormat.format(new Date()) + "  " + message + "\n";
-        logText.append(line);
+    private void startReader(BluetoothSocket activeSocket) {
+        readerThread = new Thread(() -> readLoop(activeSocket), "spp-wifi-reader");
+        readerThread.start();
+    }
+
+    private void readLoop(BluetoothSocket activeSocket) {
+        StringBuilder pending = new StringBuilder();
+        byte[] buffer = new byte[512];
+
+        try {
+            InputStream in = activeSocket.getInputStream();
+            while (activeSocket.isConnected()) {
+                int len = in.read(buffer);
+                if (len < 0) {
+                    appendLog("RX EOF");
+                    break;
+                }
+                String text = new String(buffer, 0, len, StandardCharsets.UTF_8);
+                pending.append(text);
+
+                int newlineIndex;
+                while ((newlineIndex = pending.indexOf("\n")) >= 0) {
+                    String line = pending.substring(0, newlineIndex).trim();
+                    pending.delete(0, newlineIndex + 1);
+                    if (!line.isEmpty()) {
+                        handleResponseLine(line);
+                    }
+                }
+            }
+        } catch (IOException e) {
+            appendLog("reader stopped: " + e.getClass().getSimpleName()
+                    + ": " + e.getMessage());
+        } finally {
+            closeSocket();
+            updateConnectionStatus("Disconnected");
+            runOnUiThread(this::updateButtons);
+        }
+    }
+
+    private void handleResponseLine(String line) {
+        appendLog("RX " + line);
+        try {
+            JSONObject object = new JSONObject(line);
+            renderWifiStatus(object);
+        } catch (Exception e) {
+            appendLog("response parse failed: " + e.getClass().getSimpleName());
+        }
+    }
+
+    private void renderWifiStatus(JSONObject object) {
+        boolean ok = object.optBoolean("ok", false);
+        String action = object.optString("action", "unknown");
+        String state = object.optString("state", "unknown");
+        String ssid = object.optString("ssid", "--");
+        String ip = object.optString("ip", "--");
+        int signalDbm = object.has("signal_dbm") ? object.optInt("signal_dbm") : 0;
+        int frequencyMhz = object.has("frequency_mhz") ? object.optInt("frequency_mhz") : 0;
+        String message = object.optString("message", "");
+
+        StringBuilder builder = new StringBuilder();
+        builder.append("Wi-Fi state: ").append(state)
+                .append("\nSSID: ").append(ssid)
+                .append("\nIP: ").append(ip);
+        if (frequencyMhz > 0) {
+            builder.append("\nFrequency: ").append(frequencyMhz).append(" MHz");
+        }
+        if (signalDbm != 0 || "connected".equals(state)) {
+            builder.append("\nSignal: ").append(signalDbm).append(" dBm");
+        }
+        if (!TextUtils.isEmpty(message)) {
+            builder.append("\nMessage: ").append(message);
+        }
+        updateWifiStatus(builder.toString());
+
+        if ("status".equals(action) && ok && !"--".equals(ssid)
+                && (ssidInput.getText() == null || ssidInput.getText().length() == 0)) {
+            runOnUiThread(() -> ssidInput.setText(ssid));
+        }
+    }
+
+    private void sendWifiConnect() {
+        String ssid = ssidInput.getText() == null
+                ? ""
+                : ssidInput.getText().toString().trim();
+        String password = passwordInput.getText() == null
+                ? ""
+                : passwordInput.getText().toString();
+        if (ssid.isEmpty()) {
+            appendLog("ssid is empty");
+            return;
+        }
+        JSONObject object = new JSONObject();
+        try {
+            object.put("action", "connect");
+            object.put("ssid", ssid);
+            object.put("password", password);
+            appendLog("TX connect ssid=" + ssid);
+            sendJsonCommand(object);
+            updateWifiStatus("Wi-Fi state: connecting\nSSID: " + ssid);
+        } catch (Exception e) {
+            appendLog("failed to build connect command");
+        }
+    }
+
+    private void sendWifiDisconnect() {
+        JSONObject object = new JSONObject();
+        try {
+            object.put("action", "disconnect");
+            appendLog("TX disconnect");
+            sendJsonCommand(object);
+        } catch (Exception e) {
+            appendLog("failed to build disconnect command");
+        }
+    }
+
+    private void sendWifiStatus() {
+        JSONObject object = new JSONObject();
+        try {
+            object.put("action", "status");
+            appendLog("TX status");
+            sendJsonCommand(object);
+        } catch (Exception e) {
+            appendLog("failed to build status command");
+        }
+    }
+
+    private synchronized void sendJsonCommand(JSONObject object) {
+        if (socket == null || !socket.isConnected()) {
+            appendLog("SPP not connected");
+            return;
+        }
+
+        try {
+            OutputStream out = socket.getOutputStream();
+            String line = object.toString() + "\n";
+            out.write(line.getBytes(StandardCharsets.UTF_8));
+            out.flush();
+        } catch (IOException e) {
+            appendLog("write failed: " + e.getClass().getSimpleName()
+                    + ": " + e.getMessage());
+            closeSocket();
+            updateConnectionStatus("Disconnected");
+            runOnUiThread(this::updateButtons);
+        }
+    }
+
+    private void disconnectDevice() {
+        appendLog("disconnect requested");
+        closeSocket();
+        updateConnectionStatus("Disconnected");
+        updateButtons();
+    }
+
+    private synchronized void closeSocket() {
+        if (socket != null) {
+            try {
+                socket.close();
+            } catch (IOException ignored) {
+                // Best-effort cleanup.
+            }
+            socket = null;
+        }
     }
 
     private void updateButtons() {
-        boolean hasPermission = hasRequiredPermissions();
-        boolean hasAdapter = false;
-        if (hasPermission && bluetoothAdapter != null) {
-            hasAdapter = bluetoothAdapter.isEnabled();
-        }
-        listButton.setEnabled(hasPermission && hasAdapter && !connected);
-        connectButton.setEnabled(hasPermission && hasAdapter && selectedDevice != null && !connected);
-        sendButton.setEnabled(connected);
-        disconnectButton.setEnabled(connected);
+        boolean connected = socket != null && socket.isConnected();
+        boolean busy = connectRunning.get();
+        connectDeviceButton.setEnabled(!connected && !busy);
+        disconnectDeviceButton.setEnabled(connected || busy);
+        connectWifiButton.setEnabled(connected && !busy);
+        disconnectWifiButton.setEnabled(connected && !busy);
+        refreshWifiButton.setEnabled(connected && !busy);
     }
 
-    private void runOnUiThreadSafe(Runnable runnable) {
-        if (Looper.myLooper() == Looper.getMainLooper()) {
-            runnable.run();
+    private void updateConnectionStatus(String status) {
+        runOnUiThread(() -> deviceStatusView.setText("SPP: " + status));
+    }
+
+    private void updateWifiStatus(String status) {
+        runOnUiThread(() -> wifiStatusView.setText(status));
+    }
+
+    private void registerReceiverCompat(BroadcastReceiver receiver, IntentFilter filter) {
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
+            registerReceiver(receiver, filter, Context.RECEIVER_NOT_EXPORTED);
         } else {
-            mainHandler.post(runnable);
+            registerReceiver(receiver, filter);
         }
+    }
+
+    private boolean isOsaigName(String name) {
+        return name != null && (name.startsWith("OSAIG-") || name.equals("OSAIG"));
+    }
+
+    private String describe(BluetoothDevice device) {
+        return safeName(device) + " " + device.getAddress();
+    }
+
+    private String safeName(BluetoothDevice device) {
+        String name = device.getName();
+        return name == null ? "" : name;
+    }
+
+    private void appendLog(String line) {
+        Log.i(TAG, line);
+        runOnUiThread(() -> {
+            logView.append(line + "\n");
+            int scrollAmount = logView.getLayout() == null ? 0
+                    : logView.getLayout().getLineTop(logView.getLineCount()) - logView.getHeight();
+            if (scrollAmount > 0) {
+                logView.scrollTo(0, scrollAmount);
+            }
+        });
     }
 
     private int dp(int value) {
-        return (int) (value * getResources().getDisplayMetrics().density + 0.5f);
+        float density = getResources().getDisplayMetrics().density;
+        return Math.round(value * density);
     }
 }

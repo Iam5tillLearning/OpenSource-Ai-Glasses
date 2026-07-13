@@ -56,7 +56,7 @@ int http_get(const char *url, http_response_t *resp);
 
 /**
  * 便捷函数：HTTP POST（通用）
- * 
+ *
  * @param url 请求URL
  * @param content_type Content-Type头（如 "text/plain", "application/octet-stream"）
  * @param body 请求体
@@ -64,7 +64,7 @@ int http_get(const char *url, http_response_t *resp);
  * @param resp 响应结构
  * @return 0成功，-1失败
  */
-int http_post(const char *url, const char *content_type, 
+int http_post(const char *url, const char *content_type,
               const char *body, size_t body_len, http_response_t *resp);
 
 /**
@@ -75,7 +75,7 @@ int http_post_json(const char *url, const char *json_body, http_response_t *resp
 /**
  * 便捷函数：HTTP POST (表单数据)
  * Content-Type: application/x-www-form-urlencoded
- * 
+ *
  * @param url 请求URL
  * @param form_data URL编码的表单数据（如 "name=value&foo=bar"）
  * @param resp 响应结构
@@ -85,7 +85,7 @@ int http_post_form(const char *url, const char *form_data, http_response_t *resp
 
 /**
  * 便捷函数：HTTP PUT
- * 
+ *
  * @param url 请求URL
  * @param content_type Content-Type头
  * @param body 请求体

@@ -40,7 +40,7 @@ int main() {
     // 2. 订阅特定GPIO (如订阅GPIO 0, 1, 75)
     int gpios[] = {0, 1, 75};
     ai_gpio_hub_client_subscribe_gpios(&client, gpios, 3, hub_callback, NULL);
-    
+
     // 或订阅所有GPIO
     ai_gpio_hub_client_subscribe_all(&client, hub_callback, NULL);
 

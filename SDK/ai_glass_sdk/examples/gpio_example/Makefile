@@ -14,13 +14,25 @@ endif
 endif
 
 CC = $(CROSS_COMPILE)gcc
+STRIP = $(CROSS_COMPILE)strip
+DEBUG ?= 0
+ifeq ($(DEBUG),1)
+STRIP_OUTPUTS ?= 0
+else
+STRIP_OUTPUTS ?= 1
+endif
 
 # 编译选项
-CFLAGS = -Wall -g -O2
+CFLAGS = -Wall -O2
 CFLAGS += -std=gnu99
 CFLAGS += -D_GNU_SOURCE
 CFLAGS += -DLINUX
 CFLAGS += -DOS_LINUX
+ifeq ($(DEBUG),1)
+CFLAGS += -DDEBUG -g
+else
+CFLAGS += -DNDEBUG
+endif
 
 # SDK路径（当前在ai_glass_sdk/examples/gpio_example/）
 SDK_DIR = ../..
@@ -49,6 +61,7 @@ $(BUILD_DIR):
 $(TARGET): $(EXAMPLE_SOURCE) | $(BUILD_DIR)
 	@echo "编译GPIO示例程序（使用SDK）..."
 	$(CC) $(CFLAGS) $(INCLUDES) -o $@ $(EXAMPLE_SOURCE) $(LIBS)
+	@if [ "$(STRIP_OUTPUTS)" != "0" ]; then $(STRIP) --strip-unneeded $@; fi
 	@echo "✅ 编译完成: $(TARGET)"
 	@echo ""
 	@echo "SDK路径: $(SDK_DIR)"

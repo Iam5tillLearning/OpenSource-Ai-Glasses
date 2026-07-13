@@ -17,7 +17,8 @@ Welcome to the AI Glass SDK Documentation Center. This contains all the document
 - [Camera Client API](Camera_Client_API.en.md) - Image capture and zero-copy transmission
 - [Audio Client API](Audio_Client_API.en.md) - Audio playback and resource control
 - [Display Client API](Display_Client_API.en.md) - Framebuffer submission and display focus management
-- [BLE Text Client API](BLE_Client_API.en.md) - Subscribe/send `datatype` text messages
+- [BLE Text Client API](BLE_Client_API.en.md) - BLE text-message subscription and sending
+- [Classic Bluetooth SPP Client API](SPP_Client_API.en.md) - Receive RFCOMM fds and read/write large byte streams
 - [Text Event Client API](Text_Event_Client_API.en.md) - ASR / LLM / System text stream listener
 - [Log System API](Log_API.en.md) - Unified log output and millisecond timestamp
 
@@ -26,10 +27,8 @@ Welcome to the AI Glass SDK Documentation Center. This contains all the document
 - [Camera Client](../examples/camera_capture_example/) - Image capture example
 - [Audio Playback Client](../examples/audio_play_example/) - Audio playback example
 - [Disable AI-Core Physical Actions Example](../examples/disable_aicore_physical_actions_example/) - Disable AI-Core auto physical button actions
-- [Query AI-Core Physical Actions Example](../examples/query_aicore_physical_actions_example/) - Query physical action state without modifying runtime state
 - [Record Audio Example](../examples/record_audio_example/) - Start/stop recording and copy to a fixed path
 - [Media Resource Control](../examples/media_resource_control/) - Camera/audio resource release and resume example
-- [Text Event Client](../examples/text_event_example/) - Text stream listener example
 - [Bluetooth Demo](../examples/bluetooth_demo/README.en.md) - BLE and classic Bluetooth client/glasses-side communication examples
 
 ---
@@ -52,12 +51,20 @@ Welcome to the AI Glass SDK Documentation Center. This contains all the document
 3. To disable AI-Core physical actions, view [Disable AI-Core Physical Actions Example](../examples/disable_aicore_physical_actions_example/)
 4. To trigger recording from the SDK, view [Record Audio Example](../examples/record_audio_example/)
 5. For app switching, view [Media Resource Control](../examples/media_resource_control/)
-
 ### 4. BLE Text Development
 1. Read [BLE Text Client API](BLE_Client_API.en.md)
-2. Confirm `bt_service` exposes `/var/run/ai_ble.sock`
-3. View [Bluetooth Demo](../examples/bluetooth_demo/README.en.md)
-4. Subscribe by `datatype`, such as `display.text`
+2. View [Bluetooth Demo](../examples/bluetooth_demo/README.en.md)
+3. Design your own business messages with dedicated `datatype` values
+
+### 5. Classic Bluetooth SPP Development
+1. Read [Classic Bluetooth SPP Client API](SPP_Client_API.en.md)
+2. View [Bluetooth Demo](../examples/bluetooth_demo/README.en.md)
+3. Add application-level framing for your large data format
+
+### 6. TTS Function Development
+1. Read [TTS Client API](TTS_Client_API.en.md)
+2. Configure TTS server and client according to the guide
+3. Check the troubleshooting section in the guide if you encounter problems
 
 ---
 
@@ -76,9 +83,10 @@ Hardware Resources (GPIO, Camera, Audio)
 ### Supported Function Modules
 - **GPIO Event Subscription** - Multi-process GPIO event listening
 - **Camera Access** - Zero-copy image transmission
-- **Audio Control** - PCM playback, recording control, and resource arbitration
+- **Audio Playback Control** - PCM playback and resource control
 - **Display Service** - Framebuffer transport and focus management
-- **BLE Text Channel** - Route BLE text messages by `datatype`
+- **BLE Text Messaging** - Route BLE text messages by `datatype`
+- **Classic Bluetooth SPP** - Large-data RFCOMM channel with app-owned fd
 - **Text Event Subscription** - ASR / LLM / System text stream listener
 
 ---
@@ -89,10 +97,15 @@ Hardware Resources (GPIO, Camera, Audio)
 - `ai_gpio_event_client_create()` - Create GPIO client
 - `ai_core_init()` - Initialize camera client
 - `ai_audio_init()` - Initialize audio client
+- `ai_audio_play_toast_text()` - TTS playback for short notifications
 - `ai_display_init()` - Initialize display client
 - `ai_display_commit_frame()` - Commit display frame
 - `ai_ble_client_create()` - Create BLE text client
+- `ai_ble_register_datatype()` - Register the target datatype
 - `ai_ble_send()` - Send BLE text message
+- `ai_spp_client_start()` - Register a classic Bluetooth SPP owner
+- `ai_spp_accept()` - Receive an RFCOMM fd
+- `ai_spp_write()` - Write to the SPP byte stream
 - `log_info()` - Output info log (with timestamp)
 - `log_error()` - Output error log (with timestamp)
 
@@ -101,7 +114,6 @@ Hardware Resources (GPIO, Camera, Audio)
 - Audio Example: `../examples/audio_play_example/`
 - Camera Example: `../examples/camera_capture_example/`
 - Disable AI-Core Physical Actions Example: `../examples/disable_aicore_physical_actions_example/`
-- Query AI-Core Physical Actions Example: `../examples/query_aicore_physical_actions_example/`
 - Record Audio Example: `../examples/record_audio_example/`
 - Media Resource Example: `../examples/media_resource_control/`
 - Bluetooth Demo: `../examples/bluetooth_demo/`
@@ -112,6 +124,7 @@ Hardware Resources (GPIO, Camera, Audio)
 - Audio API: `../include/ai_audio.h`
 - Display API: `../include/ai_display.h`
 - BLE API: `../include/ai_ble.h`
+- SPP API: `../include/ai_spp.h`
 - Text Event API: `../include/ai_text_event.h`
 - IPC Base: `../include/ai_ipc.h`
 - Log API: `../include/ai_log.h`
@@ -132,4 +145,4 @@ If you find issues or have improvement suggestions during use, please feedback v
 
 ---
 
-*Last Updated: 2026-05-14*
+*Last Updated: 2025-10-27*

@@ -8,13 +8,25 @@ TOOLCHAIN_PATH := $(DEV_ENV_ROOT)/tools/linux/toolchain/arm-rockchip831-linux-uc
 CC = $(TOOLCHAIN_PATH)/arm-rockchip831-linux-uclibcgnueabihf-gcc
 AR = $(TOOLCHAIN_PATH)/arm-rockchip831-linux-uclibcgnueabihf-ar
 STRIP = $(TOOLCHAIN_PATH)/arm-rockchip831-linux-uclibcgnueabihf-strip
+OEM_CLIENT_SO ?= $(DEV_ENV_ROOT)/project/oem/lib/libai_glass_sdk.so
+DEBUG ?= 0
+ifeq ($(DEBUG),1)
+STRIP_OUTPUTS ?= 0
+else
+STRIP_OUTPUTS ?= 1
+endif
 
 # 编译选项
-CFLAGS = -Wall -g -O2
+CFLAGS = -Wall -O2
 CFLAGS += -std=gnu99
 CFLAGS += -D_GNU_SOURCE
 CFLAGS += -fPIC
 CFLAGS += -I../../../media/rockit/out/include
+ifeq ($(DEBUG),1)
+CFLAGS += -DDEBUG -g
+else
+CFLAGS += -DNDEBUG
+endif
 
 # 库文件
 LIBS = -lrt -lpthread
@@ -22,18 +34,21 @@ LIBS = -lrt -lpthread
 # 源文件
 CLIENT_SOURCES = src/ai_camera.c src/ai_audio.c \
                  src/ai_gpio.c src/ai_ipc.c src/ai_log.c \
-                 src/ai_display.c src/ai_text_event.c \
+                 src/ai_display.c src/ai_text_event.c src/ai_ble.c \
+                 src/ai_spp.c src/ai_wifi.c \
                  src/http_client.c src/ws_client.c \
                  third_party/mongoose/mongoose.c
 HEADERS = include/ai_camera.h include/ai_audio.h \
           include/ai_gpio.h include/ai_ipc.h include/ai_log.h \
-          include/ai_display.h include/ai_text_event.h \
+          include/ai_display.h include/ai_text_event.h include/ai_ble.h \
+          include/ai_spp.h include/ai_wifi.h \
           include/http_client.h include/ws_client.h
 
 # 目标对象文件
 OBJS = lib/ai_camera.o lib/ai_audio.o \
        lib/ai_gpio.o lib/ai_ipc.o lib/ai_log.o \
-       lib/ai_display.o lib/ai_text_event.o \
+       lib/ai_display.o lib/ai_text_event.o lib/ai_ble.o \
+       lib/ai_spp.o lib/ai_wifi.o \
        lib/http_client.o lib/ws_client.o lib/mongoose.o
 
 # 目标库文件
@@ -45,16 +60,17 @@ EXAMPLE_DIRS = examples/audio_play_example \
                examples/gpio_example \
                examples/camera_capture_example \
                examples/disable_aicore_physical_actions_example \
-               examples/query_aicore_physical_actions_example \
                examples/record_audio_example \
                examples/bluetooth_demo/ble_demo/glasses \
+               examples/bluetooth_demo/classic_bt_demo/glasses/sdk_spp_demo \
+               examples/bluetooth_demo/combo_camera_spp_demo/glasses \
                examples/http_example \
                examples/websocket_example \
                examples/text_event_example \
                examples/media_resource_control
 
-# 默认目标（编译库和所有examples）
-all: lib $(CLIENT_LIB) $(CLIENT_SO) examples
+# 默认目标（编译库、同步动态库和所有examples）
+all: lib $(CLIENT_LIB) $(CLIENT_SO) sync-oem examples
 
 # 编译所有示例程序
 examples: $(CLIENT_LIB) $(CLIENT_SO)
@@ -76,14 +92,27 @@ lib:
 # 编译静态库
 $(CLIENT_LIB): $(OBJS)
 	@echo "📚 Building static library..."
-	$(AR) rcs $@ $^
+	$(AR) rcsD $@ $^
+	@if [ "$(STRIP_OUTPUTS)" != "0" ]; then $(STRIP) --strip-debug $@; fi
+	$(AR) sD $@
 	@echo "✅ Static library built: $(CLIENT_LIB)"
 
 # 编译动态库
 $(CLIENT_SO): $(OBJS)
 	@echo "📚 Building shared library..."
 	$(CC) -shared -o $@ $^ $(LIBS)
+	@if [ "$(STRIP_OUTPUTS)" != "0" ]; then $(STRIP) --strip-unneeded $@; fi
 	@echo "✅ Shared library built: $(CLIENT_SO)"
+	$(MAKE) sync-oem
+
+# 同步动态库到固件 OEM 打包路径
+sync-oem:
+	@test -f "$(CLIENT_SO)" || { echo "ERROR: missing $(CLIENT_SO), run make first"; exit 1; }
+	mkdir -p $(dir $(OEM_CLIENT_SO))
+	cp -f $(CLIENT_SO) $(OEM_CLIENT_SO)
+	@if [ "$(STRIP_OUTPUTS)" != "0" ]; then $(STRIP) --strip-unneeded $(OEM_CLIENT_SO); fi
+	chmod 644 $(OEM_CLIENT_SO)
+	@echo "✅ Synced OEM shared library: $(OEM_CLIENT_SO)"
 
 # 编译各个模块的对象文件
 lib/ai_camera.o: src/ai_camera.c include/ai_camera.h
@@ -113,6 +142,18 @@ lib/ai_display.o: src/ai_display.c include/ai_display.h
 lib/ai_text_event.o: src/ai_text_event.c include/ai_text_event.h include/ai_ipc.h
 	@echo "🔨 Compiling text event client module..."
 	$(CC) $(CFLAGS) -Iinclude -c src/ai_text_event.c -o $@
+
+lib/ai_ble.o: src/ai_ble.c include/ai_ble.h include/ai_ipc.h
+	@echo "🔨 Compiling BLE client module..."
+	$(CC) $(CFLAGS) -Iinclude -c src/ai_ble.c -o $@
+
+lib/ai_spp.o: src/ai_spp.c include/ai_spp.h include/ai_ipc.h
+	@echo "🔨 Compiling SPP client module..."
+	$(CC) $(CFLAGS) -Iinclude -c src/ai_spp.c -o $@
+
+lib/ai_wifi.o: src/ai_wifi.c include/ai_wifi.h
+	@echo "🔨 Compiling Wi-Fi client module..."
+	$(CC) $(CFLAGS) -Iinclude -c src/ai_wifi.c -o $@
 
 lib/http_client.o: src/http_client.c include/http_client.h third_party/mongoose/mongoose.h
 	@echo "🔨 Compiling HTTP client module..."
@@ -157,6 +198,9 @@ uninstall:
 	rm -f /usr/local/include/ai_gpio.h
 	rm -f /usr/local/include/ai_ipc.h
 	rm -f /usr/local/include/ai_log.h
+	rm -f /usr/local/include/ai_ble.h
+	rm -f /usr/local/include/ai_spp.h
+	rm -f /usr/local/include/ai_wifi.h
 	rm -f /usr/local/include/http_client.h
 	rm -f /usr/local/include/ws_client.h
 	rm -f /usr/local/lib/libai_glass_sdk.a
@@ -165,10 +209,18 @@ uninstall:
 	@echo "✅ Uninstallation completed"
 
 # 发布版本 (优化并去除调试信息)
+release: DEBUG=0
+release: STRIP_OUTPUTS=1
 release: CFLAGS += -O3 -DNDEBUG
 release: clean all
-	$(STRIP) $(CLIENT_SO)
+	$(MAKE) sync-oem
 	@echo "✅ Release build completed"
+
+# 调试版本（显式保留调试信息）
+debug: DEBUG=1
+debug: STRIP_OUTPUTS=0
+debug: clean all
+	@echo "✅ Debug build completed with symbols"
 
 # 显示帮助信息
 help:
@@ -181,6 +233,7 @@ help:
 	@echo "  install   - Install headers and libraries"
 	@echo "  uninstall - Remove installed files"
 	@echo "  release   - Build optimized release version"
+	@echo "  debug     - Build debug version with symbols"
 	@echo "  help      - Show this help"
 	@echo ""
 	@echo "Usage examples:"
@@ -189,12 +242,13 @@ help:
 	@echo "  make clean        # Clean all"
 	@echo "  make install      # Install"
 	@echo "  make release      # Release build"
+	@echo "  make debug        # Debug build with symbols"
 	@echo ""
 	@echo "Example directories:"
 	@for dir in $(EXAMPLE_DIRS); do echo "  - $$dir"; done
 
 # 声明伪目标
-.PHONY: all clean install uninstall release help examples
+.PHONY: all clean install uninstall release debug help examples sync-oem
 
 # 编译信息
 info:

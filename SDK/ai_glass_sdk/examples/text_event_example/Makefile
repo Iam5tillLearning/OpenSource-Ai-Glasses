@@ -11,7 +11,20 @@ endif
 endif
 
 CC = $(CROSS_COMPILE)gcc
-CFLAGS = -Wall -g -I../../include
+STRIP = $(CROSS_COMPILE)strip
+DEBUG ?= 0
+ifeq ($(DEBUG),1)
+STRIP_OUTPUTS ?= 0
+else
+STRIP_OUTPUTS ?= 1
+endif
+
+CFLAGS = -Wall -O2 -I../../include
+ifeq ($(DEBUG),1)
+CFLAGS += -DDEBUG -g
+else
+CFLAGS += -DNDEBUG
+endif
 
 # 使用SDK静态库
 SDK_LIB = ../../lib/libai_glass_sdk.a
@@ -29,6 +42,7 @@ $(BUILD_DIR):
 
 $(TARGET): $(OBJS) | $(BUILD_DIR)
 	$(CC) $(OBJS) -o $(TARGET) $(LDFLAGS)
+	@if [ "$(STRIP_OUTPUTS)" != "0" ]; then $(STRIP) --strip-unneeded $(TARGET); fi
 
 %.o: %.c
 	$(CC) $(CFLAGS) -c $< -o $@

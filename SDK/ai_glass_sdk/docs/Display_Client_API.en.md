@@ -117,7 +117,7 @@ int main() {
 uint8_t *overlay = ai_display_get_framebuffer_slot(client, 1);
 if (overlay) {
     // Draw overlay content...
-    
+
     // Commit overlay frame
     ai_display_commit_frame(client, 1, 0, 0, AI_DISPLAY_WIDTH, AI_DISPLAY_HEIGHT);
 }
