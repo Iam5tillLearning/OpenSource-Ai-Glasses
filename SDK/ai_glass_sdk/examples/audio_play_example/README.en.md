@@ -346,7 +346,6 @@ done
 ## Notes
 
 1. This tool needs to run on the target ARM device, cannot execute directly on x86 host
-2. TTS function requires network connection to TTS server (Default: officelocation.ezxr.com.cn:7863)
 3. PCM file must be raw PCM format, does not support MP3, WAV, etc.
 4. Volume range 0-100, out of range will be automatically limited
 5. TTS cache directory is `/oem/usr/bin/resources/cache`, ensure write permission

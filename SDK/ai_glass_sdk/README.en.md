@@ -51,7 +51,7 @@ ai_glass_sdk/
 │   └── Log_API.en.md               # Log API documentation
 ├── README.md             # Chinese guide
 ├── README.en.md          # English guide
-├── Makefile              # SDK build script
+├── Makefile              # SDK library validation and example build entry
 └── VERSION               # Version information
 ```
 
@@ -95,10 +95,10 @@ ai_glass_sdk/
 
 ## 🚀 Quick Start
 
-### 1. Build the SDK
+### 1. Validate the SDK Libraries and Build Examples
 
 ```bash
-# Build SDK libraries and the default example set
+# Validate the bundled SDK libraries and build the default example set
 cd ai_glass_sdk
 make
 ```

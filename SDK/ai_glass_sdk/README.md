@@ -51,7 +51,7 @@ ai_glass_sdk/
 │   └── Log_API.md                   # 日志系统 API 文档
 ├── README.md            # 本文件
 ├── README.en.md         # 英文说明
-├── Makefile             # SDK 编译脚本
+├── Makefile             # SDK 库校验与示例构建入口
 └── VERSION              # 版本信息
 ```
 
@@ -95,10 +95,10 @@ ai_glass_sdk/
 
 ## 🚀 快速开始
 
-### 1. 编译 SDK
+### 1. 校验 SDK 库并构建示例
 
 ```bash
-# 编译 SDK 库和默认示例集合
+# 校验随包提供的 SDK 库并构建默认示例集合
 cd ai_glass_sdk
 make
 ```

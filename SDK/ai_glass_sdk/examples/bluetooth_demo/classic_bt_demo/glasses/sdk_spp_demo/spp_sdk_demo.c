@@ -1,6 +1,8 @@
 #include "ai_spp.h"
 #include "ai_wifi.h"
 
+#include <errno.h>
+#include <poll.h>
 #include <signal.h>
 #include <stdio.h>
 #include <stdlib.h>
@@ -437,14 +439,35 @@ static void handle_connection(ai_spp_connection_t *connection)
     }
 
     while (g_running) {
-        ssize_t len = ai_spp_read(connection,
-                                  pending + pending_len,
-                                  sizeof(pending) - pending_len - 1);
+        struct pollfd pfd;
+        ssize_t len;
         char *line_end;
         char *cursor = pending;
 
+        memset(&pfd, 0, sizeof(pfd));
+        pfd.fd = connection->fd;
+        pfd.events = POLLIN | POLLERR | POLLHUP;
+        do {
+            len = poll(&pfd, 1, -1);
+        } while (len < 0 && errno == EINTR && g_running);
+
+        if (len <= 0 || !(pfd.revents & POLLIN)) {
+            printf("[SPP_WIFI_DEMO] poll end ret=%zd revents=0x%x errno=%d\n",
+                   len, pfd.revents, len < 0 ? errno : 0);
+            break;
+        }
+
+        do {
+            len = ai_spp_read(connection,
+                              pending + pending_len,
+                              sizeof(pending) - pending_len - 1);
+        } while (len < 0 && errno == EINTR);
+
+        if (len < 0 && (errno == EAGAIN || errno == EWOULDBLOCK))
+            continue;
         if (len <= 0) {
-            printf("[SPP_WIFI_DEMO] read end len=%zd\n", len);
+            printf("[SPP_WIFI_DEMO] read end len=%zd errno=%d\n",
+                   len, len < 0 ? errno : 0);
             break;
         }
 

@@ -344,7 +344,6 @@ done
 ## 注意事项
 
 1. 此工具需要在目标ARM设备上运行，无法在x86主机上直接执行
-2. TTS功能需要网络连接到TTS服务器（默认：officelocation.ezxr.com.cn:7863）
 3. PCM文件必须是原始PCM格式，不支持MP3、WAV等编码格式
 4. 音量范围0-100，超出范围会自动限制
 5. TTS缓存目录为 `/oem/usr/bin/resources/cache`，确保有写权限

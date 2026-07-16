@@ -6,6 +6,7 @@ extern "C" {
 #endif
 
 #define AI_WIFI_DEFAULT_IFNAME "wlan0"
+#define AI_WIFI_GUARD_SOCKET_PATH "/var/run/guard_wifi.sock"
 #define AI_WIFI_IFNAME_MAX 16
 #define AI_WIFI_SSID_MAX 64
 #define AI_WIFI_BSSID_MAX 32
@@ -31,6 +32,10 @@ typedef struct {
     int signal_level_dbm;
 } ai_wifi_status_t;
 
+/*
+ * Wi-Fi 状态和控制由 Guard 唯一执行。以下 API 通过本地 Unix socket 请求
+ * Guard；调用方不得再将它视为 wpa_cli 直控接口。
+ */
 int ai_wifi_get_status(ai_wifi_status_t *status);
 int ai_wifi_get_status_on(const char *ifname, ai_wifi_status_t *status);
 
