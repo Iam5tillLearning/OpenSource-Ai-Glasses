@@ -26,7 +26,7 @@
 
 | 微信交流群 | Discord社区 |
 |:---:|:---:|
-| <img width="200" alt="微信开发者交流群" src="docs/Images/weixin.png" /> | <a href="https://discord.gg/7KqjKFZ7xA"><img width="200" alt="Discord社区" src="docs/Images/discord.jpg" /></a> |
+| <img width="200" alt="微信开发者交流群" src="docs/Images/weixin.png" /> | <a href="https://discord.gg/7KqjKFZ7xA"><img width="200" alt="Discord社区" src="https://github.com/user-attachments/assets/3dfba7b2-6cc3-45e9-8ee9-28cdb25d8b09" /></a> |
 | 扫码加入微信群 | [加入Discord](https://discord.gg/7KqjKFZ7xA) |
 
 
