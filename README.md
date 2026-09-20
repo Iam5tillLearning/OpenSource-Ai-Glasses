@@ -26,7 +26,7 @@ The open-source scope is primarily the system software and application stack. De
 
 | WeChat Group | Discord Community |
 |:---:|:---:|
-| <img width="200" alt="WeChat Developer Group" src="docs/Images/weixin.png" /> | <a href="https://discord.gg/7KqjKFZ7xA"><img width="200" alt="Discord Community" src="docs/Images/discord.jpg" /></a> |
+| <img width="200" alt="WeChat Developer Group" src="docs/Images/weixin.png" /> | <a href="https://discord.gg/7KqjKFZ7xA"><img width="200" alt="Discord Community" src="https://github.com/user-attachments/assets/3dfba7b2-6cc3-45e9-8ee9-28cdb25d8b09"  /></a> |
 | Scan to join WeChat group | [Join Discord](https://discord.gg/7KqjKFZ7xA) |
 
 
