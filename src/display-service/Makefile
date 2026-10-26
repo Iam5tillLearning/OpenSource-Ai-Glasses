@@ -2,7 +2,7 @@ DEV_ENV_ROOT := ../../..
 TOOLCHAIN_PATH := $(DEV_ENV_ROOT)/tools/linux/toolchain/arm-rockchip831-linux-uclibcgnueabihf/bin
 CC = $(TOOLCHAIN_PATH)/arm-rockchip831-linux-uclibcgnueabihf-gcc
 
-CFLAGS = -Wall -O2 -I. -I../../SDK/ai_glass_sdk/include -I../../third_party/cJSON -D_GNU_SOURCE
+CFLAGS = -Wall -O2 -I. -I../../SDK/ai_glass_sdk/include -I../../third_party/cJSON -D_GNU_SOURCE -MMD -MP
 SDK_LIB = ../../SDK/ai_glass_sdk/lib
 LDFLAGS = $(SDK_LIB)/libai_glass_sdk.a -lpthread -lrt
 
@@ -27,10 +27,12 @@ OBJS += $(CJSON_OBJ)
 
 all: $(TARGET_BIN)
 
-$(TARGET_BIN): $(OBJS)
+$(OBJS): Makefile $(wildcard ../../SDK/ai_glass_sdk/include/*.h)
+
+$(TARGET_BIN): $(OBJS) $(SDK_LIB)/libai_glass_sdk.a
 	@mkdir -p $(dir $@)
 	@echo "Linking $@"
-	@$(CC) $(CFLAGS) -o $@ $^ $(LDFLAGS)
+	@$(CC) $(CFLAGS) -o $@ $(OBJS) $(LDFLAGS)
 
 $(OBJ_DIR)/%.o: %.c
 	@mkdir -p $(dir $@)
@@ -44,3 +46,5 @@ $(CJSON_OBJ): $(CJSON_DIR)/cJSON.c
 
 clean:
 	rm -rf $(BUILD_DIR) *.o
+
+-include $(wildcard $(OBJ_DIR)/*.d)

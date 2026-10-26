@@ -1,0 +1,17 @@
+{
+  "source": "InternalProjects/ai_core/ai_glass_sdk/src/ai_gpio.c",
+  "source_commit": "35674369f1ff61e1b952d8405d8eeb78d3b78ef8",
+  "source_sha256": "1d4703397f4c35ec4c43d344aa1e18240a4d9ce2ee86672a70d271d261f89c50",
+  "source_header_sha256": "fea6b9dce8de080cb94ec6f90909cc7bbdfc3328648557892bdcf41bae365b35",
+  "public_header_sha256": "5c36b04faf51f80412bc5df1c590d0d175b95b8e8626a2cdc96a87009ed298b8",
+  "abi": {
+    "state_size": 48,
+    "event_queue": 800,
+    "broadcast_sequence": 2852
+  },
+  "artifacts": {
+    "ai_gpio.o": "c96abd6d07de354eded5e3e2e23c69396220a2e9e2695b4c7c9cc6a01828611b",
+    "libai_glass_sdk.a": "70b0f413080738c7bb3599f406ea2390f2f52e802298a9cdfb5297c0f1f1b17a",
+    "libai_glass_sdk.so": "ada6e722794c0764ef6349ead025c1bfbc8b728b4f93086543f12b23eedfe75a"
+  }
+}

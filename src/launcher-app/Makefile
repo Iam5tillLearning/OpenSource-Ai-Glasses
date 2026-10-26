@@ -20,7 +20,7 @@ BIN_DIR   = $(BUILD_DIR)/bin
 TARGET = launcher-app
 TARGET_BIN = $(BIN_DIR)/$(TARGET)
 
-CFLAGS = -Wall -O2 -I. -I$(SDK_INC) -I$(LVGL_DIR) -Iui -D_GNU_SOURCE
+CFLAGS = -Wall -O2 -I. -I$(SDK_INC) -I$(LVGL_DIR) -Iui -D_GNU_SOURCE -MMD -MP
 # LVGL Config
 CFLAGS += -DLV_CONF_INCLUDE_SIMPLE
 
@@ -60,14 +60,17 @@ ALL_OBJS = $(MAIN_OBJ) $(UI_OBJ) $(LVGL_OBJ)
 
 all: $(TARGET_BIN)
 
+$(ALL_OBJS): Makefile
+$(MAIN_OBJ) $(UI_OBJ): $(wildcard $(SDK_INC)/*.h)
+
 debug_vars:
 	@echo "CSRCS: $(CSRCS)"
 	@echo "LVGL_OBJ: $(LVGL_OBJ)"
 
-$(TARGET_BIN): $(ALL_OBJS)
+$(TARGET_BIN): $(ALL_OBJS) $(SDK_LIB)/libai_glass_sdk.a
 	@mkdir -p $(dir $@)
 	@echo "Linking $@"
-	@$(CC) $(CFLAGS) -o $@ $^ $(LDFLAGS)
+	@$(CC) $(CFLAGS) -o $@ $(ALL_OBJS) $(LDFLAGS)
 
 # Rule for main.c
 $(OBJ_DIR)/%.o: %.c
@@ -90,4 +93,6 @@ $(OBJ_DIR)/%.o: %.c
 
 clean:
 	rm -rf $(BUILD_DIR) *.o ui/*.o
+
+-include $(shell find $(OBJ_DIR) -name '*.d' 2>/dev/null)
 

@@ -1,5 +1,7 @@
 # GPIO Event Broadcast Service - Client Integration Guide
 
+Compatibility update (2026-10-26): the published active_low reserved field is restored. GPIO Hub state records are 48 bytes; the event queue starts at offset 800 and the broadcast sequence at 2852. Update the header, GPIO object, static archive and shared library together, then rebuild applications. Older 40-byte prebuilt clients are incompatible with this layout. Existing subscription APIs and button behavior are unchanged. The GPIO object is rebuilt from the firmware repository's authoritative ai_core SDK source; other objects retain this public package's version.
+
 [中文版本](GPIO_Client_API.md) | English Version
 
 > **Version**: v1.1 | **Date**: 2025-10-10 | **Status**: ✅ Production Ready
