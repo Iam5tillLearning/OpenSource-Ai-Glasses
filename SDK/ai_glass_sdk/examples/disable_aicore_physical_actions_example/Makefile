@@ -12,7 +12,20 @@ endif
 endif
 
 CC = $(CROSS_COMPILE)gcc
-CFLAGS = -Wall -g -O2 -std=gnu99
+STRIP = $(CROSS_COMPILE)strip
+DEBUG ?= 0
+ifeq ($(DEBUG),1)
+STRIP_OUTPUTS ?= 0
+else
+STRIP_OUTPUTS ?= 1
+endif
+
+CFLAGS = -Wall -O2 -std=gnu99
+ifeq ($(DEBUG),1)
+CFLAGS += -DDEBUG -g
+else
+CFLAGS += -DNDEBUG
+endif
 
 SDK_DIR = ../..
 INCLUDES = -I$(SDK_DIR)/include
@@ -31,6 +44,7 @@ $(BUILD_DIR):
 $(TARGET): $(SRC) | $(BUILD_DIR)
 	@echo "Building disable_aicore_physical_actions_example..."
 	$(CC) $(CFLAGS) $(INCLUDES) -o $@ $(SRC) $(LIBS)
+	@if [ "$(STRIP_OUTPUTS)" != "0" ]; then $(STRIP) --strip-unneeded $@; fi
 	@echo "OK: $(TARGET)"
 
 clean:

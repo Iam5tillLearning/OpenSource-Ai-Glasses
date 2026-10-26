@@ -42,7 +42,7 @@ int main() {
     // 2. 订阅特定GPIO (如订阅GPIO 0, 1, 75)
     int gpios[] = {0, 1, 75};
     ai_gpio_hub_client_subscribe_gpios(&client, gpios, 3, hub_callback, NULL);
-    
+
     // 或订阅所有GPIO
     ai_gpio_hub_client_subscribe_all(&client, hub_callback, NULL);
 
@@ -414,3 +414,8 @@ int main() {
 3. 使用 `subscribe_gpios` 或 `subscribe_all` 替代原有的 `subscribe`
 
 旧代码无需修改即可运行，但无法享受到单一连接订阅多GPIO的优势。
+
+
+### main 基线整合（2026-10-26）
+
+合入main后，保留其已符合48/800/2852 ABI的完整预编译SDK及新版其他接口，不恢复早期单模块替换的旧归档。实际来源及头/库SHA256见 `../lib/gpio-build.json`。公开SDK默认12个原生示例、旧显示/桌面ARM编译及增量依赖检查通过；这些旧应用的显示协议不代表兼容当前DSP2正式服务。

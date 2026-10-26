@@ -4,12 +4,14 @@
 
 ## Introduction
 
-`gpio_example` is a demo program showing how to use AI Glass SDK's GPIO event broadcast service to subscribe and handle GPIO button events.
+`gpio_example` is a demo program showing how to use AI Glass SDK's GPIO Hub event service to subscribe and handle GPIO button events.
 
 ### Core Features
 - Subscribe to GPIO button events (Press/Release)
 - Asynchronous event callback mechanism, real-time response
-- Multi-process sharing same GPIO event source
+- Subscribes to all active GPIOs by default and prints the actual GPIO number
+- Supports `-g <gpio_number>` to subscribe to one GPIO only
+- Multi-process sharing same GPIO Hub event source
 - No need to access GPIO hardware directly
 - Complete event statistics and debug info
 
@@ -30,7 +32,7 @@
 ```
 
 1. **Server** (ai-core): Monitors GPIO hardware state changes
-2. **Event Broadcast**: Broadcasts events to all subscribed clients via Unix Domain Socket
+2. **GPIO Hub**: Broadcasts events to all subscribed clients via shared memory and Unix Domain Socket
 3. **Client**: Receives events and executes callback function in independent thread
 
 ## Compilation
@@ -52,52 +54,45 @@ cd service
 ```
 
 ### 2. Confirm GPIO Configuration
-Server needs to correctly configure the GPIO pin to monitor (default is gpio-1, corresponding to left temple physical button).
+Server needs to correctly configure the GPIO pins to monitor. To expose multiple GPIOs, start `ai-core` with `--gpio-numbers`, for example:
+
+```bash
+./build/ai-core --enable-gpio --gpio-number 1 --gpio-numbers 0,1,75 --gpio-active-low 0,75
+```
 
 ## Usage
 
 ### Basic Run
 ```bash
+# Subscribe to all active GPIOs. This is useful for finding which GPIO was pressed.
 ./gpio_example
+
+# Subscribe to GPIO 1 only.
+./gpio_example -g 1
 ```
 
 ### Program Output Example
 ```
 ═══════════════════════════════════════════════════════════
-  GPIO Event Client Example Program
+  GPIO Event Client - Hub Async Callback Mode
+  Target: all active GPIOs
 ═══════════════════════════════════════════════════════════
 
-【Function】Subscribe to GPIO events, receive button notifications in real-time
-
-【Usage】
-  ./gpio_example
-
-【Prerequisites】
-  1. Ensure ai-core server is started
-  2. Server needs to enable GPIO function (--enable-gpio)
-
-【Exit】
-  Press Ctrl+C to exit program
-
-═══════════════════════════════════════════════════════════
-
-═══════════════════════════════════════════════════════════
-  GPIO Event Client - Async Callback Mode
-═══════════════════════════════════════════════════════════
-
-📝 [Step 1/3] Creating GPIO event client...
+📝 [Step 1/3] Creating GPIO Hub event client...
 ✅ Client created
 
-📝 [Step 2/3] Connecting to GPIO event broadcast service...
+📝 [Step 2/3] Connecting to GPIO Hub event center...
 ✅ Connected to service
+
+📌 Active GPIOs in Hub: GPIO0(raw=high,active-low,released) GPIO1(raw=low,active-high,released) GPIO75(raw=high,active-low,released)
 
 📝 [Step 3/3] Subscribing to GPIO events...
 ✅ Subscribed to GPIO events
-   - Local Notify Socket: /tmp/gpio_notify_12345
+   - Local Notify Socket: /tmp/ai_gpio_hub_client_12345_123456789
    - Current Event Sequence: 0
 
 ═══════════════════════════════════════════════════════════
-  🎧 Listening... Please press GPIO button
+  🎧 Listening... Please press any active GPIO button
   💡 Hint: Press Ctrl+C to exit program
 ═══════════════════════════════════════════════════════════
 ```
@@ -224,7 +219,7 @@ void my_gpio_event_callback(gpio_event_t event_type, int gpio_number, void *user
 ❌ Subscription failed
 ```
 **Solution**:
-- Check if GPIO manager is correctly initialized
+- Check if GPIO Hub is correctly initialized
 - View server logs for detailed error info
 
 #### 3. Service Stopped
@@ -246,28 +241,34 @@ void my_gpio_event_callback(gpio_event_t event_type, int gpio_number, void *user
 ### Core API Functions
 
 ```c
-// 1. Create client
-int ai_gpio_event_client_create(gpio_event_client_t *client);
+// 1. Create Hub client
+int ai_gpio_hub_client_create(gpio_event_hub_client_t *client);
 
-// 2. Connect to service
-int ai_gpio_event_client_connect(gpio_event_client_t *client);
+// 2. Connect to GPIO Hub
+int ai_gpio_hub_client_connect(gpio_event_hub_client_t *client);
 
-// 3. Subscribe to events (register callback)
-int ai_gpio_event_client_subscribe(gpio_event_client_t *client,
-                                   gpio_event_callback_t callback,
-                                   void *user_data);
+// 3. Subscribe to specific GPIOs
+int ai_gpio_hub_client_subscribe_gpios(gpio_event_hub_client_t *client,
+                                       const int *gpio_list,
+                                       int gpio_count,
+                                       gpio_event_callback_t callback,
+                                       void *user_data);
 
-// 4. Check service status
-int ai_gpio_event_client_is_service_alive(gpio_event_client_t *client);
+// 4. Subscribe to all GPIOs
+int ai_gpio_hub_client_subscribe_all(gpio_event_hub_client_t *client,
+                                     gpio_event_callback_t callback,
+                                     void *user_data);
 
-// 5. Unsubscribe
-void ai_gpio_event_client_unsubscribe(gpio_event_client_t *client);
+// 5. Get active GPIO list
+int ai_gpio_hub_client_get_active_gpios(gpio_event_hub_client_t *client,
+                                        int *gpio_list,
+                                        int max_count);
 
-// 6. Disconnect
-void ai_gpio_event_client_disconnect(gpio_event_client_t *client);
+// 6. Check service status
+int ai_gpio_hub_client_is_service_alive(gpio_event_hub_client_t *client);
 
 // 7. Destroy client
-void ai_gpio_event_client_destroy(gpio_event_client_t *client);
+void ai_gpio_hub_client_destroy(gpio_event_hub_client_t *client);
 
 // Auxiliary function
 uint64_t ai_gpio_get_timestamp_us(void);  // Get microsecond timestamp
@@ -308,10 +309,13 @@ Multiple clients can subscribe to the same GPIO event simultaneously:
 ### 2. Check Socket Connection
 ```bash
 # View Client Socket
-ls -la /tmp/gpio_notify_*
+ls -la /tmp/ai_gpio_hub_client_*
 
 # View Server Socket
-ls -la /tmp/ai-core_gpio_*
+ls -la /tmp/ai_gpio_event_hub_broadcast
+
+# View Hub shared memory
+ls -la /dev/shm/ai_gpio_event_hub
 ```
 
 ### 3. Enable Verbose Log
@@ -328,7 +332,7 @@ Modify log level in source code to see more debug info.
 
 - View Help: Running program automatically shows usage instructions
 - Check Service: `ps aux | grep ai-core`
-- View Socket: `ls -la /tmp/gpio_*`
+- View Socket: `ls -la /tmp/ai_gpio_event_hub_broadcast /tmp/ai_gpio_hub_client_*`
 
 ## Related Documentation
 

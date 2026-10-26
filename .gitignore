@@ -4,6 +4,10 @@ output/
 *.pyc
 __pycache__/
 
+# SDK intermediate objects
+SDK/ai_glass_sdk/lib/*.o
+SDK/ai_glass_sdk/examples/**/*.o
+
 # IDE and editors
 .vscode/
 .idea/

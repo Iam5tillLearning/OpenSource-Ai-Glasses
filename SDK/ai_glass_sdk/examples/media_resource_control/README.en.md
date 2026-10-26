@@ -9,8 +9,9 @@
 Typical use cases:
 
 - Release camera/audio before launching an external application
-- Return camera/audio back to `ai-core` after `rkipc` exits
 - Quickly inspect current media resource state during debugging
+
+Note: the current RTSP live-video path uses the `ai-core` H.265 shared-main-stream architecture. Do not use this tool to run `cam_off/cam_on` or `aud_off/aud_on` when starting or stopping live video. Use the device-side `/oem/usr/bin/rkipc_device_enter.sh` and `/oem/usr/bin/rkipc_device_exit_to_aicore.sh` helpers instead; camera/audio remain owned by `ai-core` throughout that flow.
 
 ### Core Features
 - ✅ Reuses SDK resource arbitration APIs directly
@@ -64,7 +65,7 @@ media-resource> status
 State: camera=active(ai-core owned), audio=active(ai-core owned)
 ```
 
-### 2. Switch to `rkipc`
+### 2. Release Resources to an External Application
 
 ```text
 media-resource> cam_off
@@ -78,9 +79,11 @@ Expected state:
 camera=suspended, audio=suspended
 ```
 
+This flow is only for debugging cases where an external application must directly own camera/audio. It is not the current RTSP live-video path.
+
 ### 3. Switch Back to `ai-core`
 
-Make sure `rkipc` has exited cleanly first, then run:
+After the external application releases the resources, run:
 
 ```text
 media-resource> cam_on
@@ -88,21 +91,22 @@ media-resource> aud_on
 media-resource> status
 ```
 
-### 4. Recommended `rkipc` Exit Method
+### 4. RTSP Live-Video Entry Points
 
-Use normal exit when stopping `rkipc`:
+The current live-video flow does not use this tool for resource switching. Use:
+
+```bash
+/oem/usr/bin/rkipc_device_enter.sh
+/oem/usr/bin/rkipc_device_exit_to_aicore.sh
+```
+
+If you manually stop `rkipc`, use normal exit and avoid `kill -9`:
 
 ```bash
 killall -TERM rkipc
 ```
 
-Avoid:
-
-```bash
-kill -9 <rkipc_pid>
-```
-
-Because `SIGKILL` skips user-space cleanup and may make later `cam_on` recovery unstable.
+Because `SIGKILL` skips RTSP, socket, and subscription cleanup and can leave incomplete subscription state or log evidence.
 
 ## Output Conventions
 
@@ -136,4 +140,4 @@ On the current RV1106 device, about `3-5s` recovery time for `cam_on` is expecte
 
 ### 3. `cam_on` fails after running `rkipc`
 
-First confirm that `rkipc` exited normally with `SIGTERM` instead of `kill -9`.
+First confirm that the external holder has really released resources. If `rkipc` was started manually before, confirm that it exited normally with `SIGTERM` instead of `kill -9`.

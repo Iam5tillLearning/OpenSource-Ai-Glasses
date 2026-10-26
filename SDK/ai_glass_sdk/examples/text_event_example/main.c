@@ -1,6 +1,6 @@
 /**
  * AI Glass SDK - Text Event Example
- * 
+ *
  * Demonstrates how to receive and print ASR/LLM text events.
  */
 
@@ -36,7 +36,7 @@ static void on_text_event(ai_text_event_t *event, void *user_data) {
         }
         printf("%s", event->text);
         fflush(stdout);
-        
+
         // FINAL 类型表示 LLM 本轮输出结束
         if (event->type == AI_TEXT_TYPE_FINAL) {
             printf("\n\n"); // LLM 完成，加空行

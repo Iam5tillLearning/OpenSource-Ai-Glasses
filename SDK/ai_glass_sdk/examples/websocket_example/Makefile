@@ -15,6 +15,13 @@ endif
 endif
 
 CC = $(CROSS_COMPILE)gcc
+STRIP = $(CROSS_COMPILE)strip
+DEBUG ?= 0
+ifeq ($(DEBUG),1)
+STRIP_OUTPUTS ?= 0
+else
+STRIP_OUTPUTS ?= 1
+endif
 
 # 编译选项
 CFLAGS = -Wall -O2 -std=gnu99
@@ -24,8 +31,11 @@ CFLAGS += -DMG_ENABLE_DIRECTORY_LISTING=0
 CFLAGS += -DMG_ENABLE_LOG=1
 # 使用mbedTLS（支持WSS连接）
 CFLAGS += -DMG_TLS=1
-# 启用详细调试日志（0=ERROR, 1=ERROR, 2=INFO, 3=DEBUG, 4=VERBOSE）
-CFLAGS += -DMG_LOG_LEVEL=4
+ifeq ($(DEBUG),1)
+CFLAGS += -DDEBUG -g -DMG_LOG_LEVEL=4
+else
+CFLAGS += -DNDEBUG -DMG_LOG_LEVEL=2
+endif
 
 # 头文件路径
 INCLUDES = -I../../include
@@ -52,6 +62,7 @@ $(BUILD_DIR):
 $(TARGET): ws_example.c | $(BUILD_DIR)
 	@echo "编译 WebSocket 示例 (with mbedTLS)..."
 	$(CC) $(CFLAGS) $(INCLUDES) -o $@ $< $(LIBS)
+	@if [ "$(STRIP_OUTPUTS)" != "0" ]; then $(STRIP) --strip-unneeded $@; fi
 	@echo "✅ 编译完成: $@"
 
 clean:

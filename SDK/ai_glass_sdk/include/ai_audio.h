@@ -5,6 +5,8 @@
 extern "C" {
 #endif
 
+#include <stdint.h>
+
 /**
  * @file ai_audio.h
  * @brief AI Media Service 音频播放客户端API
@@ -44,6 +46,7 @@ typedef struct ai_audio ai_audio_t;
 #define AI_AUDIO_ERROR_PARAM      -4    // 参数错误
 #define AI_AUDIO_ERROR_RESPONSE   -5    // 服务端响应错误
 #define AI_AUDIO_ERROR_STATE      -6    // 状态错误（例如重复开始录音）
+#define AI_AUDIO_ERROR_TIMEOUT    -7    // 读取超时，可重试
 
 // =============================================================================
 // 资源控制定义
@@ -53,10 +56,74 @@ typedef struct ai_audio ai_audio_t;
 #define AI_AUDIO_RESOURCE_AUDIO   0x02
 #define AI_AUDIO_RESOURCE_ALL     (AI_AUDIO_RESOURCE_CAMERA | AI_AUDIO_RESOURCE_AUDIO)
 
+#define AI_MEDIA_HOLDER_ID_MAX 64
+#define AI_MEDIA_ENDPOINT_PATH_MAX 108
+
+#define AI_AUDIO_STREAM_DEFAULT_SOCKET_PATH "/tmp/ai-core_audio_stream"
+#define AI_AUDIO_STREAM_MAGIC 0x41415346u
+#define AI_AUDIO_STREAM_VERSION 1
+#define AI_AUDIO_STREAM_CODEC_G711A 1
+#define AI_AUDIO_STREAM_MAX_PAYLOAD 4096
+
 typedef struct {
     int camera_suspended;    // 1=已释放给外部应用，0=ai-core持有
     int audio_suspended;     // 1=已释放给外部应用，0=ai-core持有
 } ai_audio_resource_status_t;
+
+typedef struct {
+    int (*release_resources)(int resource_mask, void *user_data);
+    int (*acquire_resources)(int resource_mask, void *user_data);
+    int (*get_resource_status)(int *camera_owned, int *audio_owned, void *user_data);
+} ai_media_holder_ops_t;
+
+typedef struct {
+    const char *holder_id;
+    int owned_mask;
+    int reclaim_timeout_ms;
+    ai_media_holder_ops_t ops;
+    void *user_data;
+} ai_media_holder_registration_t;
+
+typedef struct {
+    int holder_registered;
+    int owned_mask;
+    int reclaim_pending;
+    int camera_suspended;
+    int audio_suspended;
+    int holder_generation;
+    int loan_active;
+    int loan_auto_return;
+    int return_pending;
+    char holder_id[AI_MEDIA_HOLDER_ID_MAX];
+    char endpoint_path[AI_MEDIA_ENDPOINT_PATH_MAX];
+} ai_media_arbitration_status_t;
+
+typedef struct __attribute__((packed)) {
+    uint32_t magic;
+    uint16_t version;
+    uint16_t header_size;
+
+    uint32_t codec;
+    uint32_t sample_rate;
+    uint16_t channels;
+    uint16_t bits_per_sample;
+
+    uint32_t frame_samples;
+    uint32_t payload_size;
+
+    uint64_t capture_ts_us;
+    uint64_t seq;
+} ai_audio_stream_frame_header_t;
+
+typedef struct {
+    ai_audio_stream_frame_header_t header;
+    unsigned char payload[AI_AUDIO_STREAM_MAX_PAYLOAD];
+} ai_audio_stream_packet_t;
+
+typedef struct {
+    int fd;
+    char socket_path[AI_MEDIA_ENDPOINT_PATH_MAX];
+} ai_audio_stream_handle_t;
 
 // =============================================================================
 // 核心API
@@ -149,6 +216,40 @@ int ai_audio_resume_resources(ai_audio_t *client, int resource_mask);
 int ai_audio_get_resource_status(ai_audio_t *client, ai_audio_resource_status_t *status);
 
 /**
+ * @brief 注册当前外部媒体 holder
+ * @param client 客户端句柄
+ * @param registration holder 注册信息
+ * @return 0成功，负数表示错误码
+ */
+int ai_media_register_holder(ai_audio_t *client,
+                             const ai_media_holder_registration_t *registration);
+
+/**
+ * @brief 注销当前外部媒体 holder
+ * @param client 客户端句柄
+ * @param holder_id holder 标识
+ * @return 0成功，负数表示错误码
+ */
+int ai_media_unregister_holder(ai_audio_t *client, const char *holder_id);
+
+/**
+ * @brief 查询当前媒体仲裁状态
+ * @param client 客户端句柄
+ * @param status 输出状态
+ * @return 0成功，负数表示错误码
+ */
+int ai_media_get_arbitration_status(ai_audio_t *client,
+                                    ai_media_arbitration_status_t *status);
+
+int ai_audio_stream_subscribe(const char *socket_path,
+                              ai_audio_stream_handle_t *handle);
+
+int ai_audio_stream_read_packet(ai_audio_stream_handle_t *handle,
+                                ai_audio_stream_packet_t *packet);
+
+void ai_audio_stream_unsubscribe(ai_audio_stream_handle_t *handle);
+
+/**
  * @brief 清理音频客户端
  * @param client 客户端句柄
  */
@@ -218,6 +319,26 @@ int ai_audio_play_tts(ai_audio_t *client, const ai_audio_tts_params_t *params);
  * 默认参数：音量=默认，排队播放，使用缓存
  */
 int ai_audio_play_tts_simple(ai_audio_t *client, const char *text);
+
+/**
+ * @brief 播放适合短提示的TTS文本
+ * @param client 客户端句柄
+ * @param text 待播报的文本
+ * @return 0成功，负数表示错误码
+ *
+ * 该接口会先过滤不适合朗读或会破坏TTS命令协议的字符，再使用固定提示音参数播放：
+ * 音量=80，排队播放，使用缓存。
+ */
+int ai_audio_play_toast(ai_audio_t *client, const char *text);
+
+/**
+ * @brief 使用默认音频Socket播放适合短提示的TTS文本
+ * @param text 待播报的文本
+ * @return 0成功，负数表示错误码
+ *
+ * 等价于创建默认音频客户端后调用 `ai_audio_play_toast()`。
+ */
+int ai_audio_play_toast_text(const char *text);
 
 /**
  * @brief 创建默认TTS参数

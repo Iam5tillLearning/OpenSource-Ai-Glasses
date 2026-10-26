@@ -391,6 +391,48 @@ int ai_audio_play_tts_simple(ai_audio_t *client, const char *text);
 
 ---
 
+#### ai_audio_play_toast()
+
+Play short, readable TTS notification text.
+
+```c
+int ai_audio_play_toast(ai_audio_t *client, const char *text);
+```
+
+**Parameters**:
+- `client` - Client handle
+- `text` - Short notification text to speak
+
+**Return Value**:
+- Error code
+
+**Description**:
+- The SDK filters characters that are not suitable for speech or would break the TTS command protocol
+- Uses fixed notification parameters: volume `80`, queued playback, cache enabled
+- Suitable for operation feedback and repeated status notifications
+
+---
+
+#### ai_audio_play_toast_text()
+
+Play short, readable TTS notification text through the default audio socket.
+
+```c
+int ai_audio_play_toast_text(const char *text);
+```
+
+**Parameters**:
+- `text` - Short notification text to speak
+
+**Return Value**:
+- Error code
+
+**Description**:
+- Equivalent to creating a default audio client and then calling `ai_audio_play_toast()`
+- The caller does not need to manage the `ai_audio_t` lifecycle
+
+---
+
 #### ai_audio_play_simple()
 
 Simplified PCM playback function.
@@ -438,9 +480,11 @@ int ai_audio_get_resource_status(ai_audio_t *client, ai_audio_resource_status_t 
 
 **Example Program**: `ai_glass_sdk/examples/media_resource_control/`
 
+> Note: This resource arbitration API is only for external applications that must directly own camera/audio. The current RTSP live-video path keeps camera/audio owned by `ai-core` and lets `rkipc` subscribe to the shared H.265 main stream, so it does not use this API as the RTSP start/stop path.
+
 **Typical Use Cases**:
-- Release camera/audio to an external application before launching IPC
-- Return camera/audio back to `ai-core` after IPC exits
+- Release camera/audio to an external application before launching it
+- Return camera/audio to `ai-core` after that external application exits
 
 ---
 

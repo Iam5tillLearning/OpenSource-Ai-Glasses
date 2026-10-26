@@ -6,7 +6,7 @@
 
 ## 适用范围
 
-v0.7.0 参考固件可以启动 `rkipc` 串流运行态，并通过 RTSP 暴露摄像头画面。
+v0.7.0 参考固件可以启动 `rkipc` 串流运行态，并通过 RTSP 暴露摄像头画面。当前架构中，`ai-core` 仍然持有 camera/audio 并生产 H.265 视频流与音频镜像流；`rkipc` 只作为 RTSP 出口订阅这些流，不接管 camera/audio。
 
 参考地址：
 
@@ -89,13 +89,13 @@ ffmpeg -rtsp_transport tcp \
 
 ## 停止串流
 
-不再需要 RTSP 时，应正常退出 `rkipc` 并把 camera/audio 资源归还给 `ai-core`：
+不再需要 RTSP 时，应正常退出 `rkipc`。退出后 SDK 订阅断开，`ai-core` 会在无订阅者宽限期后停止 H.265 producer；camera/audio 在整个过程中始终由 `ai-core` 持有，不需要再执行 `cam_on` / `aud_on`：
 
 ```bash
 adb shell /oem/usr/bin/rkipc_device_exit_to_aicore.sh
 ```
 
-不要用 `kill -9` 结束 `rkipc`，因为这会跳过用户态清理流程，可能导致后续相机恢复不稳定。
+不要用 `kill -9` 结束 `rkipc`，因为这会跳过 RTSP、socket 和订阅断开的用户态清理流程，可能导致后续订阅状态或日志证据不完整。
 
 ## 常见问题
 

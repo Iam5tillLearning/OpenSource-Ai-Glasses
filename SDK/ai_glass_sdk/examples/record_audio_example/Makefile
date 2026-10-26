@@ -1,11 +1,31 @@
 # Makefile for record-audio sample
 
+DEV_ENV_ROOT := ../../../../..
+TOOLCHAIN_BIN := $(DEV_ENV_ROOT)/tools/linux/toolchain/arm-rockchip831-linux-uclibcgnueabihf/bin
+
 ifeq ($(CROSS_COMPILE),)
+ifneq ($(wildcard $(TOOLCHAIN_BIN)/arm-rockchip831-linux-uclibcgnueabihf-gcc),)
+CROSS_COMPILE = $(TOOLCHAIN_BIN)/arm-rockchip831-linux-uclibcgnueabihf-
+else
 CROSS_COMPILE = arm-rockchip831-linux-uclibcgnueabihf-
+endif
 endif
 
 CC = $(CROSS_COMPILE)gcc
-CFLAGS = -Wall -g -O2 -std=gnu99
+STRIP = $(CROSS_COMPILE)strip
+DEBUG ?= 0
+ifeq ($(DEBUG),1)
+STRIP_OUTPUTS ?= 0
+else
+STRIP_OUTPUTS ?= 1
+endif
+
+CFLAGS = -Wall -O2 -std=gnu99
+ifeq ($(DEBUG),1)
+CFLAGS += -DDEBUG -g
+else
+CFLAGS += -DNDEBUG
+endif
 
 SDK_DIR = ../..
 INCLUDES = -I$(SDK_DIR)/include
@@ -24,6 +44,7 @@ $(BUILD_DIR):
 $(TARGET): $(SRC) | $(BUILD_DIR)
 	@echo "Building record_audio_example..."
 	$(CC) $(CFLAGS) $(INCLUDES) -o $@ $(SRC) $(LIBS)
+	@if [ "$(STRIP_OUTPUTS)" != "0" ]; then $(STRIP) --strip-unneeded $@; fi
 	@echo "OK: $(TARGET)"
 
 clean:

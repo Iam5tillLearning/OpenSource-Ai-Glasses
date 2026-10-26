@@ -343,3 +343,8 @@ int main() {
 **Date**: 2025-10-10
 **Author**: AI Media Service Team
 **Status**: ✅ Production Ready
+
+
+### Integration with main (2026-10-26)
+
+The complete upstream prebuilt SDK already satisfies the 48/800/2852 GPIO layout and retains its newer APIs. It replaces the earlier single-object archive update. Actual upstream provenance and header/library SHA256 values are recorded in `../lib/gpio-build.json`. All 12 default native SDK examples and the legacy display/launcher ARM builds and incremental dependencies passed. The legacy display protocol is not a claim of compatibility with the current DSP2 service.

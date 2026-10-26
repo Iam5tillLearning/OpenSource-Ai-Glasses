@@ -26,8 +26,8 @@ The open-source scope is primarily the system software and application stack. De
 
 | WeChat Group | Discord Community |
 |:---:|:---:|
-| <img width="200" alt="WeChat Developer Group" src="docs/Images/weixin.png" /> | <a href="https://discord.gg/7KqjKFZ7xA"><img width="200" alt="Discord Community" src="docs/Images/discord.jpg" /></a> |
-| Scan to join WeChat group | [Join Discord](https://discord.gg/7KqjKFZ7xA) |
+| <img width="200" alt="WeChat Developer Group" src="docs/Images/weixin.png" /> | <a href="https://discord.gg/9AYus36rXH"><img width="200" alt="Discord Community" src="https://github.com/user-attachments/assets/3dfba7b2-6cc3-45e9-8ee9-28cdb25d8b09"  /></a> |
+| Scan to join WeChat group | [Join Discord](https://discord.gg/9AYus36rXH) |
 
 
 
@@ -41,10 +41,7 @@ You can develop this project in two ways:
 
 [**Optional: Get the Official AI Glasses Kit**](https://item.taobao.com/item.htm?id=1007109700786) — *Recommended for faster bring-up, not required for development*
 
-[**Backup purchase link**](https://item.taobao.com/item.htm?ft=t&id=1044923880613) — *Use this if the primary purchase page is unavailable*
-
-> [!NOTE]
-> **For international buyers**: Please find your own purchasing agent or package forwarding company for now. A global shipping platform is being set up and is expected to go live in about one week. We apologize for the inconvenience.
+[**Backup purchase link**](https://item.taobao.com/item.htm?ft=t&id=1056653633568) — *Use this if the primary purchase page is unavailable*
 
 > [!CAUTION]
 > **Official Hardware Compatibility Notice**: The v0.6.x and v0.7.x reference firmware builds are **only compatible with integrated hardware produced after January 1, 2026**. If your official kit or same-reference hardware was purchased/produced before this date, please use v0.6.0 or earlier firmware versions.
@@ -158,7 +155,7 @@ You can develop this project in two ways:
 - ⚡ **Performance**: Single Cortex-A7 core, 8GB storage
 - 🔋 **Battery**: 180mAh, 2hr music, 3hr display, 45min recording
 - ⚖️ **Lightweight**: Only 43g
-- 🧠 **Sensors**: Optional IMU only (geomagnetic sensor is no longer supported)
+- 🧠 **Sensors**: Optional geomagnetic sensor, IMU
 - 🐧 **OS**: Embedded Linux-based system
 
 ## 🚀 Quick Start
@@ -218,15 +215,6 @@ See [Development Environment Setup Guide](docs/ENV_SETUP.en.md) for details.
 
 ### 3. AI Conversation
 - **Operation**: After configuration, long press the left temple button to speak, release to send, and wait for the AI response.
-
-> [!WARNING]
-> **Bundled AI Service Notice**
-> - **Optional Bundled Components**: `ai-core` and `guard` are pre-installed helper binaries for out-of-box AI experience. They are optional and are **not required** for open-source smart glasses development.
-> - **Development Independence**: Developers can build their own solution entirely with the public SDK (camera/GPIO/audio/IPC) without depending on `ai-core` or `guard`.
-> - **Ease of Development**: `ai-core` runs as a system service and centrally manages camera/microphone/speaker/display/GPIO hardware. If your requirements match the built-in workflow, developing on top of `ai-core` is usually simpler, more developer-friendly, and faster than building everything directly with the Rockchip SDK.
-> - **Positioning**: This is not about pushing `ai-core`. We include our commercially deployed service in this open-source project as an optional convenience to help developers get started faster, and you can choose not to use it.
-> - **Privacy**: If `ai-core` is enabled, AI conversations may capture photos and upload them to cloud services for real-time recognition. These images are used for real-time processing only and **will not be persistently stored**.
-> - **Disable Bundled Services (Rockchip SDK mode)**: Remove or rename `/etc/init.d/S53_guard`, then power off and restart the device. After boot, use `top` to verify `ai-core` and `guard` are no longer running.
 
 
 ## 📦 SDK Development
