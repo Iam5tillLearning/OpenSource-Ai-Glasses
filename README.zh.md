@@ -6,7 +6,7 @@
 
 **一个基于Linux的开源智能眼镜平台，适用于医疗、工业、教育和消费应用**
 
-**中文** | [English](README.md)
+**中文** | [English](README.md) | [日本語](README.ja.md)
 
 [![Build Status](https://img.shields.io/badge/build-passing-brightgreen.svg)](https://github.com/ezxrdev/OpenSource-Ai-Glasses/actions)
 [![License](https://img.shields.io/badge/license-Apache%202.0-blue.svg)](LICENSE)
