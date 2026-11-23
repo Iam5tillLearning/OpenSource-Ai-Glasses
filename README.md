@@ -6,7 +6,7 @@
 
 **An open-source Linux-based smart glasses platform for medical, industrial, educational, and consumer applications**
 
-[中文](README.zh.md) | **English**
+[中文](README.zh.md) | **English** | [日本語](README.ja.md)
 
 [![Build Status](https://img.shields.io/badge/build-passing-brightgreen.svg)](https://github.com/ezxrdev/OpenSource-Ai-Glasses/actions)
 [![License](https://img.shields.io/badge/license-Apache%202.0-blue.svg)](LICENSE)
